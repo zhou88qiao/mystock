@@ -1,0 +1,19 @@
+<?xmlversion="1.0"encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<!-- 引用JDBC属性的配置文件 -->
+	<propertiesresource="stock_base.properties"/>
+	<!-- 使用JDBC的事务管理 -->
+	<transactionManagertype="JDBC">
+	<!-- 数据源 -->
+	<dataSourcetype="SIMPLE">
+	<propertyname="JDBC.Driver"value="${driver}"/>
+	<propertyname="JDBC.ConnectionURL"value="${url}"/>
+	<propertyname="JDBC.Username"value="${username}"/>
+	<propertyname="JDBC.Password"value="${password}"/>
+	</dataSource>
+	</transactionManager>
+	<!-- 这里可以写多个实体的映射文件 -->
+	<sqlMapresource="ibatis/StockSingle.xml"/>
+</sqlMapConfig>

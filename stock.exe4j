@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exe4j version="4.5.2" transformSequenceNumber="1">
+  <directoryPresets config="D:/Javawork/StockTrunk" />
+  <application name="stock" distributionSourceDir="C:/Users/Administrator/Desktop/stock_base">
+    <languages>
+      <principalLanguage id="en" customLocalizationFile="" />
+    </languages>
+  </application>
+  <executable name="stock" type="2" iconSet="true" iconFile="C:/Users/Administrator/Desktop/stock_base/stock_logo.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" amd64="false">
+    <messageSet />
+    <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" companyName="" productVersion="" />
+  </executable>
+  <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
+    <text>
+      <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+      <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+    </text>
+  </splashScreen>
+  <java mainClass="stock.basic.StockBaseManager" vmParameters="-J-Xms256m -Xmx1024m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.4" maxVersion="" allowBetaVM="false" jdkOnly="false">
+    <searchSequence>
+      <directory location="./jre" />
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <classPath>
+      <archive location="./StockJar/dom4j-1.6.1.jar" failOnError="false" />
+      <archive location="./StockJar/ibatis-2.3.4.jar" failOnError="false" />
+      <archive location="./StockJar/jcommon-1.0.23.jar" failOnError="false" />
+      <archive location="./StockJar/jfreechart-1.0.19.jar" failOnError="false" />
+      <archive location="./StockJar/log4j-1.2.13.jar" failOnError="false" />
+      <archive location="./StockJar/mysql-connector-java-5.1.22-bin.jar" failOnError="false" />
+      <archive location="./StockJar/poi-3.7-20101029.jar" failOnError="false" />
+      <archive location="./StockJar/poi-ooxml-3.7-20101029.jar" failOnError="false" />
+      <archive location="./StockJar/poi-ooxml-schemas-3.7-20101029.jar" failOnError="false" />
+      <archive location="./StockJar/xmlbeans-2.3.0.jar" failOnError="false" />
+      <archive location="D:/Javawork/StockTrunk/base.jar" failOnError="false" />
+    </classPath>
+    <nativeLibraryDirectories />
+  </java>
+  <includedFiles />
+  <unextractableFiles />
+</exe4j>
+
