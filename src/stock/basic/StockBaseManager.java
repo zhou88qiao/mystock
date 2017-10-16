@@ -519,49 +519,12 @@ public class StockBaseManager {
 				
 				break;
 		
-			case 6://获取数据
+			case 6://导入交易数据
+				loadStockData(ConstantsInfo.StockMarket);
+				return;
 			case 31:				
-				Date startDate = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
-		        String dateNowStr = sdf.format(startDate);  
-				fr=new FileReader(sbDao,sdDao,spDao,ssDao);				
-				//导入 部分日数据 并计算ma5 涨幅
-				try {
-						if(index == 6)
-							ret=fr.loadAllDataInfile(dateNowStr);
-						else 
-							ret=fr.loadAllFuturesDataInfile(dateNowStr);
-					//	ret=fr.deleteDataInfile(); //删除数据
-					} catch (SecurityException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					} catch (IOException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					} catch (ClassNotFoundException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					} catch (SQLException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					} catch (InstantiationException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					} catch (IllegalAccessException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					} catch (NoSuchFieldException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					}				
-									
-					jop=new JOptionPane();					
-					jFrame.add(jop,BorderLayout.NORTH);
-					if (ret == 0)
-						jop.showMessageDialog(jFrame, "数据已经导入完成","提示", JOptionPane.INFORMATION_MESSAGE); 
-					else
-						jop.showMessageDialog(jFrame, "数据已经导入，不用重复","提示", JOptionPane.INFORMATION_MESSAGE); 
-					return;
+				loadStockData(ConstantsInfo.FuturesMarket);
+				return;
 			case 7://分析当天数据
 				analyseStockData(ConstantsInfo.StockMarket); 
 				return;
@@ -1077,7 +1040,55 @@ public class StockBaseManager {
 		
 	}
 	
-	//分析股票数据
+	
+	//1导入交易数据
+	public void loadStockData(int type){
+		
+		Date startDate = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
+        String dateNowStr = sdf.format(startDate);  
+		fr=new FileReader(sbDao,sdDao,spDao,ssDao);		
+		int ret = 0;
+		//导入 部分日数据 并计算ma5 涨幅
+		try {
+				if(type == 6)
+					ret=fr.loadAllDataInfile(dateNowStr);
+				else 
+					ret=fr.loadAllFuturesDataInfile(dateNowStr);
+			//	ret=fr.deleteDataInfile(); //删除数据
+			} catch (SecurityException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (IOException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (ClassNotFoundException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (SQLException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (InstantiationException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (IllegalAccessException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (NoSuchFieldException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			}				
+							
+			jop=new JOptionPane();					
+			jFrame.add(jop,BorderLayout.NORTH);
+			if (ret == 0)
+				jop.showMessageDialog(jFrame, "数据已经导入完成","提示", JOptionPane.INFORMATION_MESSAGE); 
+			else
+				jop.showMessageDialog(jFrame, "数据已经导入，不用重复","提示", JOptionPane.INFORMATION_MESSAGE); 
+			return;
+	}
+	
+	//2分析股票交易数据
 	public void analyseStockData(int type){
 		PointClass pc=new PointClass(sbDao,sdDao,spDao);						
 		try {
@@ -1115,7 +1126,7 @@ public class StockBaseManager {
 			return;
 	}
 	 
-	 //导出数据
+	 //3导出分析数据
     public void exportExcelFile(int type){
 		Date startDate1 = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
@@ -1166,7 +1177,7 @@ public class StockBaseManager {
 		return;
 	 }
     
-    //导入统计表
+    //4导入统计表
     public void loadSummaryExcelFile(int type) 
     {
     	
@@ -1192,8 +1203,101 @@ public class StockBaseManager {
 		return;
     }
     
+  //5导出极点数据
+    public void exportPointExcelFile(int type)
+    {
+    	Date startDate1 = new Date();
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
+		String dateNowStr1 = sdf1.format(startDate1);    	
+			
+		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
+    	try {
+    		if(type == ConstantsInfo.StockMarket) {
+    			//sep.writePointExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
+    			sep.writePointExcelFormIndustryOrderBy("export\\",dateNowStr1);
+    		} else {
+    			sep.writePointExcelFormFuturesOrderBy("export\\",dateNowStr1);
+    		}
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	jop=new JOptionPane();					
+		jFrame.add(jop,BorderLayout.NORTH);
+		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		return;
+    }
+    
+    //6导出统计数据
+    public void exportSummaryExcelFile(int type)
+    {
+    	Date startDate1 = new Date();
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
+		String dateNowStr1 = sdf1.format(startDate1);    	
+			
+		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	   
+    	try {
+    		if(type == ConstantsInfo.StockMarket) {
+    			sep.writeSummaryExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
+    		} else {
+    			sep.writeSummaryExcelFormFuturesOrderBy("export\\",dateNowStr1);
+    		}
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	jop=new JOptionPane();					
+		jFrame.add(jop,BorderLayout.NORTH);
+		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		return;
+    }
     
     
+    //7买卖操作分析
     public void analyseOperation(int type)
     {
     	Date startDate1 = new Date();
@@ -1265,6 +1369,7 @@ public class StockBaseManager {
     }
 	 
     
+    //8导出操作分析数据
     public void exportOperationExcelFile(int type)
     {
     	Date startDate1 = new Date();
@@ -1317,6 +1422,7 @@ public class StockBaseManager {
 		return;
     }
     
+    //9导出总的操作分析
     public void exportTotalOperationExcelFile(int type)
     {
     	Date startDate1 = new Date();
@@ -1334,97 +1440,6 @@ public class StockBaseManager {
 
     		} else {
     			sep.writeTotalOperationExcelFormFuturesOrderBy("export\\",dateNowStr1);
-    		}
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	jop=new JOptionPane();					
-		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
-		return;
-    }
-	 
-    public void exportPointExcelFile(int type)
-    {
-    	Date startDate1 = new Date();
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
-		String dateNowStr1 = sdf1.format(startDate1);    	
-			
-		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
-    	try {
-    		if(type == ConstantsInfo.StockMarket) {
-    			//sep.writePointExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
-    			sep.writePointExcelFormIndustryOrderBy("export\\",dateNowStr1);
-    		} else {
-    			sep.writePointExcelFormFuturesOrderBy("export\\",dateNowStr1);
-    		}
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	jop=new JOptionPane();					
-		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
-		return;
-    }
-    
-    public void exportSummaryExcelFile(int type)
-    {
-    	Date startDate1 = new Date();
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
-		String dateNowStr1 = sdf1.format(startDate1);    	
-			
-		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	   
-    	try {
-    		if(type == ConstantsInfo.StockMarket) {
-    			sep.writeSummaryExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
-    		} else {
-    			sep.writeSummaryExcelFormFuturesOrderBy("export\\",dateNowStr1);
     		}
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block

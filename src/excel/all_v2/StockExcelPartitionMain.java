@@ -330,7 +330,7 @@ public class StockExcelPartitionMain {
  	}
  	
  	//计算date当天 分析趋势，上，下转等
- 	public StockExcelItem getExcelItem(String stockFullId,int dataType,int stockType) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException
+ 	public StockExcelItem getExcelItem(String stockFullId,int dataType,int stockType, String anaylseDate) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException
  	{
  	
  		StockExcelItem eItem=null;
@@ -341,9 +341,7 @@ public class StockExcelPartitionMain {
  		
  		//
  		
- 		//当天
- 		//String nowTime = "2017-09-08"; //
- 		String nowTime =stockDateTimer.getCurDate(); 
+ 		
  		int curTread =0;//当前趋势 0跌 1涨
  		//涨跌停数
  		int upType=0;//涨跌集类型
@@ -413,13 +411,17 @@ public class StockExcelPartitionMain {
 		String crossLastDate=lastSp.getToDate().toString();				
 		
 		//取当天日数据作为计算，不拿周，月数据
-		StockData sdata = sdDao.getLastDataStock(stockFullId,ConstantsInfo.DayDataType);
-		curDate= sdata.getDate().toString();		
+		//StockData sdata = sdDao.getLastDataStock(stockFullId,ConstantsInfo.DayDataType);	
+		//当天
+ 		String nowTime = anaylseDate; //stockDateTimer.getCurDate(); 
+		StockData sdata = sdDao.getZhiDingDataStock(stockFullId,ConstantsInfo.DayDataType,anaylseDate);
+		if(sdata == null)
+			return null;
+		
 		range = sdata.getRange();
 		StockData sMinData=null;
 		StockData sMaxData=null;
-		
-		
+			
 		if (curTread == 0) { 
 			
 			//3 最近最低点 疑似极点
@@ -526,8 +528,7 @@ public class StockExcelPartitionMain {
 		if(dataType == ConstantsInfo.DayDataType){
    		//计算上一涨停时间差
 			priUpDateGap = priUpData(stockFullId);
-			
-			
+					
 			StockData sData=null;
 			//2015-06-12最低点
 			sData = sdDao.getMinStockDataPoint(stockFullId,"2015-06-12",nowTime,dataType);
@@ -661,7 +662,7 @@ public class StockExcelPartitionMain {
 	   		
 			//其他值
 	   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,sMarket.getName().toString(),0,0,baseFace,null);
-	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0);
 	   		
 	   		//获取最近统计数据
 		    String endDate = StockDateTimer.getCurDate();
@@ -945,19 +946,19 @@ public class StockExcelPartitionMain {
 	   		
 	   		//分析日
 	   	//	stockLogger.logger.debug("*****分析日*****");
-	   		StockExcelItem dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType); 
+	   		StockExcelItem dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType, filetime); 
 			ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow, ConstantsInfo.DayDataType);
 			if (dayItem == null) 
 				continue;
 			//分析周预测值
 	//		stockLogger.logger.debug("*****分析周*****");
-			StockExcelItem weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType);		
+			StockExcelItem weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType, filetime);		
 			ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType);
 			if (weekItem == null)
 				continue;			
 			//分析月预测值
 	//		stockLogger.logger.debug("*****分析月*****");
-			StockExcelItem monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType);		
+			StockExcelItem monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType, filetime);		
 			ExcelCommon.writeExcelItem(wb,sheet,monthItem, stockRow, ConstantsInfo.MonthDataType);
 			if (monthItem == null)
 				continue;
@@ -1097,7 +1098,7 @@ public class StockExcelPartitionMain {
 		   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,toInduStock.getName(),enableTwoRong,enableTingPai,baseFace,null);
 								
    				//分析日预测值
-   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType);   
+   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType, fileTime);   
    				if (dayItem == null){
    					stockLogger.logger.fatal("day point is null");
    					//continue;
@@ -1105,7 +1106,7 @@ public class StockExcelPartitionMain {
    				//	ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow, ConstantsInfo.DayDataType);
    				}
    				//分析周预测值
-   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType);
+   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType, fileTime);
    				if (weekItem == null){
    					stockLogger.logger.fatal("week point is null");
    					//continue; 
@@ -1113,7 +1114,7 @@ public class StockExcelPartitionMain {
    				//	ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType);
    				}
    				//分析月预测值
-   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType);
+   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType, fileTime);
    				if (monthItem == null){
    					stockLogger.logger.fatal("month point is null");
    					//continue; 
@@ -1326,7 +1327,7 @@ public class StockExcelPartitionMain {
 				
 				
    				//分析日预测值
-   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType);   
+   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType, fileTime);   
    				if (dayItem == null){
    					stockLogger.logger.fatal("day point is null");
    					//continue;
@@ -1334,7 +1335,7 @@ public class StockExcelPartitionMain {
    				//	ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow, ConstantsInfo.DayDataType);
    				}
    				//分析周预测值
-   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType);
+   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType, fileTime);
    				if (weekItem == null){
    					stockLogger.logger.fatal("week point is null");
    					//continue; 
@@ -1342,7 +1343,7 @@ public class StockExcelPartitionMain {
    				//	ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType);
    				}
    				//分析月预测值
-   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType);
+   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType,fileTime);
    				if (monthItem == null){
    					stockLogger.logger.fatal("month point is null");
    					//continue; 
@@ -1379,30 +1380,33 @@ public class StockExcelPartitionMain {
    				StockExcelTotalInfo setInfo = (StockExcelTotalInfo) listStockTotalInfoOrderBy.get(j);
    				if(!listName.get(kk).equals(setInfo.getSoiValue().getName()))
    					continue;
-   				stockRow++;   		
+   				stockRow++;   	
+   				
+   				StockSummary ssu = new StockSummary();
+   				
 	   			//基本信息
-   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow,1);
+   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow, 1, ssu);
    				
    				//未停牌
    				if (setInfo.getSoiValue().getEnableTingPai() == 0) {
    					statItem = setInfo.getStatItem();
    					
    					//统计 并设置统计值
-   					ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow);
+   					ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow, ssu);
    							
    	   		    	//统计数据已经在概念那 插入数据
    					//ssDao.insertStockSummaryTable(setInfo.getSoiValue().getFullId(),ssu);
    				
 	   				if (setInfo.getDayItem() != null) {
-	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType);
+	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType, ssu);
 	   					//记录股票交易提示
 		   				dealWarns[setInfo.getDayItem().getScValue().getDealWarn()]++;
 	   				}
 	   				
 	   				if (setInfo.getWeekItem() != null)
-	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType);
+	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType, ssu);
 	   				if (setInfo.getMonthItem() != null)
-	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType);
+	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType, ssu);
    				}
    			} 
    			}
@@ -1545,7 +1549,7 @@ public class StockExcelPartitionMain {
 		   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);	
 		   		
    				//分析日预测值
-   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType);   
+   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType,fileTime);   
    				if (dayItem == null){
    					stockLogger.logger.fatal("day point is null");
    					//continue;
@@ -1553,7 +1557,7 @@ public class StockExcelPartitionMain {
    					//ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow, ConstantsInfo.DayDataType);
    				}
    				//分析周预测值
-   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType);
+   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType,fileTime);
    				if (weekItem == null){
    					stockLogger.logger.fatal("week point is null");
    					//continue; 
@@ -1561,7 +1565,7 @@ public class StockExcelPartitionMain {
    					//ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType);
    				}
    				//分析月预测值
-   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType);
+   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType,fileTime);
    				if (monthItem == null){
    					stockLogger.logger.fatal("month point is null");
    					//continue; 
@@ -2325,7 +2329,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 	   				//分析日预测值
-	   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType);   
+	   				dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType, fileTime);   
 	   				if (dayItem == null){
 	   					stockLogger.logger.fatal("day point is null");
 	   					//continue;
@@ -2333,7 +2337,7 @@ public class StockExcelPartitionMain {
 	   					//ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow, ConstantsInfo.DayDataType);
 	   				}
 	   				//分析周预测值
-	   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType);
+	   				weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType, fileTime);
 	   				if (weekItem == null){
 	   					stockLogger.logger.fatal("week point is null");
 	   					//continue; 
@@ -2341,7 +2345,7 @@ public class StockExcelPartitionMain {
 	   					//ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType);
 	   				}
 	   				//分析月预测值
-	   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType);
+	   				monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType, fileTime);
 	   				if (monthItem == null){
 	   					stockLogger.logger.fatal("month point is null");
 	   					//continue; 

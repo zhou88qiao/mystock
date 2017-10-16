@@ -2393,7 +2393,6 @@ public class StockDataDao extends BaseDao{
 		
 	}	
 	
-	
 	/*获取最后一个交易数据*/
 	public StockData getLastDataStock(String stockFullId,int type) throws IOException, ClassNotFoundException, SQLException
 	{
