@@ -110,20 +110,20 @@ public class StockPointDao extends BaseDao{
 	}	
 	
 	/*获取最后两个极点数据*/
-	public List<StockPoint>  getLastTwoPointStock(String stockFullId,int type) throws IOException, ClassNotFoundException, SQLException
+	public List<StockPoint>  getLastTwoPointStock(String stockFullId,int type, String date) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_POINT_TABLE_NAME+stockFullId;
 		String selectSql = null;	
 		switch(type)
 		{
 		case ConstantsInfo.DayDataType:
-			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 2";
+			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.DayDataType+"' and toDate <= '"+date+"' ORDER BY id desc limit 2";
 			break;
 		case ConstantsInfo.WeekDataType:
-			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.WeekDataType+"' ORDER BY id desc limit 2";
+			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.WeekDataType+"' and toDate <= '"+date+"' ORDER BY id desc limit 2";
 			break;
 		case ConstantsInfo.MonthDataType:
-			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.MonthDataType+"' ORDER BY id desc limit 2";
+			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.MonthDataType+"' and toDate <= '"+date+"' ORDER BY id desc limit 2";
 			break;
 		}	
 		//stockLogger.logger.debug(selectSql);

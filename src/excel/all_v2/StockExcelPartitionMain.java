@@ -340,8 +340,6 @@ public class StockExcelPartitionMain {
  		float tmpValue=0;
  		
  		//
- 		
- 		
  		int curTread =0;//当前趋势 0跌 1涨
  		//涨跌停数
  		int upType=0;//涨跌集类型
@@ -386,7 +384,7 @@ public class StockExcelPartitionMain {
     	    
  		//最后两个极值点
  		List<StockPoint> listSP = new ArrayList<StockPoint>();
- 		listSP = spDao.getLastTwoPointStock(stockFullId,dataType);
+ 		listSP = spDao.getLastTwoPointStock(stockFullId, dataType, anaylseDate);
  		
  		StockPoint lastSp = null,priSp=null;
  		if(listSP == null || listSP.size() == 0) {
@@ -425,7 +423,6 @@ public class StockExcelPartitionMain {
 		if (curTread == 0) { 
 			
 			//3 最近最低点 疑似极点
-			//sMinData=sdDao.getMinStockDataPoint(stockFullId,crossLastDate,nowTime,ConstantsInfo.DayDataType);
 			sMinData=sdDao.getMinStockDataPoint(stockFullId,lastExtremeDate,nowTime,ConstantsInfo.DayDataType);
 			if ( sMinData == null){
 				stockLogger.logger.fatal("****stockFullId："+stockFullId+"无最近低点****");
@@ -537,7 +534,7 @@ public class StockExcelPartitionMain {
 				minPrice= sData.getLowestPrice();
 			}
 		
-			sData = sdDao.getMaxStockDataPoint(stockFullId,"2015-01-04",nowTime,dataType);
+			sData = sdDao.getMaxStockDataPoint(stockFullId,"2015-06-04",nowTime,dataType);
 			if ( sData != null){
 				maxDate = sData.getDate().toString();
 				maxPrice = sData.getHighestPrice(); 
@@ -662,7 +659,7 @@ public class StockExcelPartitionMain {
 	   		
 			//其他值
 	   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,sMarket.getName().toString(),0,0,baseFace,null);
-	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0);
+	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null);
 	   		
 	   		//获取最近统计数据
 		    String endDate = StockDateTimer.getCurDate();
@@ -746,7 +743,7 @@ public class StockExcelPartitionMain {
 	   		
 			//其他值
 	   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,sMarket.getName().toString(),0,0,baseFace,null);
-	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0, null);
 	   		
 	   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
 	   		//获取最近统计数据
@@ -808,7 +805,7 @@ public class StockExcelPartitionMain {
 	   		
 			//其他值
 	   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,sMarket.getName().toString(),0,0,baseFace,null);
-	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   		
 	   		//获取最近统计数据
 			List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -884,7 +881,7 @@ public class StockExcelPartitionMain {
 			StockBaseYearInfo yearInfo = sbDao.lookUpStockBaseYearInfo(stockFullId);
 			//其他值
 	   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,sMarket.getName().toString(),0,0,baseFace,yearInfo);
-	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   		
 	   		//获取最近统计数据
 			List<StockSummary> stockSummaryInfo=new ArrayList<StockSummary>();
@@ -940,26 +937,28 @@ public class StockExcelPartitionMain {
 			
 			StockBaseYearInfo yearInfo = sbDao.lookUpStockBaseYearInfo(stockFullId);
 			
+			StockSummary ssu = new StockSummary();
+			
 			//其他值
 	   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,sMarket.getName().toString(),0,0,baseFace,yearInfo);
-	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,1);
+	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,1,ssu);
 	   		
 	   		//分析日
 	   	//	stockLogger.logger.debug("*****分析日*****");
 	   		StockExcelItem dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType, filetime); 
-			ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow, ConstantsInfo.DayDataType);
+			ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow, ConstantsInfo.DayDataType,ssu);
 			if (dayItem == null) 
 				continue;
 			//分析周预测值
 	//		stockLogger.logger.debug("*****分析周*****");
 			StockExcelItem weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType, filetime);		
-			ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType);
+			ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType,ssu);
 			if (weekItem == null)
 				continue;			
 			//分析月预测值
 	//		stockLogger.logger.debug("*****分析月*****");
 			StockExcelItem monthItem = getExcelItem(stockFullId,ConstantsInfo.MonthDataType,stockType, filetime);		
-			ExcelCommon.writeExcelItem(wb,sheet,monthItem, stockRow, ConstantsInfo.MonthDataType);
+			ExcelCommon.writeExcelItem(wb,sheet,monthItem, stockRow, ConstantsInfo.MonthDataType,ssu);
 			if (monthItem == null)
 				continue;
 			
@@ -967,7 +966,13 @@ public class StockExcelPartitionMain {
 			StockExcelStatItem statItem = getExcelStatItem(dayItem, weekItem, monthItem);
 			
 			//统计
-			ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow);
+			ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow,ssu);
+			
+			//避免多次写入	
+			StockSummary lastSS = ssDao.getZhiDingSummaryFromSummaryTable(stockFullId, filetime,ConstantsInfo.DayDataType);
+			if(lastSS == null) {
+				ssDao.insertStockSummaryTable(ssu.getFullId(), ssu); 
+			}
 			
 	   	}
 
@@ -1151,29 +1156,36 @@ public class StockExcelPartitionMain {
    				if(!listName.get(kk).equals(setInfo.getSoiValue().getName()))
    					continue;
    				
-   				stockRow++;   			
-   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow,1);
+   				stockRow++;   
+   				StockSummary ssu = new StockSummary();
+   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow,1, ssu);
    				
    				//未停牌
    				if (setInfo.getSoiValue().getEnableTingPai() == 0) {
    					statItem = setInfo.getStatItem();
    					
    					//统计 并设置统计值
-   					ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow);
+   					ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow,ssu);
    							
    	   		    	//统计数据已经在概念那 插入数据
    					//ssDao.insertStockSummaryTable(setInfo.getSoiValue().getFullId(),ssu);
    				
 	   				if (setInfo.getDayItem() != null) {
-	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType);
+	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType,ssu);
 	   					//记录股票交易提示
 		   				dealWarns[setInfo.getDayItem().getScValue().getDealWarn()]++;
 	   				}
 	   				
 	   				if (setInfo.getWeekItem() != null)
-	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType);
+	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType,ssu);
 	   				if (setInfo.getMonthItem() != null)
-	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType);
+	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType,ssu);
+	   				
+	   				//避免多次写入	
+	   				StockSummary lastSS = ssDao.getZhiDingSummaryFromSummaryTable(ssu.getFullId(), fileTime,ConstantsInfo.DayDataType);
+	   				if(lastSS == null) {
+	   					ssDao.insertStockSummaryTable(ssu.getFullId(), ssu); 
+	   				}
    				}
    			} 	
    			}
@@ -1407,6 +1419,13 @@ public class StockExcelPartitionMain {
 	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType, ssu);
 	   				if (setInfo.getMonthItem() != null)
 	   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType, ssu);
+	   				
+	   				//插入summary表
+	   				//避免多次写入	
+	   				StockSummary lastSS = ssDao.getZhiDingSummaryFromSummaryTable(ssu.getFullId(), fileTime,ConstantsInfo.DayDataType);
+	   				if(lastSS == null) {
+	   					ssDao.insertStockSummaryTable(ssu.getFullId(), ssu); 
+	   				}
    				}
    			} 
    			}
@@ -1587,15 +1606,23 @@ public class StockExcelPartitionMain {
    			{
    				StockExcelTotalInfo setInfo = (StockExcelTotalInfo) listStockTotalInfoOrderBy.get(j);
    				stockRow++;
-   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow,1);
+   				
+   				StockSummary ssu = new StockSummary();
+   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow,1, ssu);
    				if (setInfo.getDayItem() != null) {
-   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType);
+   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType, ssu);
    					//ExcelCommon.writeExcelStatItem(wb,sheet,setInfo.getStatItem(), stockRow);
    				}
    				if (setInfo.getWeekItem() != null)
-   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType);
+   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType, ssu);
    				if (setInfo.getMonthItem() != null)
-   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType);
+   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType, ssu);
+   				
+   				//避免多次写入	
+   				StockSummary lastSS = ssDao.getZhiDingSummaryFromSummaryTable(ssu.getFullId(), fileTime,ConstantsInfo.DayDataType);
+   				if(lastSS == null) {
+   					ssDao.insertStockSummaryTable(ssu.getFullId(), ssu); 
+   				}
    			}
    			
    			listStockTotalInfoOrderBy =null;
@@ -2383,24 +2410,30 @@ public class StockExcelPartitionMain {
 	   				stockRow++;
 	   				stockLogger.logger.fatal("**write**stockFullId："+setInfo.getSoiValue().getFullId()+"****");
 	   				System.out.println("**write**stockFullId："+setInfo.getSoiValue().getFullId()+"****");
-	   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow,1);
+	   				
+	   				StockSummary ssu = new StockSummary();
+	   				
+	   				ExcelCommon.writeExcelStockOtherInfo(wb, sheet, setInfo.getSoiValue(), stockRow,1, ssu);
 	   				//未停牌
 	   				if (setInfo.getSoiValue().getEnableTingPai() == 0) {
 	   					
 	   					statItem = setInfo.getStatItem();	   				
 	   						
 	   					//统计 并设置统计值
-	   					ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow);
+	   					ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow, ssu);
 	   						
 		   				if (setInfo.getDayItem() != null) {
-		   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType);
+		   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getDayItem(), stockRow, ConstantsInfo.DayDataType, ssu);
 		   					//记录股票交易提示
 			   				dealWarns[setInfo.getDayItem().getScValue().getDealWarn()]++;
 		   				}
 		   				if (setInfo.getWeekItem() != null)
-		   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType);
+		   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getWeekItem(), stockRow, ConstantsInfo.WeekDataType, ssu);
 		   				if (setInfo.getMonthItem() != null)
-		   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType);	
+		   					ExcelCommon.writeExcelItem(wb,sheet,setInfo.getMonthItem(),stockRow, ConstantsInfo.MonthDataType, ssu);
+		   				
+		   				//行业已经写入， 概念不需要再次写入
+		   			///	ssDao.insertStockSummaryTable(ssu.getFullId(), ssu);
 		   			}
 	   			}
 	   			}
@@ -2579,7 +2612,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockSummary> stockSummaryInfo=new ArrayList<StockSummary>();
@@ -2752,7 +2785,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0, null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockSummary> stockSummaryInfo=new ArrayList<StockSummary>();
@@ -2927,7 +2960,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0, null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -3126,7 +3159,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -3324,7 +3357,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   				
 			   	//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();			 	
@@ -3497,7 +3530,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   				
 			   		
 			     	//获取最近统计数据
@@ -3708,7 +3741,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -3899,7 +3932,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -4081,7 +4114,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockPoint> stockPointInfo=new ArrayList<StockPoint>();
@@ -4289,7 +4322,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -4491,7 +4524,7 @@ public class StockExcelPartitionMain {
 			   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 			   		
 			   		stockRow++;
-			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 	   				
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -4683,7 +4716,7 @@ public class StockExcelPartitionMain {
 				   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 				   		
 				   		stockRow++;
-				   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+				   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null);
 		   				
 				   		//获取最近统计数据
 				   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -4848,7 +4881,7 @@ public class StockExcelPartitionMain {
 				   		//ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow);
 				   		
 				   		stockRow++;
-				   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0);
+				   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null);
 		   				
 				   		//获取最近统计数据
 				   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
@@ -4921,7 +4954,7 @@ public class StockExcelPartitionMain {
 	//se.writeTotalOperationExcelFormFuturesOrderBy("export\\",dateNowStr);
 	
 	//股票 分析
-	//se.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr);
+	se.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr);
 	se.writeExcelFormIndustryOrderBy("export\\",dateNowStr);
 	
 //	se.writeOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr, ConstantsInfo.WeekDataType);

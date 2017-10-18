@@ -287,20 +287,50 @@ public class StockSummaryDao extends BaseDao{
 	}
 	  
 	
-	/*
+	
 	public int insertStockSummaryTable(String stockFullId, StockSummary ssu) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_SUMMARY_TABLE_NAME+stockFullId;
 	
 		String insertSql = "insert into "+stockTable;
 		return super.saveOrUpdate(
-				 insertSql+" values(?,?,?,?,?,?,?,?,?,?)", 
-				 0,ssu.getAnaly_date(),ssu.getComState(),ssu.getPsState(),
-				 ssu.getDayPS(),ssu.getDaySC(),ssu.getWeekPS(),ssu.getWeekSC(),
-				 ssu.getMonthPS(),ssu.getMonthSC());
+				 insertSql+" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?," +
+				 		"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+				 		"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+				 		"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+				 		"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+				 		"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+				 		"?,?,?,?,?,?,?,?)", 
+				 0,ssu.getFullId(),ssu.getName(), ssu.getDouRong(), ssu.getBaseExpect(), ssu.getMain(), ssu.getPsychology(), ssu.getRisk(), ssu.getPotential(), ssu.getFaucet(),
+				 ssu.getCurRange(), ssu.getPriComState(), ssu.getPriState(),ssu.getComState(),ssu.getPsState(),
+				 ssu.getDaySaleGrade(),ssu.getDaySaleState(),ssu.getDayPriUpDateGap(),ssu.getDayUpOrdownDates(), ssu.getDayWarnDeal(), ssu.getDayPS(), ssu.getDaySC(),
+				 ssu.getWeekSaleGrade(),ssu.getWeekSaleState(),ssu.getWeekUpOrdownDates(), ssu.getWeekWarnDeal(), ssu.getWeekPS(), ssu.getWeekSC(),
+				 ssu.getMonthUpOrdownDates(), ssu.getMonthWarnDeal(), ssu.getMonthPS(), ssu.getMonthSC(),
+				 ssu.getDayPriDate(),ssu.getDayPriHighOrLowest(), ssu.getDayReversalRegion(),ssu.getDayStartDate(), ssu.getDayStartValue(), ssu.getDayEndDate(), ssu.getDayEndValue(),ssu.getDayCurDate(), ssu.getDayCurValue(),ssu.getDayWorkRegion(),
+				 ssu.getDayPSDateGap(), ssu.getDayPSValueGap(), ssu.getDayPCDateGap(), ssu.getDayPCValueGap(), ssu.getDaySCDateGap(), ssu.getDaySCValueGap(),
+				 ssu.getDayMarketPSDateGap(), ssu.getDayMarketPSSpace(),ssu.getDayMarketPCDateGap(),ssu.getDayMarketPCSpace(),ssu.getDayMarketSCDateGap(), ssu.getDayMarketSCSpace(),ssu.getDayTrendConsistent(),
+				 ssu.getDayDesireValue1(),ssu.getDayDesireRange1(),ssu.getDayDesireRate1(),ssu.getDayDesireValue2(),ssu.getDayDesireRange2(),ssu.getDayDesireRate2(),ssu.getDayDesireValue3(),ssu.getDayDesireRange3(),ssu.getDayDesireRate3(),
+				 ssu.getDayDesireValue4(),ssu.getDayDesireRange4(),ssu.getDayDesireRate4(),ssu.getDayDesireValue5(),ssu.getDayDesireRange5(),ssu.getDayDesireRate5(),ssu.getDayDesireValue6(),ssu.getDayDesireRange6(),ssu.getDayDesireRate6(),
+				 ssu.getDayDesireValue1Gap(), ssu.getDayDesireValue2Gap(), ssu.getDayDesireValue3Gap(), ssu.getDayDesireValue4Gap(), ssu.getDayDesireValue5Gap(), ssu.getDayDesireValue6Gap(),
+				 ssu.getDayBugValue(), ssu.getDayWinValue(), ssu.getDayLoseValue(), ssu.getDayDealWarn(), ssu.getDayOption(),
+				 ssu.getWeekPriDate(),ssu.getWeekPriHighOrLowest(), ssu.getWeekReversalRegion(),ssu.getWeekStartDate(), ssu.getWeekStartValue(), ssu.getWeekEndDate(), ssu.getWeekEndValue(),ssu.getWeekCurDate(), ssu.getWeekCurValue(),ssu.getWeekWorkRegion(),
+				 ssu.getWeekPSDateGap(), ssu.getWeekPSValueGap(), ssu.getWeekPCDateGap(), ssu.getWeekPCValueGap(), ssu.getWeekSCDateGap(), ssu.getWeekSCValueGap(),
+				 ssu.getWeekMarketPSDateGap(), ssu.getWeekMarketPSSpace(),ssu.getWeekMarketPCDateGap(),ssu.getWeekMarketPCSpace(),ssu.getWeekMarketSCDateGap(), ssu.getWeekMarketSCSpace(),ssu.getWeekTrendConsistent(),
+				 ssu.getWeekDesireValue1(),ssu.getWeekDesireRange1(),ssu.getWeekDesireRate1(),ssu.getWeekDesireValue2(),ssu.getWeekDesireRange2(),ssu.getWeekDesireRate2(),ssu.getWeekDesireValue3(),ssu.getWeekDesireRange3(),ssu.getWeekDesireRate3(),
+				 ssu.getWeekDesireValue4(),ssu.getWeekDesireRange4(),ssu.getWeekDesireRate4(),ssu.getWeekDesireValue5(),ssu.getWeekDesireRange5(),ssu.getWeekDesireRate5(),ssu.getWeekDesireValue6(),ssu.getWeekDesireRange6(),ssu.getWeekDesireRate6(),
+				 ssu.getWeekDesireValue1Gap(), ssu.getWeekDesireValue2Gap(), ssu.getWeekDesireValue3Gap(), ssu.getWeekDesireValue4Gap(), ssu.getWeekDesireValue5Gap(), ssu.getWeekDesireValue6Gap(),
+				 ssu.getWeekBugValue(), ssu.getWeekWinValue(), ssu.getWeekLoseValue(), ssu.getWeekDealWarn(), ssu.getWeekOption(),
+				 ssu.getMonthPriDate(),ssu.getMonthPriHighOrLowest(), ssu.getMonthReversalRegion(),ssu.getMonthStartDate(), ssu.getMonthStartValue(), ssu.getMonthEndDate(), ssu.getMonthEndValue(),ssu.getMonthCurDate(), ssu.getMonthCurValue(),ssu.getMonthWorkRegion(),
+				 ssu.getMonthPSDateGap(), ssu.getMonthPSValueGap(), ssu.getMonthPCDateGap(), ssu.getMonthPCValueGap(), ssu.getMonthSCDateGap(), ssu.getMonthSCValueGap(),
+				 ssu.getMonthMarketPSDateGap(), ssu.getMonthMarketPSSpace(),ssu.getMonthMarketPCDateGap(),ssu.getMonthMarketPCSpace(),ssu.getMonthMarketSCDateGap(), ssu.getMonthMarketSCSpace(),ssu.getMonthTrendConsistent(),
+				 ssu.getMonthDesireValue1(),ssu.getMonthDesireRange1(),ssu.getMonthDesireRate1(),ssu.getMonthDesireValue2(),ssu.getMonthDesireRange2(),ssu.getMonthDesireRate2(),ssu.getMonthDesireValue3(),ssu.getMonthDesireRange3(),ssu.getMonthDesireRate3(),
+				 ssu.getMonthDesireValue4(),ssu.getMonthDesireRange4(),ssu.getMonthDesireRate4(),ssu.getMonthDesireValue5(),ssu.getMonthDesireRange5(),ssu.getMonthDesireRate5(),ssu.getMonthDesireValue6(),ssu.getMonthDesireRange6(),ssu.getMonthDesireRate6(),
+				 ssu.getMonthDesireValue1Gap(), ssu.getMonthDesireValue2Gap(), ssu.getMonthDesireValue3Gap(), ssu.getMonthDesireValue4Gap(), ssu.getMonthDesireValue5Gap(), ssu.getMonthDesireValue6Gap(),
+				 ssu.getMonthBugValue(), ssu.getMonthWinValue(), ssu.getMonthLoseValue(), ssu.getMonthDealWarn(), ssu.getMonthOption()
+			);
 		
 	}
-	*/
+	
 	
 
 	//最近30交易日时间的所有值
@@ -524,7 +554,7 @@ public class StockSummaryDao extends BaseDao{
 		
 			//排好序
 			if(sdate!=null)
-				selectSql="select * from "+stockTable+" where dateType="+dateType+" and opDate <= '"+sdate+"' ";
+				selectSql="select * from "+stockTable+" where dateType="+dateType+" and opDate <= '"+sdate+"' ORDER BY id desc limit 1";
 			else
 				selectSql="select * from "+stockTable+" where dateType="+dateType+" ORDER BY id desc limit 1 ";
 			//System.out.println(selectSql);
