@@ -260,7 +260,7 @@ public class StockRecentWriter {
  		String nowTime=dateTimer.getCurDate(); 
     	//1 最后一个极值点
  		//System.out.println(dataType);
-		StockPoint sp = spDao.getLastPointStock(stockFullId,dataType);		
+		StockPoint sp = spDao.getLastPointStock(stockFullId,dataType, nowTime);		
 		if(sp == null) {
 			stockLogger.logger.fatal("stockFullId："+stockFullId+"极点表无数据");
 			System.out.println(stockFullId+"极点表无数据****");

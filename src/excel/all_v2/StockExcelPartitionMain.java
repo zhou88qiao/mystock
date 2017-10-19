@@ -935,8 +935,7 @@ public class StockExcelPartitionMain {
 	   		
 		//	setHighestLowestPrice(baseFace,stockFullId);
 			
-			StockBaseYearInfo yearInfo = sbDao.lookUpStockBaseYearInfo(stockFullId);
-			
+			StockBaseYearInfo yearInfo = sbDao.lookUpStockBaseYearInfo(stockFullId);			
 			StockSummary ssu = new StockSummary();
 			
 			//其他值
@@ -950,7 +949,7 @@ public class StockExcelPartitionMain {
 			if (dayItem == null) 
 				continue;
 			//分析周预测值
-	//		stockLogger.logger.debug("*****分析周*****");
+			//	stockLogger.logger.debug("*****分析周*****");
 			StockExcelItem weekItem = getExcelItem(stockFullId,ConstantsInfo.WeekDataType,stockType, filetime);		
 			ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow, ConstantsInfo.WeekDataType,ssu);
 			if (weekItem == null)
@@ -962,16 +961,14 @@ public class StockExcelPartitionMain {
 			if (monthItem == null)
 				continue;
 			
-
 			StockExcelStatItem statItem = getExcelStatItem(dayItem, weekItem, monthItem);
 			
 			//统计
-			ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow,ssu);
-			
+			ExcelCommon.writeExcelStatItem(wb,sheet,statItem,stockRow,ssu);			
 			//避免多次写入	
 			StockSummary lastSS = ssDao.getZhiDingSummaryFromSummaryTable(stockFullId, filetime,ConstantsInfo.DayDataType);
 			if(lastSS == null) {
-				ssDao.insertStockSummaryTable(ssu.getFullId(), ssu); 
+				ssDao.insertStockSummaryTable(ssu.getFullId(), ssu);
 			}
 			
 	   	}

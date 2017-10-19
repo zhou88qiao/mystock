@@ -1090,13 +1090,17 @@ public class StockBaseManager {
 	
 	//2分析股票交易数据
 	public void analyseStockData(int type){
+		
+		Date startDate = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
+        String dateNowStr = sdf.format(startDate);  
 		PointClass pc=new PointClass(sbDao,sdDao,spDao);						
 		try {
 			//计算当前数据
 				if(type == ConstantsInfo.StockMarket) 
-					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.StockMarket);
+					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.StockMarket, dateNowStr);
 				else 
-					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.FuturesMarket);
+					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.FuturesMarket, dateNowStr);
 			} catch (SecurityException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();

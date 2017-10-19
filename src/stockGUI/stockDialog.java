@@ -12,8 +12,10 @@ import java.awt.Image;
 import java.awt.event.ComponentListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -228,10 +230,13 @@ public class stockDialog {
 						List<StockPoint> stockWeekPoint=new ArrayList<StockPoint>();
 						List<StockPoint> stockMonthPoint=new ArrayList<StockPoint>();
 						
+						Date startDate = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
+				        String dateNowStr = sdf.format(startDate);  
 						try {
-							stockDayPoint=pClass.getStockDayExtremePoint(noteName, dStock,ConstantsInfo.StockCalAllData);
-							stockWeekPoint=pClass.getStockWeekExtremePoint(noteName, dStock,ConstantsInfo.StockCalAllData);
-							stockMonthPoint=pClass.getStockMonthExtremePoint(noteName, dStock,ConstantsInfo.StockCalAllData);
+							stockDayPoint=pClass.getStockDayExtremePoint(noteName, dStock,ConstantsInfo.StockCalAllData,dateNowStr);
+							stockWeekPoint=pClass.getStockWeekExtremePoint(noteName, dStock,ConstantsInfo.StockCalAllData,dateNowStr);
+							stockMonthPoint=pClass.getStockMonthExtremePoint(noteName, dStock,ConstantsInfo.StockCalAllData,dateNowStr);
 						} catch (SecurityException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();

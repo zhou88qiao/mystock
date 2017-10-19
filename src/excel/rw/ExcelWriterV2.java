@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,7 +113,7 @@ public class ExcelWriterV2 {
          return cellStyle;
       }  
       
-    public static HSSFWorkbook exportExcelForStock() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException 
+    public static HSSFWorkbook exportExcelForStock(String dateNowStr) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException 
     {    
       
     	//创建excel文件对象  
@@ -140,9 +141,9 @@ public class ExcelWriterV2 {
     			
     			DateStock dStock=sdDao.getDateStock(stockFullId);
     			
-    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
+    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
+    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
+    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
     			System.out.println("day size:"+stockDayPoint.size());
     			System.out.println("week size:"+stockWeekPoint.size());
     			System.out.println("month size:"+stockMonthPoint.size());    			
@@ -252,7 +253,7 @@ public class ExcelWriterV2 {
         }     
     
     //2007   day week表各一行
-    public static XSSFWorkbook exportExcelForAllStockSeparate() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException 
+    public static XSSFWorkbook exportExcelForAllStockSeparate(String dateNowStr) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException 
     {    
       
     	//创建excel文件对象  
@@ -357,8 +358,8 @@ public class ExcelWriterV2 {
     			
     			DateStock dStock=sdDao.getDateStock(stockFullId);
     			
-    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
+    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
+    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
     			//stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock);
     			System.out.println("day size:"+stockDayPoint.size());
     			System.out.println("week size:"+stockWeekPoint.size());
@@ -1416,7 +1417,7 @@ public class ExcelWriterV2 {
     }   
     
     //2007 只显示股票当前存在的极值点
-    public static XSSFWorkbook exportExcelForAllStockSimple() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException 
+    public static XSSFWorkbook exportExcelForAllStockSimple(String dateNowStr) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException 
     {    
       
     	//创建excel文件对象  
@@ -1493,6 +1494,7 @@ public class ExcelWriterV2 {
             	create07Cell(wb, rowHead, stockColumn, colName, font0,IndexedColors.YELLOW.getIndex()); 	
     		}
        
+            
             //第二行开始展示  
             int stockRow = 1;  
             
@@ -1552,9 +1554,9 @@ public class ExcelWriterV2 {
 	    			
 	    			DateStock dStock=sdDao.getDateStock(stockFullId);
 	    			
-	    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-	    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-	    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
+	    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
+	    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
+	    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
 	    			System.out.println("day size:"+stockDayPoint.size());
 	    			System.out.println("week size:"+stockWeekPoint.size());
 	    			System.out.println("month size:"+stockMonthPoint.size());    			
@@ -1758,6 +1760,10 @@ public class ExcelWriterV2 {
             	stockColumn++;
     		}           
            
+            
+            Date startDate = new Date();
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
+            String dateNowStr = sdf.format(startDate);  
        
             //第二行开始展示  
             int stockRow = 1;  
@@ -1817,9 +1823,9 @@ public class ExcelWriterV2 {
 	    			
 	    			DateStock dStock=sdDao.getDateStock(stockFullId);
 	    			
-	    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-	    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-	    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
+	    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData,dateNowStr);
+	    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData,dateNowStr);
+	    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData,dateNowStr);
 	    			System.out.println("day size:"+stockDayPoint.size());
 	    			System.out.println("week size:"+stockWeekPoint.size());
 	    			System.out.println("month size:"+stockMonthPoint.size());    			
@@ -2106,6 +2112,12 @@ public class ExcelWriterV2 {
                 //第二行开始展示  
                 int stockRow = 1;  
                 
+                
+                Date startDate = new Date();
+        		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
+                String dateNowStr = sdf.format(startDate);  
+                
+                
                 listIndustry=siDao.getAllIndustry(listStockInfo);	
                 System.out.println("板块个数："+listIndustry.size());
                 Iterator itIndu,ie;
@@ -2161,9 +2173,9 @@ public class ExcelWriterV2 {
     	    			
     	    			DateStock dStock=sdDao.getDateStock(stockFullId);
     	    			
-    	    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-    	    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
-    	    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData);
+    	    			stockDayPoint=pClass.getStockDayExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
+    	    			stockWeekPoint=pClass.getStockWeekExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
+    	    			stockMonthPoint=pClass.getStockMonthExtremePoint(stockFullId, dStock,ConstantsInfo.StockCalAllData, dateNowStr);
     	    			System.out.println("day size:"+stockDayPoint.size());
     	    			System.out.println("week size:"+stockWeekPoint.size());
     	    			System.out.println("month size:"+stockMonthPoint.size());    			

@@ -631,7 +631,7 @@ public class FileReader {
 				 
 				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
 				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData);
+				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, loadDate);
 			 }else {				
 				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
 			 }
@@ -731,7 +731,7 @@ public class FileReader {
 				 
 				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
 				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData);
+				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, loadDate);
 			 }else {				
 				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
 			 }
@@ -793,7 +793,7 @@ public class FileReader {
 				 spDao.createStockPointTable(stock_name);
 				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
 				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData);
+				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, loadDate);
 			 }else {				
 				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
 			 }
