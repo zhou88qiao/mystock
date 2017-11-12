@@ -603,7 +603,6 @@ public class FileReader {
 				 sdDao.createStockDataTable(stock_name);	
 			 }
 			 
-			 
 			 stockDataNum = readFileByLines(stock_source_data,stock_name,ConstantsInfo.StockMarket);
 			//已经存在表，空交易数据或停牌不用导入
 			 if((isTableExist>0) && (stockDataNum <= 0)) {
@@ -623,18 +622,39 @@ public class FileReader {
 			 if(isTableExist==0) {//不存在				 
 				 stockLogger.logger.fatal("cal new stock table");
 				//计算全部ma5 涨幅	
-				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 
-				 //创建极点表
-				 spDao.createStockPointTable(stock_name);
-				 //创建汇总表
-				 ssDao.createStockSummaryTable(stock_name);
-				 
+				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 		 
 				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
 				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, loadDate);
-			 }else {				
+				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
+			 } else {				
 				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
 			 }
+			 
+			 /*
+			 //创建极点表
+			 spDao.createStockPointTable(stock_name);
+			 //创建汇总表
+			 ssDao.createStockSummaryTable(stock_name);
+			 //创建操作表
+			 ssDao.createStockOperationTable(stock_name);
+			 */
+			 
+			 //全部删除summary point operation表情况	
+			 
+			isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_POINT_STOCK);
+			if(isTableExist==0){//不存在
+				spDao.createStockPointTable(stock_name);
+			}
+			isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_SUMMARY_STOCK);
+			if(isTableExist==0){//不存在
+				ssDao.createStockSummaryTable(stock_name);
+			}
+			
+			isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_OPERATION_STOCK);
+			if(isTableExist==0){//不存在
+				ssDao.createStockOperationTable(stock_name);
+			} 
+				
 			
 			stockFile++;
 			
@@ -731,7 +751,7 @@ public class FileReader {
 				 
 				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
 				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, loadDate);
+				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
 			 }else {				
 				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
 			 }
@@ -793,8 +813,8 @@ public class FileReader {
 				 spDao.createStockPointTable(stock_name);
 				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
 				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, loadDate);
-			 }else {				
+				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
+			 } else {				
 				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
 			 }
 

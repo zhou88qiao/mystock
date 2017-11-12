@@ -73,7 +73,7 @@ public class PointClass {
 		StockPoint sp;		
 		float extremeBeforePrice=0;
 		float extremeCurPrice=0;
-		StockPoint lastSp;
+		StockPoint lastSp = null;
 		float ratioTmp,ratio=0;
 		List<String> dayDate=null;
 		int timeStart=1; //计算初始位置
@@ -107,7 +107,7 @@ public class PointClass {
 			break;
 		case ConstantsInfo.StockCalCurData:
 			//查询最后一条记录
-			lastSp=spDao.getLastPointStock(fullId,stockType, analyTime);
+			lastSp=spDao.getLastPointStock(fullId, stockType, analyTime);
 			if(lastSp==null) { //重新计算，是否存在新的极点
 				//stockLogger.logger.fatal("no point data");
 				System.out.println("no point data");
@@ -181,10 +181,17 @@ public class PointClass {
 			break;
 		}
 		
-		System.out.println(timeStart);
-		
+		if (timeStart <  0){
+			stockLogger.logger.error("no found start time");
+			return -1;
+		}
 		firstDate=dayDate.get(timeStart);//计算当前数据时起始时间
-	//	System.out.println("StartDate:"+firstDate);
+		if (firstDate == null){
+			stockLogger.logger.error("no found start time");
+			return -1;
+		}
+			
+		System.out.println("start:"+timeStart+" StartDate:"+firstDate);
 		stockLogger.logger.debug("StartDate::"+firstDate);
 		float pointFlag =0;
 		float priFlag =0;
@@ -302,7 +309,18 @@ public class PointClass {
 				{
 			
 					//计算最后一个极点
-					lastSp=spDao.getLastPointStock(fullId,stockType, analyTime);
+					/*
+					switch(calType)
+					{
+					case ConstantsInfo.StockCalAllData:			
+						lastSp=spDao.getLastPointStock(fullId,stockType, null);
+						break;
+					case ConstantsInfo.StockCalCurData:
+						lastSp=spDao.getLastPointStock(fullId,stockType, analyTime);
+						break;
+					}
+					priveSpe = lastSp;
+					*/
 					if(lastSp==null) { //重新计算，是否存在新的极点			
 					//	System.out.println("no point data");	
 						pointTrueStartDate=pointStartDate;
@@ -310,21 +328,6 @@ public class PointClass {
 						pointLastExtremeDate = lastSp.getExtremeDate().toString();//初值
 						pointTrueStartDate = pointLastExtremeDate;
 					}
-	
-					/*
-					switch (stockType)
-					{
-					case ConstantsInfo.DayDataType:
-						pointTrueStartDate=pointStartDate;
-						break;
-					case ConstantsInfo.WeekDataType:
-						pointTrueStartDate=sdDao.getPointStartDate(fullId,pointStartDate,ConstantsInfo.WeekDataType);				
-						break;
-					case ConstantsInfo.MonthDataType:
-						pointTrueStartDate=sdDao.getPointStartDate(fullId,pointStartDate,ConstantsInfo.MonthDataType);
-						break;
-					}
-					*/
 									
 					stockLogger.logger.debug("*pointStartDate:"+pointTrueStartDate+"pointEndDate:"+pointEndDate);
 					//if(priceWillFall)
@@ -364,12 +367,27 @@ public class PointClass {
 					stockLogger.logger.debug("pointEndDate:"+pointEndDate);					
 					stockLogger.logger.debug("ratio:"+ratio);
 					//System.out.println("flag:"+flagRiseFall);
-					System.out.println("insert day point date:"+extremeDate);
+					
+					
+					switch (stockType)
+					{
+					case ConstantsInfo.DayDataType:
+						System.out.println("insert day point date:"+extremeDate);
+						stockLogger.logger.debug("insert day point date:"+extremeDate);
+						break;
+					case ConstantsInfo.WeekDataType:
+						System.out.println("insert week point date:"+extremeDate);	
+						stockLogger.logger.debug("insert week point date:"+extremeDate);
+						break;
+					case ConstantsInfo.MonthDataType:
+						System.out.println("insert month point date:"+extremeDate);
+						stockLogger.logger.debug("insert week point date:"+extremeDate);
+						break;			
+					}
 					//sp=new StockPoint(stockType,Date.valueOf(extremeDate),extremePrice,Date.valueOf(pointStartDate),Date.valueOf(pointEndDate),priceFlag,ratio,0);
 					sp=new StockPoint(0,stockType,Date.valueOf(extremeDate),extremePrice,Date.valueOf(pointTrueStartDate),Date.valueOf(pointEndDate),flagRiseFall,ratio,0);
-					
-					spDao.insertPointStockTable(sp,fullId);
-									
+					lastSp = sp;
+					spDao.insertPointStockTable(sp,fullId);							
 				}	
 						
 			}	
@@ -1053,7 +1071,7 @@ public class PointClass {
 	
 	
 	//计算某个股票极点数据
-	public void getPiontToTableForSingleStock(String fullId,int type, String analyTime) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
+	public void getPiontToTableForSingleStock(String fullId,int type,String alyseTimeStart, String alyseTimeEnd) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
 	{
 		int isTableExist=sdDao.isExistStockTable(fullId,ConstantsInfo.TABLE_DATA_STOCK);
 		if(isTableExist==0)//不存在
@@ -1068,17 +1086,19 @@ public class PointClass {
 		List<String> listStockSeasons=new ArrayList<String>();
 		List<String> listStockYears=new ArrayList<String>();
 	
-		listStockDays=sdDao.getDates(fullId,ConstantsInfo.DayDataType);
-		listStockWeeks=sdDao.getDates(fullId,ConstantsInfo.WeekDataType);
-		listStockMonths=sdDao.getDates(fullId,ConstantsInfo.MonthDataType);
+		
 	//	listStockSeasons=sdDao.getDates(fullId,ConstantsInfo.SeasonDataType);
 	//	listStockYears=sdDao.getDates(fullId,ConstantsInfo.YearDataType);
 	//	listStockYears=sdDao.getDates("sh000001_copy",ConstantsInfo.YearDataType);
-		DateStock dStock=new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
-	
+		DateStock dStock = null;
 		switch(type)
 		{
 			case ConstantsInfo.StockCalAllData:
+				listStockDays=sdDao.getDatesFromTo(fullId,ConstantsInfo.DayDataType,null,null);
+				listStockWeeks=sdDao.getDatesFromTo(fullId,ConstantsInfo.WeekDataType,null,null);
+				listStockMonths=sdDao.getDatesFromTo(fullId,ConstantsInfo.MonthDataType,null,null);
+				dStock=new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
+				
 				isTableExist=sdDao.isExistStockTable(fullId,ConstantsInfo.TABLE_POINT_STOCK);
 		    	if(isTableExist == 0){//不存在
 					stockLogger.logger.fatal("****stockFullId："+fullId+"不存在极点表****");
@@ -1089,20 +1109,25 @@ public class PointClass {
 					spDao.truncatePointStockTable(fullId);	
 				}
 				//极点数据从2010-06-04 数据库最早是6月份开始
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalAllData, analyTime);
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalAllData, analyTime);
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalAllData, analyTime);
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalAllData, alyseTimeStart);
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalAllData, alyseTimeStart);
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalAllData, alyseTimeStart);
 
 				break;
 			case ConstantsInfo.StockCalCurData:
+				listStockDays=sdDao.getDatesFromTo(fullId,ConstantsInfo.DayDataType,null,alyseTimeEnd);
+				listStockWeeks=sdDao.getDatesFromTo(fullId,ConstantsInfo.WeekDataType,null,alyseTimeEnd);
+				listStockMonths=sdDao.getDatesFromTo(fullId,ConstantsInfo.MonthDataType,null,alyseTimeEnd);
+				dStock=new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
+				
 				System.out.println("------------");
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalCurData, analyTime);
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);
 			//	getStockDayExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData); ///日极点
 				System.out.println("-----------");
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalCurData, analyTime);
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);
 			//	getStockWeekExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData);//周极点
 				System.out.println("------------");
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalCurData, analyTime);
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);
 			//	getStockMonthExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData);//部分月极点
 				break;
 		}
@@ -1123,7 +1148,7 @@ public class PointClass {
 	 * @throws NoSuchFieldException
 	 */
 
-	public void getPointToTable(int type,int stockMarket,int marketType, String alyseTime) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
+	public void getPointToTable(int type,int stockMarket,int marketType, String alyseTimeStart, String alyseTimeEnd) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
 	{
 		List<String> listStockFullId = new ArrayList<String>();
 		
@@ -1178,8 +1203,8 @@ public class PointClass {
 			}
 			
 			/*测试*/
-			// if(!fullId.equals("SZ002772"))
-			//	continue;
+		//	if(!fullId.equals("SH000001"))
+		//		continue;
 			
 			 /*测试*/
 			// if(!fullId.contains("SH"))
@@ -1201,17 +1226,19 @@ public class PointClass {
 			List<String> listStockSeasons=new ArrayList<String>();
 			List<String> listStockYears=new ArrayList<String>();
 		
-			listStockDays=sdDao.getDates(fullId,ConstantsInfo.DayDataType);
-			listStockWeeks=sdDao.getDates(fullId,ConstantsInfo.WeekDataType);
-			listStockMonths=sdDao.getDates(fullId,ConstantsInfo.MonthDataType);
 		//	listStockSeasons=sdDao.getDates(fullId,ConstantsInfo.SeasonDataType);
 		//	listStockYears=sdDao.getDates(fullId,ConstantsInfo.YearDataType);
 		//	listStockYears=sdDao.getDates("sh000001_copy",ConstantsInfo.YearDataType);
-			DateStock dStock=new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
+			DateStock dStock= null;//new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
 		
 			switch(type)
 			{
 				case ConstantsInfo.StockCalAllData:
+					listStockDays=sdDao.getDatesFromTo(fullId,ConstantsInfo.DayDataType,null,null);
+					listStockWeeks=sdDao.getDatesFromTo(fullId,ConstantsInfo.WeekDataType,null,null);
+					listStockMonths=sdDao.getDatesFromTo(fullId,ConstantsInfo.MonthDataType,null,null);
+					dStock=new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
+					
 					isTableExist=sdDao.isExistStockTable(fullId,ConstantsInfo.TABLE_POINT_STOCK);
 			    	if(isTableExist == 0){//不存在
 						stockLogger.logger.fatal("****stockFullId："+fullId+"不存在极点表****");
@@ -1222,20 +1249,25 @@ public class PointClass {
 						spDao.truncatePointStockTable(fullId);	
 					}
 					//极点数据从2010-06-04 数据库最早是6月份开始
-			    	getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalAllData, alyseTime);
-			    	getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalAllData, alyseTime);
-			    	getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalAllData, alyseTime);
+			    	getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalAllData, alyseTimeStart);
+			    	getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalAllData, alyseTimeStart);
+			    	getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalAllData, alyseTimeStart);
 
 					break;
 				case ConstantsInfo.StockCalCurData:
+					listStockDays=sdDao.getDatesFromTo(fullId,ConstantsInfo.DayDataType,alyseTimeStart,alyseTimeEnd);
+					listStockWeeks=sdDao.getDatesFromTo(fullId,ConstantsInfo.WeekDataType,alyseTimeStart,alyseTimeEnd);
+					listStockMonths=sdDao.getDatesFromTo(fullId,ConstantsInfo.MonthDataType,alyseTimeStart,alyseTimeEnd);
+					dStock=new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
+					
 					System.out.println("------------");
-					getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalCurData,alyseTime);
+					getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalCurData,alyseTimeStart);
 				//	getStockDayExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData); ///日极点
 					System.out.println("-----------");
-					getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalCurData,alyseTime);
+					getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalCurData,alyseTimeStart);
 				//	getStockWeekExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData);//周极点
 					System.out.println("------------");
-					getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalCurData,alyseTime);
+					getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalCurData,alyseTimeStart);
 				//	getStockMonthExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData);//部分月极点
 					break;
 			}
@@ -1317,18 +1349,24 @@ public class PointClass {
 		//计算部分极值点
 		//pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket);
 		
-		pc.getPiontToTableForSingleStock("SZ300420",ConstantsInfo.StockCalAllData, dateNowStr);
+        
+        List<String> listStockDays=new ArrayList<String>();
+
+	
+		pc.getPiontToTableForSingleStock("SH000001",ConstantsInfo.StockCalCurData, "2017-11-12", "2017-11-12");
+		//pc.getPiontToTableForSingleStock("SH000001",ConstantsInfo.StockCalAllData, null, null);
+		
 		//pc.getPiontToTableForSingleStock("SZ002696",ConstantsInfo.StockCalCurData);
 	//	pc.getPiontToTableForSingleStock("SH000001",ConstantsInfo.StockCalAllData);
 		//pc.getPiontToTableForSingleStock("SH600030",ConstantsInfo.StockCalCurData);
 	//	pc.printfAllStockId();
-		
-
 	
 		Date endDate = new Date(0);
 		long seconds =(endDate.getTime() - startDate.getTime())/1000;
 		System.out.println("总共耗时："+seconds+"秒");
 		
+		
+	//	pc.getPointToTable(ConstantsInfo.StockCalAllData,ConstantsInfo.ALLMarket,ConstantsInfo.StockMarket, "2016-01-27", "2016-05-26");
 		
 		stockBaseConn.close();
 		stockPointConn.close();

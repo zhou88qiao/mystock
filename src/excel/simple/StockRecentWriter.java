@@ -1124,7 +1124,7 @@ public class StockRecentWriter {
          //大盘指数 一行       
        	stockRow++;
 		StockBaseFace sbFace = new StockBaseFace(0,"sh1111","","","","","","");
-		ExcelCommon.writeExcelItemTitle(wb,sheet,"大盘指数",sbFace,stockRow);
+		ExcelCommon.writeExcelItemTitle(wb,sheet,"大盘指数",sbFace,stockRow,true);
      //  	ExcelCommon.writeExcelItemTitle(wb,sheet,"大盘指数",stockRow);
        	stockRow++;  
        	System.out.println(listStockMarket.size());

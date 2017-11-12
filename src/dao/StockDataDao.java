@@ -362,17 +362,17 @@ public class StockDataDao extends BaseDao{
 	public String getDateOfWeek(String stockFullId,int week,int year) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
-		String selectSql = "select date from "+ stockTable+" where WEEK(date)="+week+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
+		String selectSql = "select date from "+ stockTable+" where WEEK(date)="+week+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date desc limit 1";
 		System.out.println(selectSql);
 		return super.getSingleQuery(selectSql, null);
 	}
 	
 	//查询每周的收盘价
-	//SELECT closingPrice FROM day_stock_sh000001 where WEEK(date) = 52 and YEAR(date) = 2013 ORDER BY id desc limit 1;
+	//SELECT closingPrice FROM day_stock_sh000001 where WEEK(date) = 52 and YEAR(date) = 2013 ORDER BY date desc limit 1;
 	public float getClosingPriceOfWeek(String stockFullId,int week,int year) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
-		String selectSql = "select closingPrice from "+ stockTable+" where WEEK(date)="+week+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
+		String selectSql = "select closingPrice from "+ stockTable+" where WEEK(date)="+week+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date desc limit 1";
 		//System.out.println(selectSql);
 		return super.getSingleFloatQuery(selectSql, null);
 	}
@@ -383,7 +383,7 @@ public class StockDataDao extends BaseDao{
 	public float getOpeningPriceOfWeek(String stockFullId,int week,int year) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
-		String selectSql = "select openingPrice from "+ stockTable+" where WEEK(date)="+week+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id limit 1";
+		String selectSql = "select openingPrice from "+ stockTable+" where WEEK(date)="+week+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date limit 1";
 		//System.out.println(selectSql);
 		return super.getSingleFloatQuery(selectSql, null);
 	}
@@ -417,13 +417,13 @@ public class StockDataDao extends BaseDao{
 		switch(dataType)
 		{
 		case ConstantsInfo.DayDataType: //day
-			selectSql= "select date from "+ stockTable+" where dayofyear(date)="+num+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
+			selectSql= "select date from "+ stockTable+" where dayofyear(date)="+num+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.WeekDataType://week
-			selectSql= "select date from "+ stockTable+" where WEEK(date)="+num+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
+			selectSql= "select date from "+ stockTable+" where WEEK(date)="+num+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.MonthDataType://month
-			selectSql = "select date from "+ stockTable+" where Month(date)="+num+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
+			selectSql = "select date from "+ stockTable+" where Month(date)="+num+" and YEAR(date)="+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.SeasonDataType://season
 			String seasonStart=null,seasonEnd = null;
@@ -447,14 +447,14 @@ public class StockDataDao extends BaseDao{
 					break;
 			}
 			//从月表的日期中查找更快
-			selectSql = "select date from "+ stockTable+" where date>='"+seasonStart+"' and date<='"+seasonEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY id desc limit 1";
+			selectSql = "select date from "+ stockTable+" where date>='"+seasonStart+"' and date<='"+seasonEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.YearDataType://year
 			String yearStart=null,yearEnd = null;
 			yearStart=year+"-01-01";
 			yearEnd=year+"-12-31";
 			//从季表的日期中查找更快
-			selectSql = "select date from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY id desc limit 1";
+			selectSql = "select date from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date desc limit 1";
 		}
 		
 		if(ConstantsInfo.DEBUG)
@@ -467,7 +467,7 @@ public class StockDataDao extends BaseDao{
 	
 	
 	//查询每周,每月，每年的收盘价
-	//SELECT closingPrice FROM day_stock_sh000001 where WEEK(date) = 52 and YEAR(date) = 2013 ORDER BY id desc limit 1;
+	//SELECT closingPrice FROM day_stock_sh000001 where WEEK(date) = 52 and YEAR(date) = 2013 ORDER BY date desc limit 1;
 	public float getClosingPriceFromDate(String stockFullId,int num,int year,int dataType) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
@@ -477,10 +477,10 @@ public class StockDataDao extends BaseDao{
 		case ConstantsInfo.DayDataType: //day
 			break;
 		case ConstantsInfo.WeekDataType://week
-			selectSql= "select closingPrice from "+ stockTable+" where WEEK(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
+			selectSql= "select closingPrice from "+ stockTable+" where WEEK(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.MonthDataType://month
-			selectSql = "select closingPrice from "+ stockTable+" where Month(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
+			selectSql = "select closingPrice from "+ stockTable+" where Month(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.SeasonDataType://season
 			String seasonStart=null,seasonEnd = null;
@@ -503,13 +503,13 @@ public class StockDataDao extends BaseDao{
 					seasonEnd=year+"-12-31";
 					break;
 			}
-			selectSql = "select closingPrice from "+ stockTable+" where date>='"+seasonStart+"' and date<='"+seasonEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY id desc limit 1";
+			selectSql = "select closingPrice from "+ stockTable+" where date>='"+seasonStart+"' and date<='"+seasonEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.YearDataType://year
 			String yearStart=null,yearEnd = null;
 			yearStart=year+"-01-01";
 			yearEnd=year+"-12-31";
-			selectSql = "select closingPrice from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY id desc limit 1";
+			selectSql = "select closingPrice from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date desc limit 1";
 		}
 		
 		if(ConstantsInfo.DEBUG)
@@ -522,7 +522,7 @@ public class StockDataDao extends BaseDao{
 	
 	
 	//查询每周,每月，每年的开盘价
-	//SELECT OpeningPrice FROM day_stock_sh000001 where WEEK(date) = 52 and YEAR(date) = 2013 ORDER BY id desc limit 1;
+	//SELECT OpeningPrice FROM day_stock_sh000001 where WEEK(date) = 52 and YEAR(date) = 2013 ORDER BY date desc limit 1;
 	public float getOpeningPriceFromDate(String stockFullId,int num,int year,int dataType) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
@@ -532,10 +532,10 @@ public class StockDataDao extends BaseDao{
 		case ConstantsInfo.DayDataType: //day
 			break;
 		case ConstantsInfo.WeekDataType://week
-			selectSql= "select openingPrice from "+ stockTable+" where WEEK(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id limit 1";
+			selectSql= "select openingPrice from "+ stockTable+" where WEEK(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date limit 1";
 			break;
 		case ConstantsInfo.MonthDataType://month
-			selectSql = "select openingPrice from "+ stockTable+" where Month(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id limit 1";
+			selectSql = "select openingPrice from "+ stockTable+" where Month(date) ="+num+" and YEAR(date) = "+year+" and dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date limit 1";
 			break;
 		case ConstantsInfo.SeasonDataType://season
 			String seasonStart=null,seasonEnd = null;
@@ -558,13 +558,13 @@ public class StockDataDao extends BaseDao{
 					seasonEnd=year+"-12-31";
 					break;
 			}
-			selectSql = "select openingPrice from "+ stockTable+" where date>='"+seasonStart+"' and date<='"+seasonEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY id limit 1";
+			selectSql = "select openingPrice from "+ stockTable+" where date>='"+seasonStart+"' and date<='"+seasonEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY date limit 1";
 			break;
 		case ConstantsInfo.YearDataType://year
 			String yearStart=null,yearEnd = null;
 			yearStart=year+"-01-01";
 			yearEnd=year+"-12-31";
-			selectSql = "select openingPrice from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY id limit 1";
+			selectSql = "select openingPrice from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date limit 1";
 		}
 		if(ConstantsInfo.DEBUG)
 		{
@@ -1627,8 +1627,56 @@ public class StockDataDao extends BaseDao{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
 		String selectSql;
 		selectSql="select id from "+stockTable+" where date = '"+date+"'";
-		System.out.println(selectSql);
+		//System.out.println(selectSql);
 		return super.getSingleIntQuery(selectSql, null);
+	}
+	
+	public List<String> getDatesFromTo(String stockFullId,int dateType, String dateStart, String dateEnd) throws SQLException
+	{
+		List<String> dates=new ArrayList<String>();
+		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
+		StringBuffer selectSql = new StringBuffer();
+		
+		selectSql.append("select date from ");
+		selectSql.append(stockTable);
+		selectSql.append(" where ");
+		
+		if (dateStart != null) {
+			selectSql.append(" date>='"+dateStart+"' and ");
+		}
+		
+		if (dateEnd != null) {
+			selectSql.append(" date<='"+dateEnd+"' and ");
+		}	
+			
+		switch(dateType)
+		{
+		case ConstantsInfo.DayDataType:
+			 //排好序
+			selectSql.append(" dataType='"+ConstantsInfo.DayDataType+"' ORDER BY date");
+			break;
+		case ConstantsInfo.WeekDataType:
+			selectSql.append(" dataType='"+ConstantsInfo.WeekDataType+"' ORDER BY date");
+			//selectSql="select date from "+stockTable+" where date>='"+dateStart+"' and date<='"+dateEnd+"' and dataType='"+ConstantsInfo.WeekDataType+"' ORDER BY date";
+			break;
+		case ConstantsInfo.MonthDataType:
+			selectSql.append(" dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY date");
+			//selectSql="select date from "+stockTable+" where date>='"+dateStart+"' and date<='"+dateEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY date";
+			break;
+		case ConstantsInfo.SeasonDataType:
+			selectSql.append(" dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date");
+			//selectSql="select date from "+stockTable+" where date>='"+dateStart+"' and date<='"+dateEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date";
+			break;
+		case ConstantsInfo.YearDataType:
+			selectSql.append(" dataType='"+ConstantsInfo.YearDataType+"' ORDER BY date");
+			//selectSql="select date from "+stockTable+" where dataType='"+ConstantsInfo.YearDataType+"' ORDER BY date";
+			break;
+		}
+		
+		stockLogger.logger.fatal("select data sql："+selectSql.toString());
+		System.out.println(selectSql.toString());
+		dates=getQuery(selectSql.toString(),null);
+		return dates;
 	}
 	
 	public List<String> getDates(String stockFullId,int dateType) throws SQLException
@@ -1901,6 +1949,28 @@ public class StockDataDao extends BaseDao{
 		return dates;
 	}
 	
+	
+	public List<String> getStockTradeTimesFromTo(String stockFullId,String dateStart,String dateEnd,int type) throws IOException, ClassNotFoundException, SQLException
+	{
+		List<String> dates=new ArrayList<String>();
+		String selectSql=null;
+		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
+		switch(type)
+		{
+		case ConstantsInfo.DayDataType:
+			selectSql="select date from "+stockTable+" where date>='"+dateStart+"' and date<'"+dateEnd+"' and dataType='"+ConstantsInfo.DayDataType+"'";
+			break;
+		case ConstantsInfo.WeekDataType:
+			selectSql="select date from "+stockTable+" where date>='"+dateStart+"' and date<'"+dateEnd+"' and dataType='"+ConstantsInfo.WeekDataType+"'";
+			break;
+		case ConstantsInfo.MonthDataType:
+			selectSql="select date from "+stockTable+" where date>='"+dateStart+"' and date<'"+dateEnd+"' and dataType='"+ConstantsInfo.MonthDataType+"'";
+			break;
+		}	
+		dates=getQuery(selectSql,null);
+		return dates;
+	}
+	
 	//最近时间的所有值
 	public List<String> getDatesFromSH000001RecentDate(String cdate) throws SQLException
 	{
@@ -1915,6 +1985,19 @@ public class StockDataDao extends BaseDao{
 		return dates;
 	}
 	
+	
+	
+	/*获取最近交易时间*/
+	public String getRecetlyDateFromSH000001(String zhiDing) throws IOException, ClassNotFoundException, SQLException
+	{
+		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+"sh000001";
+		String selectSql = null;		
+		selectSql="select date from "+stockTable+" where dataType='"+ConstantsInfo.DayDataType+"' and date <= '"+zhiDing+"' ORDER BY date desc limit 1";
+	
+		//System.out.println(selectSql);
+		//return super.executeSingleQuery(selectSql,StockData.class); 	
+		return super.getSingleDateQuery(selectSql,null).toString(); 
+	}
 	
 	//最近30交易日时间的所有值
 	public List<String> getDatesFromSH000001For(int days, int dateType) throws SQLException
@@ -1938,7 +2021,7 @@ public class StockDataDao extends BaseDao{
 		String selectSql = null;
 		
 			//排好序
-		selectSql="select DISTINCT(date) from "+stockTable+" where date >='"+startDate+"' and date<= '"+endDate+"' ORDER BY date desc";
+		selectSql="select DISTINCT(date) from "+stockTable+" where date >='"+startDate+"' and date<= '"+endDate+"' ORDER BY date";
 		System.out.println(selectSql);
 		dates=getQuery(selectSql,null);
 		return dates;
@@ -2392,28 +2475,7 @@ public class StockDataDao extends BaseDao{
 		return super.executeSingleQuery(selectSql,StockData.class); 
 		
 	}	
-	
-	/*获取最后一个交易数据*/
-	public StockData getLastDataStock(String stockFullId,int type) throws IOException, ClassNotFoundException, SQLException
-	{
-		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;
-		String selectSql = null;	
-		switch(type)
-		{
-		case ConstantsInfo.DayDataType:
-			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.DayDataType+"' ORDER BY id desc limit 1";
-			break;
-		case ConstantsInfo.WeekDataType:
-			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.WeekDataType+"' ORDER BY id desc limit 1";
-			break;
-		case ConstantsInfo.MonthDataType:
-			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.MonthDataType+"' ORDER BY id desc limit 1";
-			break;
-		}	
-		//System.out.println(selectSql);
-		return super.executeSingleQuery(selectSql,StockData.class); 
-		
-	}	
+
 	
 	/*获取所在周或月交易数据*/
 	public StockData getZhiDingDataStock(String stockFullId,int type,String zhiDing) throws IOException, ClassNotFoundException, SQLException
@@ -2423,18 +2485,17 @@ public class StockDataDao extends BaseDao{
 		switch(type)
 		{
 		case ConstantsInfo.DayDataType:
-			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.DayDataType+"' and date= '"+zhiDing+"' ORDER BY id desc limit 1";
+			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.DayDataType+"' and date = '"+zhiDing+"' ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.WeekDataType:
-			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.WeekDataType+"' and week(date)= week('"+zhiDing+"') ORDER BY id desc limit 1";
+			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.WeekDataType+"' and week(date)= week('"+zhiDing+"') ORDER BY date desc limit 1";
 			break;
 		case ConstantsInfo.MonthDataType:
-			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.MonthDataType+"' and month(date) = month('"+zhiDing+"') ORDER BY id desc limit 1";
+			selectSql="select * from "+stockTable+" where dataType='"+ConstantsInfo.MonthDataType+"' and month(date) = month('"+zhiDing+"') ORDER BY date desc limit 1";
 			break;
 		}	
 		//System.out.println(selectSql);
-		return super.executeSingleQuery(selectSql,StockData.class); 
-		
+		return super.executeSingleQuery(selectSql,StockData.class); 	
 	}
 	
 	//删除某天数据
@@ -2448,17 +2509,7 @@ public class StockDataDao extends BaseDao{
 		return super.saveOrUpdate(selectSql);
 	}
 	
-	//查看最后一行数据时间
-	public String getLastDay(String stockFullId) throws IOException, ClassNotFoundException, SQLException
-	{
-		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+"SH000001";
-		//delete from day_stock_sz000010  where id in (select id from (select  max(id) as id,count(date) as count from day_stock_sz000010 group by date having count >1 order by count desc) as tab );
-		String selectSql;
-		selectSql="select date from "+stockTable+"  where dataType = 1 ORDER BY id desc limit 1";
-		System.out.println(selectSql);
-		return super.getSingleQuery(selectSql, null);
-	}
-	
+
 	//查看上证是否存在同一时间数据
 	public int getDataValueIsExist(String stockFullId,String date) throws IOException, ClassNotFoundException, SQLException
 	{

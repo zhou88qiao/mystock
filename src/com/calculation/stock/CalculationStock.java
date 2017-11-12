@@ -96,8 +96,6 @@ public class CalculationStock {
 				listMonthCur =sdDao.getUnCalculationMonth(fullId, listYear.get(1));
 			}
 			
-		
-			
 			//开始：年最早一天 
 			System.out.println(listDay.get(0));
 			System.out.println(listDay.get(listDay.size()-1));

@@ -3,6 +3,8 @@ package stock.basic;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -24,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -51,8 +54,11 @@ import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
 
 import com.calculation.stock.CalculationStock;
+import com.eltima.components.ui.DatePicker;
 import com.point.stock.PointClass;
 import com.timer.stock.DateStock;
+import com.timer.stock.StockDateTimer;
+
 import common.ConstantsInfo;
 import common.stockLogger;
 
@@ -90,6 +96,7 @@ public class StockBaseManager {
 	private final static int  editIndex=1;
 	private final static int  delIndex=2;
 	private final static int  queryIndex=3;	
+	private final static int  checkIndex=4;	
 	
 	static StockBaseManager stockBM;
 	private StockDataDao sdDao;
@@ -145,11 +152,14 @@ public class StockBaseManager {
 	JMenuItem LoadStockToFuturesBaseface=new JMenuItem("7 导入期货商品对应个股数据");
 	JMenuItem LoadStockBaseYearface=new JMenuItem("8 导入股票年份交易信息");
 	
+	DatePicker datepickStart = getDatePicker();
+    DatePicker datepickEnd = getDatePicker();
 
 	JButton addButton=new JButton("新建");	//0
 	JButton editButton=new JButton("编辑");//1
 	JButton deleteButton=new JButton("删除");//2
 	JButton queryButton=new JButton("查询");//3
+	JButton checkButton=new JButton("确定");//4
 	
 	JPanel Panel=new JPanel();
 	JLabel jlMarket=new JLabel("市场");
@@ -190,6 +200,7 @@ public class StockBaseManager {
 	JTable stockTable;
 	JScrollPane stockSP;
 	JPanel operationPane;
+	JPanel timerPane;
 	JOptionPane jop;	
 	List<StockMarket> listStockMarket = new ArrayList<StockMarket>(); 
 	List<StockConcept> listStockConcept = new ArrayList<StockConcept>(); 
@@ -198,7 +209,6 @@ public class StockBaseManager {
 	List<StockSingle> listStockSingle = new ArrayList<StockSingle>(); 
 	
 	FileReader fr;//导入数据
-	
 	
 	public StockBaseManager(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
 	{
@@ -223,16 +233,17 @@ public class StockBaseManager {
 	
 		stockOperate.addActionListener(actionL);
 		
-		
 		addButton.addMouseListener(actionM);
 		deleteButton.addMouseListener(actionM);
 		editButton.addMouseListener(actionM);
 		queryButton.addMouseListener(actionM);
+		checkButton.addMouseListener(actionM);
 		
 		addButton.setActionCommand(""+addIndex);
 		deleteButton.setActionCommand(""+delIndex);
 		editButton.setActionCommand(""+editIndex);
 		queryButton.setActionCommand("" + queryIndex);
+		checkButton.setActionCommand("" + checkIndex);
 	
 		stockOperate.add(LoadMarket);
 		stockOperate.add(LoadIndustry);
@@ -244,7 +255,6 @@ public class StockBaseManager {
 		stockOperate.add(LoadStockToFuturesBaseface);
 		stockOperate.add(LoadStockBaseYearface);
 		
-	
 		
 		GetStockData.setActionCommand("" + 6); //根据i 事件监听器获取
 		ExtremeAnalyze.setActionCommand("" + 7); //根据i 事件监听器获取		
@@ -361,9 +371,7 @@ public class StockBaseManager {
 		     }*/
 
 		    });
-		
 	}
-	
 	
 	
 	class menuActionListenter implements ActionListener
@@ -386,6 +394,15 @@ public class StockBaseManager {
 			{
 				jFrame.remove(jop);
 			}
+			
+			if(timerPane!=null){
+				jFrame.remove(timerPane);
+			}
+			
+			timerPane = new JPanel();
+			timerPane.add(datepickStart);
+			timerPane.add(datepickEnd);
+			timerPane.add(checkButton);
 			
 			//复用按钮
 			operationPane=new JPanel();
@@ -525,17 +542,29 @@ public class StockBaseManager {
 			case 31:				
 				loadStockData(ConstantsInfo.FuturesMarket);
 				return;
-			case 7://分析当天数据
-				analyseStockData(ConstantsInfo.StockMarket); 
+			case 7://分析当天极点数据
+				timerPane.setName("stock_analy_point");
+				jFrame.add(timerPane,BorderLayout.NORTH);
+				jFrame.validate();
+				//analyseStockData(ConstantsInfo.StockMarket); 
 				return;
-			case 32://分析当天数据
-				analyseStockData(ConstantsInfo.FuturesMarket); 
+			case 32://分析当天极点数据
+				timerPane.setName("future_analy_point");
+				jFrame.add(timerPane,BorderLayout.NORTH);
+				jFrame.validate();
+				//analyseStockData(ConstantsInfo.FuturesMarket); 
 				return;
 			case 8: //导出数据
-				exportExcelFile(ConstantsInfo.StockMarket); 
+				timerPane.setName("stock_analy_summary");
+				jFrame.add(timerPane,BorderLayout.NORTH);
+				jFrame.validate();
+				//exportExcelFile(ConstantsInfo.StockMarket); 
 				return;
 			case 33: //导出数据
-				exportExcelFile(ConstantsInfo.FuturesMarket); 
+				timerPane.setName("future_analy_summary");
+				jFrame.add(timerPane,BorderLayout.NORTH);
+				jFrame.validate();
+				//exportExcelFile(ConstantsInfo.FuturesMarket); 
 				return;
 				
 			case 20:
@@ -552,10 +581,16 @@ public class StockBaseManager {
 				return;
 				
 			case 22://分析操作数据
-				analyseOperation(ConstantsInfo.StockMarket);
+				timerPane.setName("stock_analy_operation");
+				jFrame.add(timerPane,BorderLayout.NORTH);
+				jFrame.validate();
+				//analyseOperation(ConstantsInfo.StockMarket);
 				return;
 			case 36://分析操作数据
-				analyseOperation(ConstantsInfo.FuturesMarket);
+				timerPane.setName("stock_analy_operation");
+				jFrame.add(timerPane,BorderLayout.NORTH);
+				jFrame.validate();
+				//analyseOperation(ConstantsInfo.FuturesMarket);
 				return;
 			case 23://导出操作数据
 				exportOperationExcelFile(ConstantsInfo.StockMarket);
@@ -736,7 +771,8 @@ public class StockBaseManager {
 		public void mouseClicked(MouseEvent e) {
 		
 			
-			String paneNmae=operationPane.getName();
+			String paneNmae= operationPane.getName();
+			String timeNmae= timerPane.getName();
 			//System.out.println("pane name:"+operationPane.getName());
 			
 			if(jop!=null)
@@ -744,7 +780,7 @@ public class StockBaseManager {
 				jFrame.remove(jop);
 			}
 			
-			if(e.getSource()==addButton){
+			if(e.getSource()== addButton){
 				
 				
 				addButton.setBackground(Color.BLUE);
@@ -892,6 +928,23 @@ public class StockBaseManager {
 					System.out.println(jtfMarket.getText());
 				}
 				
+            } else if(e.getSource()== checkButton){
+            	  		
+            	String startTime = StockDateTimer.formatDate((Date)datepickStart.getValue());
+        		String endTime = StockDateTimer.formatDate((Date)datepickEnd.getValue());
+        	
+        		if(timeNmae.equals("stock_analy_summary"))
+        			exportExcelFile(ConstantsInfo.StockMarket,startTime, endTime);
+        		else if (timeNmae.equals("future_analy_summary"))
+        			exportExcelFile(ConstantsInfo.FuturesMarket,startTime, endTime);
+        		else if(timeNmae.equals("stock_analy_point"))
+        			analyseStockData(ConstantsInfo.StockMarket,startTime, endTime);
+        		else if (timeNmae.equals("future_analy_point"))
+        			analyseStockData(ConstantsInfo.FuturesMarket,startTime, endTime);
+        		else if(timeNmae.equals("stock_analy_operation"))
+        			analyseOperation(ConstantsInfo.StockMarket,startTime, endTime);
+        		else if (timeNmae.equals("future_analy_operation"))
+        			analyseOperation(ConstantsInfo.FuturesMarket,startTime, endTime);
             }
 			
 		
@@ -1051,7 +1104,7 @@ public class StockBaseManager {
 		int ret = 0;
 		//导入 部分日数据 并计算ma5 涨幅
 		try {
-				if(type == 6)
+				if(type == ConstantsInfo.StockMarket)
 					ret=fr.loadAllDataInfile(dateNowStr);
 				else 
 					ret=fr.loadAllFuturesDataInfile(dateNowStr);
@@ -1089,18 +1142,15 @@ public class StockBaseManager {
 	}
 	
 	//2分析股票交易数据
-	public void analyseStockData(int type){
+	public void analyseStockData(int type, String startdate, String enddate){
 		
-		Date startDate = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
-        String dateNowStr = sdf.format(startDate);  
-		PointClass pc=new PointClass(sbDao,sdDao,spDao);						
+		PointClass pc = new PointClass(sbDao,sdDao,spDao);				
 		try {
-			//计算当前数据
-				if(type == ConstantsInfo.StockMarket) 
-					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.StockMarket, dateNowStr);
-				else 
-					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.FuturesMarket, dateNowStr);
+			//计算当天数据
+				if(type == ConstantsInfo.StockMarket){ 
+					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.StockMarket, startdate, enddate);
+				} else 
+					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.FuturesMarket, startdate, enddate);
 			} catch (SecurityException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -1129,54 +1179,102 @@ public class StockBaseManager {
 			jop.showMessageDialog(jFrame, "数据已经分析完成","提示", JOptionPane.INFORMATION_MESSAGE); 
 			return;
 	}
+	
+	private static DatePicker getDatePicker() {
+        DatePicker datepick;
+        // 格式
+        String DefaultFormat = "yyyy-MM-dd hh:mm:ss";
+        // 当前时间
+        Date date = new Date();
+        // 字体
+        Font font = new Font("Times New Roman", Font.BOLD, 14);
+
+        Dimension dimension = new Dimension(180, 30);
+
+       // int[] hilightDays = { 1, 3, 5, 7 };
+      //  int[] disabledDays = { 4, 6, 5, 9 };
+    //构造方法（初始时间，时间显示格式，字体，控件大小）
+        datepick = new DatePicker(date, DefaultFormat, font, dimension);
+
+        datepick.setLocation(130, 90);//设置起始位置
+        /*
+        //也可用setBounds()直接设置大小与位置
+        datepick.setBounds(137, 83, 177, 24);
+        */
+        // 设置一个月份中需要高亮显示的日子
+     //   datepick.setHightlightdays(hilightDays, Color.red);
+        // 设置一个月份中不需要的日子，呈灰色显示
+      //  datepick.setDisableddays(disabledDays);
+        // 设置国家
+        datepick.setLocale(Locale.CHINA);
+        // 设置时钟面板可见
+        datepick.setTimePanleVisible(true);
+        return datepick;
+    }
 	 
 	 //3导出分析数据
-    public void exportExcelFile(int type){
-		Date startDate1 = new Date();
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
-		String dateNowStr1 = sdf1.format(startDate1);    	
-			
+    public void exportExcelFile(int type, String startdate, String enddate){
+				
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	   	
 		StockRecentWriter ew=new StockRecentWriter(sbDao,sdDao,spDao);
-		try {
-			//ew.exportRecentlyStockFromConcept("export\\",dateNowStr1);
-		   // ew.exportRecentlyStockFromIndustry("export\\",dateNowStr1);	
 			
-			if(type == ConstantsInfo.StockMarket) {
-				sep.writeExcelFormIndustryOrderBy("export\\",dateNowStr1);
-				sep.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
-			} else {
-				sep.writeExcelFormFuturesOrderBy("export\\",dateNowStr1);
-			}
-			//sep.writeExcelFormConceptOrderBy("export\\",dateNowStr1);
-		} catch (SecurityException e1) {
+		List<String> listStockDate = new ArrayList<String>();	         
+        try {
+			listStockDate = sdDao.getDatesFromSH000001ForStartEnd(startdate,enddate);
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NoSuchFieldException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}			
+			e.printStackTrace();
+		}
+        
+		int size =  listStockDate.size();
 		
+        for(int i = 0; i < listStockDate.size(); i++) {        	
+        	String date = listStockDate.get(i);	    
+			try {
+				if(type == ConstantsInfo.StockMarket) {
+					if(i == size -1){
+						sep.writeExcelFormIndustryOrderBy("export\\",date, true);
+					} else {
+						sep.writeExcelFormIndustryOrderBy("export\\",date, false);
+					}			
+				} else {
+					if(i == size -1){
+						sep.writeExcelFormFuturesOrderBy("export\\",date, true);
+					} else {
+						sep.writeExcelFormFuturesOrderBy("export\\",date, false);
+					}
+				}
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				//sep.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);	
+        }
+	    
 		jop=new JOptionPane();					
-		jFrame.add(jop,BorderLayout.NORTH);
+		jFrame.add(jop,BorderLayout.SOUTH);
+		
 		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
 	 }
@@ -1184,7 +1282,6 @@ public class StockBaseManager {
     //4导入统计表
     public void loadSummaryExcelFile(int type) 
     {
-    	
     	StockExcelReadMain seRead = new StockExcelReadMain(sbDao,sdDao,spDao,ssDao);
 		//seRead.create_summarY("123");
 		try {
@@ -1216,11 +1313,16 @@ public class StockBaseManager {
 			
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
+    		
+    		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
+    		if(date_rectely==null || date_rectely == ""){
+    			return;
+    		}
     		if(type == ConstantsInfo.StockMarket) {
     			//sep.writePointExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
-    			sep.writePointExcelFormIndustryOrderBy("export\\",dateNowStr1);
+    			sep.writePointExcelFormIndustryOrderBy("export\\",date_rectely);
     		} else {
-    			sep.writePointExcelFormFuturesOrderBy("export\\",dateNowStr1);
+    			sep.writePointExcelFormFuturesOrderBy("export\\",date_rectely);
     		}
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
@@ -1259,14 +1361,19 @@ public class StockBaseManager {
     {
     	Date startDate1 = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
-		String dateNowStr1 = sdf1.format(startDate1);    	
+		String dateNowStr1 = sdf1.format(startDate1);  
 			
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	   
     	try {
+    		
+    		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
+    		if(date_rectely==null || date_rectely == ""){
+    			return;
+    		}
     		if(type == ConstantsInfo.StockMarket) {
-    			sep.writeSummaryExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
+    			sep.writeSummaryExcelFormConceptInFirstIndustryOrderBy("export\\",date_rectely);
     		} else {
-    			sep.writeSummaryExcelFormFuturesOrderBy("export\\",dateNowStr1);
+    			sep.writeSummaryExcelFormFuturesOrderBy("export\\",date_rectely);
     		}
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
@@ -1302,18 +1409,12 @@ public class StockBaseManager {
     
     
     //7买卖操作分析
-    public void analyseOperation(int type)
-    {
-    	Date startDate1 = new Date();
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
-		String dateNowStr1 = sdf1.format(startDate1);    	
-			
+    public void analyseOperation(int type, String startdate, String enddate)
+    {	
 		StockExcelOperationMain sop = new StockExcelOperationMain(sbDao,sdDao,spDao,ssDao);	 
     	
 	/*
 			try {
-				
-		
 				if(type == ConstantsInfo.StockMarket) {
 					sop.delete_data(ConstantsInfo.StockMarket);
 				} else {
@@ -1330,41 +1431,47 @@ public class StockBaseManager {
 				e.printStackTrace();
 			}
 		*/
-    	
-		try {
-			if(type == ConstantsInfo.StockMarket) {
-				//sop.analyseStockOperation(ConstantsInfo.StockMarket,null);
-				sop.analyseStockOperationAll(ConstantsInfo.StockMarket,null,ConstantsInfo.DayDataType);
-				sop.analyseStockOperationAll(ConstantsInfo.StockMarket,null,ConstantsInfo.WeekDataType);
-				sop.analyseStockOperationAll(ConstantsInfo.StockMarket,null,ConstantsInfo.MonthDataType);
-			} else {
-			//	sop.analyseStockOperation(ConstantsInfo.FuturesMarket,null);
-				sop.analyseStockOperationAll(ConstantsInfo.FuturesMarket,null,ConstantsInfo.DayDataType);
-				sop.analyseStockOperationAll(ConstantsInfo.FuturesMarket,null,ConstantsInfo.WeekDataType);
-				sop.analyseStockOperationAll(ConstantsInfo.FuturesMarket,null,ConstantsInfo.MonthDataType);
-			}
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		List<String> listStockDate = new ArrayList<String>();	         
+        try {
+			listStockDate = sdDao.getDatesFromSH000001ForStartEnd(startdate,enddate);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+         
+        for(int i = 0; i < listStockDate.size(); i++) {        	
+        	String date = listStockDate.get(i);	
+    	
+			try {
+				if(type == ConstantsInfo.StockMarket) {
+					sop.analyseStockOperationAll(ConstantsInfo.StockMarket,date);			
+				} else {
+					sop.analyseStockOperationAll(ConstantsInfo.FuturesMarket,date);
+				}
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
 
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
@@ -1382,17 +1489,21 @@ public class StockBaseManager {
 			
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
+    		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
+    		if(date_rectely==null || date_rectely == ""){
+    			return;
+    		}
     		if(type == ConstantsInfo.StockMarket) {
     		//	sep.writeOperationExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
     		//	sep.writeOperationExcelFormIndustryOrderBy("export\\",dateNowStr1);
-    			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr1, ConstantsInfo.DayDataType);
-    			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr1, ConstantsInfo.WeekDataType);
-    			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr1, ConstantsInfo.MonthDataType);
+    			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",date_rectely, ConstantsInfo.DayDataType);
+    			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",date_rectely, ConstantsInfo.WeekDataType);
+    			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",date_rectely, ConstantsInfo.MonthDataType);
     		} else {
     		//	sep.writeOperationExcelFormFuturesOrderBy("export\\",dateNowStr1);
-    			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",dateNowStr1, ConstantsInfo.DayDataType);
-    			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",dateNowStr1, ConstantsInfo.WeekDataType);
-    			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",dateNowStr1, ConstantsInfo.MonthDataType);
+    			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",date_rectely, ConstantsInfo.DayDataType);
+    			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",date_rectely, ConstantsInfo.WeekDataType);
+    			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",date_rectely, ConstantsInfo.MonthDataType);
     		}
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
@@ -1432,18 +1543,24 @@ public class StockBaseManager {
     	Date startDate1 = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
 		String dateNowStr1 = sdf1.format(startDate1);    	
+		
+		
 			
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
+    		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
+    		if(date_rectely==null || date_rectely == ""){
+    			return;
+    		}
     		if(type == ConstantsInfo.StockMarket) {
 
     			//sep.writeTotalOperationExcelFormIndustryOrderBy("export\\",dateNowStr1);
-    			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr1,ConstantsInfo.DayDataType);
-    			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr1,ConstantsInfo.WeekDataType);
-    			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr1,ConstantsInfo.MonthDataType);
+    			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",date_rectely,ConstantsInfo.DayDataType);
+    			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",date_rectely,ConstantsInfo.WeekDataType);
+    			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",date_rectely,ConstantsInfo.MonthDataType);
 
     		} else {
-    			sep.writeTotalOperationExcelFormFuturesOrderBy("export\\",dateNowStr1);
+    			sep.writeTotalOperationExcelFormFuturesOrderBy("export\\",date_rectely);
     		}
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block

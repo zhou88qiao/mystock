@@ -25,8 +25,6 @@ public class ConstantsInfo {
 	public final static int  ORANGEColor=5;
 	public final static int  GREENColor=6;
 
-		
-
 	public final static int  ExtremeDateDay=1;	
 	public final static int  ExtremeDateDayWeek=2;
 	public final static int  ExtremeDateDayWeekMonth=3;
@@ -91,5 +89,24 @@ public class ConstantsInfo {
 	public final static int  SALE=3;//Âô³ö
 	
 	public final static int  DEAL_DATE=11;//
+	
+	
+	public final static int ExportDayNum=60;
+	public final static int ExportWeekNum=30;
+	public final static int ExportMonthNum=15;
+	
+	public static int ExportNum (int dateType){
+		switch(dateType)
+		{
+		case ConstantsInfo.DayDataType:
+			return ExportDayNum;
+		case ConstantsInfo.WeekDataType:
+			return ExportWeekNum;
+		case ConstantsInfo.MonthDataType:
+			return ExportMonthNum;
+
+		}
+		return ExportDayNum;
+	}
 
 }

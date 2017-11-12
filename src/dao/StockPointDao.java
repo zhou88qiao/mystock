@@ -95,18 +95,32 @@ public class StockPointDao extends BaseDao{
 		switch(type)
 		{
 		case ConstantsInfo.DayDataType:
-			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.DayDataType+"' and toDate <= '"+date+"' ORDER BY id desc limit 1";
+			if(null == date){
+				selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.DayDataType+"' ORDER BY todate desc limit 1";
+			} else {
+				selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.DayDataType+"' and toDate <= '"+date+"' ORDER BY todate desc limit 1";
+			}
 			break;
 		case ConstantsInfo.WeekDataType:
-			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.WeekDataType+"' and toDate <= '"+date+"' ORDER BY id desc limit 1";
+			if(null == date){
+				selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.WeekDataType+"' ORDER BY todate desc limit 1";
+			} else {
+				selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.WeekDataType+"' and toDate <= '"+date+"' ORDER BY todate desc limit 1";
+			}
+			
 			break;
 		case ConstantsInfo.MonthDataType:
-			selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.MonthDataType+"' and toDate <= '"+date+"' ORDER BY id desc limit 1";
+			if(null == date){
+				selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.MonthDataType+"' ORDER BY todate desc limit 1";
+			} else {
+				selectSql="select * from "+stockTable+" where type='"+ConstantsInfo.MonthDataType+"' and toDate <= '"+date+"' ORDER BY todate desc limit 1";
+			}
+			
 			break;
 		}	
-		//stockLogger.logger.debug(selectSql);
-		return super.executeSingleQuery(selectSql,StockPoint.class); 
-		
+		System.out.println(selectSql);
+		stockLogger.logger.debug(selectSql);
+		return super.executeSingleQuery(selectSql,StockPoint.class); 	
 	}	
 	
 	/*获取最后两个极点数据*/

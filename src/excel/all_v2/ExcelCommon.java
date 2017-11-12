@@ -37,6 +37,7 @@ import com.point.stock.PointClass;
 import com.timer.stock.StockDateTimer;
 
 import common.ConstantsInfo;
+import common.stockLogger;
 import dao.DbConn;
 import dao.StockBaseDao;
 import dao.StockBaseFace;
@@ -326,13 +327,13 @@ public class ExcelCommon {
  		{
  		case ConstantsInfo.DayDataType:
  		default:
- 			 listStockDate = sdDao.getDatesFromSH000001For(60, ConstantsInfo.DayDataType);
+ 			listStockDate = sdDao.getDatesFromSH000001For(ConstantsInfo.ExportDayNum, ConstantsInfo.DayDataType);
  			break;
  		case ConstantsInfo.WeekDataType:
- 			 listStockDate = sdDao.getDatesFromSH000001For(60, ConstantsInfo.WeekDataType);
+ 			 listStockDate = sdDao.getDatesFromSH000001For(ConstantsInfo.ExportWeekNum, ConstantsInfo.WeekDataType);
  			break;
  		case ConstantsInfo.MonthDataType:
- 			 listStockDate = sdDao.getDatesFromSH000001For(60, ConstantsInfo.MonthDataType);
+ 			 listStockDate = sdDao.getDatesFromSH000001For(ConstantsInfo.ExportMonthNum, ConstantsInfo.MonthDataType);
  			break;
  		}
         
@@ -970,8 +971,11 @@ public class ExcelCommon {
     }
     
     //输出每行业或大盘标题
-    public static void writeExcelItemTitle(Workbook wb,Sheet sheet,String induName,StockBaseFace sbFace,int rowIndex)
+    public static void writeExcelItemTitle(Workbook wb,Sheet sheet,String induName,StockBaseFace sbFace,int rowIndex, boolean flag)
     {
+    	if (!flag){
+    		return;
+    	}
     	Row rowIndustry = sheet.createRow(rowIndex);  
     	int col=4;
     	create07Cell(wb, rowIndustry, 0, induName, ConstantsInfo.NoColor);  
@@ -1020,9 +1024,13 @@ public class ExcelCommon {
     
     
     //输出统计项内容
-    public static void writeExcelStatItem(Workbook wb,Sheet sheet, StockExcelStatItem esItem,int stockRow, StockSummary ssu)
+    public static void writeExcelStatItem(Workbook wb,Sheet sheet, StockExcelStatItem esItem,int stockRow, StockSummary ssu, boolean flag)
     {
-		Row rowStock =  sheet.getRow(stockRow);
+		Row rowStock = null;
+		
+		if(flag) {
+			 rowStock =  sheet.getRow(stockRow);
+		}
     	int colNum = stockLabelNum;
     	String desc = "";
     	int ret=0;
@@ -1044,51 +1052,49 @@ public class ExcelCommon {
     	
     	//当天涨幅
     	String range= Float.toString(daySValue.getRange());
-    	
-    	create07Cell(wb, rowStock, colNum, range, 0); 
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, range, 0);
+    		//前极点状态组合
+    		create07Cell(wb, rowStock, colNum++,dayMSvalue.getPriComState(), 0); 
+    		//前极点组合
+    		create07Cell(wb, rowStock, colNum++,dayMSvalue.getPriState(), 0);    		
+    		//组合
+        	create07Cell(wb, rowStock, colNum++,dayMSvalue.getComState(), 0); 
+        	//组合
+        	create07Cell(wb, rowStock, colNum++,dayMSvalue.getPsState(), 0); 
+        	//日分级买卖	
+        	create07Cell(wb, rowStock, colNum++,dayMSvalue.getBuySaleGrade(), 0); 
+        	//日状态	
+        	create07Cell(wb, rowStock, colNum++,dayMSvalue.getBuySaleState(), 0); 
+    	}
     	ssu.setCurRange(range);
-    	colNum++;
-    	
-    	//前极点状态组合
-    	create07Cell(wb, rowStock, colNum,dayMSvalue.getPriComState(), 0); 
     	ssu.setPriComState(dayMSvalue.getPriComState());
-    	colNum++;
-    	//前极点组合
-    	create07Cell(wb, rowStock, colNum,dayMSvalue.getPriState(), 0); 
     	ssu.setPriState(dayMSvalue.getPriState());
-    	colNum++;
-    	
-    	//组合
-    	create07Cell(wb, rowStock, colNum,dayMSvalue.getComState(), 0); 
-    	ssu.setComState(dayMSvalue.getComState());
-    	colNum++;
-    	//组合
-    	create07Cell(wb, rowStock, colNum,dayMSvalue.getPsState(), 0); 
-    	ssu.setPsState(dayMSvalue.getPsState());
-    	colNum++;
-    	
-    	//日分级买卖	
-    	create07Cell(wb, rowStock, colNum++,dayMSvalue.getBuySaleGrade(), 0); 
+    	ssu.setComState(dayMSvalue.getComState());  	
+    	ssu.setPsState(dayMSvalue.getPsState());	
     	ssu.setDaySaleGrade(dayMSvalue.getBuySaleGrade());
-
-    	//日状态	
-    	create07Cell(wb, rowStock, colNum++,dayMSvalue.getBuySaleState(), 0); 
     	ssu.setDaySaleState(dayMSvalue.getBuySaleState());
     	
     	//前涨停时间差
     	String[] priUpDateGap = daySValue.getPriUpDateGap().split("\\|");
     	int dgap = Integer.parseInt(priUpDateGap[0]);
     	if(dgap <0) {
-    		create07Cell(wb, rowStock, colNum++,"无", 0); 
-    		create07Cell(wb, rowStock, colNum++,"无", 0); 
+    		if(flag){ 
+    			create07Cell(wb, rowStock, colNum++,"无", 0); 
+    			create07Cell(wb, rowStock, colNum++,"无", 0); 
+    		}
     		ssu.setDayPriUpDateGap("无");
     		ssu.setDayUpOrdownDates("无");
     	}
     	else {
-    		create07Cell(wb, rowStock, colNum++, priUpDateGap[0], 0);
+    		if(flag){
+    			create07Cell(wb, rowStock, colNum++, priUpDateGap[0], 0);
+    		}
     		ssu.setDayPriUpDateGap(priUpDateGap[0]);
     		if (dgap < 65) {
-    			create07Cell(wb, rowStock, colNum, priUpDateGap[1], 0); 
+    			if(flag){
+    				create07Cell(wb, rowStock, colNum, priUpDateGap[1], 0); 
+    			}
     			ssu.setDayUpOrdownDates(priUpDateGap[1]);
     		}
     		colNum++;
@@ -1111,8 +1117,11 @@ public class ExcelCommon {
     		case ConstantsInfo.DEAL_WARN_BUG://买入
     			warnDeal = "买入";
     			break;
-    	}    
-    	create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	}
+    	
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	}
     	ssu.setDayWarnDeal(warnDeal);
 	    	
 		if(daySValue.getTread() == 0){  
@@ -1129,14 +1138,15 @@ public class ExcelCommon {
 		//create07Cell(wb, rowStock, colNum++, dayPS , 0); 	
     	//create07Cell(wb, rowStock, colNum++, daySC , 0); 
 		if (minMaxItem != null){
-	    	create07Cell(wb, rowStock, colNum++, minMaxItem.getMinDate() , 0); 	
-	    	String minprice = Float.toString(minMaxItem.getMinPrice());
-	    	create07Cell(wb, rowStock, colNum++, minprice, 0); 
-	    	ssu.setDayPS( minMaxItem.getMinDate());
+			String minprice = Float.toString(minMaxItem.getMinPrice());
+			if(flag){
+		    	create07Cell(wb, rowStock, colNum++, minMaxItem.getMinDate() , 0); 	
+		    	create07Cell(wb, rowStock, colNum++, minprice, 0);
+			}
+	    	ssu.setDayPS(minMaxItem.getMinDate());
 	    	ssu.setDaySC(minprice);
 		} else {
-			create07Cell(wb, rowStock, colNum++, "" , 0); 	
-	    	create07Cell(wb, rowStock, colNum++, "" , 0); 
+			colNum = colNum+2;
 		}
 	
 		//周
@@ -1146,21 +1156,25 @@ public class ExcelCommon {
     	if(weekSValue==null || weekMSvalue == null) {
     		colNum = colNum+4;
     		if (minMaxItem != null){
-    			create07Cell(wb, rowStock, colNum++, minMaxItem.getMaxDate(), 0); 	
     			String maxPrice = Float.toString(minMaxItem.getMaxPrice());
-    			create07Cell(wb, rowStock, colNum++, maxPrice, 0); 
+    			if(flag){
+	    			create07Cell(wb, rowStock, colNum++, minMaxItem.getMaxDate(), 0); 				
+	    			create07Cell(wb, rowStock, colNum++, maxPrice, 0); 
+	    			colNum  = colNum +2;
+	    			//create07Cell(wb, rowStock, colNum++, Float.toString(minMaxItem.getMinMaxRatio()), 0); 
+    			}
     			ssu.setWeekPS(minMaxItem.getMaxDate());
     			ssu.setWeekSC(maxPrice);
-    			colNum  = colNum +2;
-    			create07Cell(wb, rowStock, colNum++, Float.toString(minMaxItem.getMinMaxRatio()), 0);
-    			
+    			  			
     		} 
     		return;
     	}
-		//周分级买卖	
-    	create07Cell(wb, rowStock, colNum++,weekMSvalue.getBuySaleGrade(), 0); 
-    	//周状态	
-    	create07Cell(wb, rowStock, colNum++,weekMSvalue.getBuySaleState(), 0); 
+    	if(flag){
+			//周分级买卖	
+	    	create07Cell(wb, rowStock, colNum++,weekMSvalue.getBuySaleGrade(), 0); 
+	    	//周状态	
+	    	create07Cell(wb, rowStock, colNum++,weekMSvalue.getBuySaleState(), 0); 
+    	}
     	ssu.setWeekSaleGrade(weekMSvalue.getBuySaleGrade());
     	ssu.setWeekSaleState(weekMSvalue.getBuySaleState());
     	
@@ -1168,7 +1182,9 @@ public class ExcelCommon {
     	ret = weekSValue.getUpOrdownTimes();
     	if(ret > 0) {
     		String updowntimes = desc+Integer.toString(ret);
-    		create07Cell(wb, rowStock, colNum,updowntimes, 0); 
+    		if(flag){
+    			create07Cell(wb, rowStock, colNum,updowntimes, 0); 
+    		}
     		ssu.setWeekUpOrdownDates(updowntimes);	
     	}
     	colNum++;
@@ -1183,8 +1199,10 @@ public class ExcelCommon {
     		case ConstantsInfo.DEAL_WARN_BUG://买入
     			warnDeal = "买入";
     			break;
-    	}    
-    	create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	}
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	}
     	ssu.setWeekWarnDeal(warnDeal);
     	
 		if(weekSValue.getTread() == 0){  
@@ -1200,15 +1218,16 @@ public class ExcelCommon {
 	//	String weekSC=nextTrend+Integer.toString(weekSValue.getSuspectedCurDateGap());
     //	create07Cell(wb, rowStock, colNum++, weekPS, 0); 	
     //	create07Cell(wb, rowStock, colNum++, weekSC, 0); 
-		if (minMaxItem != null){
-			create07Cell(wb, rowStock, colNum++, minMaxItem.getMaxDate() , 0); 	
+		if (minMaxItem != null){	 	
 			String maxPrice = Float.toString(minMaxItem.getMaxPrice());
-			create07Cell(wb, rowStock, colNum++, maxPrice , 0); 
+			if(flag){
+				create07Cell(wb, rowStock, colNum++, minMaxItem.getMaxDate() , 0);
+				create07Cell(wb, rowStock, colNum++, maxPrice , 0); 
+			}
 			ssu.setWeekPS(minMaxItem.getMaxDate());
 			ssu.setWeekSC(maxPrice);
 		} else {
-			create07Cell(wb, rowStock, colNum++, "" , 0); 	
-	    	create07Cell(wb, rowStock, colNum++, "" , 0); 
+	    	colNum=colNum+2;
 		}
 		
     	StockStatValue monthSValue = esItem.getMonthStatItem();
@@ -1216,7 +1235,9 @@ public class ExcelCommon {
     	if(monthSValue == null){
     		colNum = colNum+2;
     		if (minMaxItem != null){
-    			create07Cell(wb, rowStock, colNum++, Float.toString(minMaxItem.getMinMaxRatio()), 0);		
+    			if(flag){
+    				create07Cell(wb, rowStock, colNum++, Float.toString(minMaxItem.getMinMaxRatio()), 0);		
+    			}
     		}
     		return;
     	}
@@ -1224,7 +1245,9 @@ public class ExcelCommon {
     	ret = monthSValue.getUpOrdownTimes();
     	if(ret > 0){	
     		String updowntimes = desc+Integer.toString(ret);
-    		create07Cell(wb, rowStock, colNum,updowntimes, 0); 
+    		if(flag){
+    			create07Cell(wb, rowStock, colNum,updowntimes, 0); 
+    		}
     		ssu.setMonthUpOrdownDates(updowntimes);	
     	}
     	colNum++;
@@ -1241,7 +1264,9 @@ public class ExcelCommon {
     			warnDeal = "买入";
     			break;
     	}    
-    	create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	}
     	ssu.setMonthWarnDeal(warnDeal);
     	
 		if(monthSValue.getTread() == 0){  
@@ -1258,51 +1283,70 @@ public class ExcelCommon {
     //	create07Cell(wb, rowStock, colNum++,monthPS, 0); 	
     //	create07Cell(wb, rowStock, colNum++, monthSC, 0); 
 		if (minMaxItem != null){
-			create07Cell(wb, rowStock, colNum++, Float.toString(minMaxItem.getMinMaxRatio()), 0); 
-			create07Cell(wb, rowStock, colNum++, "", 0); 
+			if(flag){
+				create07Cell(wb, rowStock, colNum++, Float.toString(minMaxItem.getMinMaxRatio()), 0); 
+				create07Cell(wb, rowStock, colNum++, "", 0);
+			}
 	    } else {
-			create07Cell(wb, rowStock, colNum++, "" , 0); 	
-	    	create07Cell(wb, rowStock, colNum++, "" , 0); 
+	    	colNum = colNum+2;
 		}
     	
     }
     
     //输出股票其他value
-    public static void writeExcelStockOtherInfo(Workbook wb,Sheet sheet, StockOtherInfoValue soiValue,int stockRow,int type, StockSummary ssu)
+    public static void writeExcelStockOtherInfo(Workbook wb,Sheet sheet, StockOtherInfoValue soiValue,int stockRow,int type, StockSummary ssu,boolean flag)
     {
-    	Row rowStock;
+    	Row rowStock = null;
     	int col =0;
-		rowStock = sheet.createRow(stockRow);  
-		create07Cell(wb, rowStock, col++, Integer.toString(stockRow), 0);  
-        create07Cell(wb, rowStock, col++, soiValue.getFullId(), 0);  
-        create07Cell(wb, rowStock, col++, soiValue.getName(), 0); 
-        
-        if(ssu != null){
+    	if(flag) {
+    		rowStock = sheet.createRow(stockRow);  
+    		create07Cell(wb, rowStock, col++, Integer.toString(stockRow), 0);  
+            create07Cell(wb, rowStock, col++, soiValue.getFullId(), 0);  
+            create07Cell(wb, rowStock, col++, soiValue.getName(), 0); 
+    	}
+    	
+    	if (ssu!= null) {
 	        ssu.setFullId(soiValue.getFullId());
 	        ssu.setName(soiValue.getName());
-        }
+    	}
+        
         
         if (type == 1) {
 	        if(soiValue.getEnableTingPai() == 1){
 	        	String dourong = Integer.toString(soiValue.getMarginTrading())+":停牌";
-	        	create07Cell(wb, rowStock, col++, dourong, 0); 
-	        	ssu.setDouRong(dourong);
+	        	if(flag) {
+	        		create07Cell(wb, rowStock, col++, dourong, 0); 
+	        	}
+	        	if (ssu != null) {
+	        		ssu.setDouRong(dourong);
+	        	}
 	        } else {
 	        	String dourong = Integer.toString(soiValue.getMarginTrading());
-	        	create07Cell(wb, rowStock, col++,dourong, 0); 
-	        	ssu.setDouRong(dourong);
+	        	if(flag) {
+	        		create07Cell(wb, rowStock, col++,dourong, 0); 
+	        	}
+	        	if (ssu != null) {
+	        		ssu.setDouRong(dourong);
+	        	}
 	        }
 	        
 	        if (soiValue.getBaseFace()!= null) {
-	        	create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getBaseExpect(), 0); 
-		        create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getMain(), 0); 
-		    	create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getPsychology(), 0); 
-		    	
-		    	ssu.setBaseExpect(soiValue.getBaseFace().getBaseExpect());
-		    	ssu.setMain(soiValue.getBaseFace().getMain());
-		    	ssu.setPsychology(soiValue.getBaseFace().getPsychology());
-		    	
-		    	
+	        	if(flag) {
+		        	create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getBaseExpect(), 0); 
+			        create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getMain(), 0); 
+			    	create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getPsychology(), 0); 
+			    	create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getRisk(), 0); 
+		    		create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getPotential(), 0); 	    	
+			    	create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getFaucet(), 0); 
+	        	}
+	        	if (ssu != null) {
+	        		ssu.setBaseExpect(soiValue.getBaseFace().getBaseExpect());
+	        		ssu.setMain(soiValue.getBaseFace().getMain());
+	        		ssu.setPsychology(soiValue.getBaseFace().getPsychology());
+	        		ssu.setRisk(soiValue.getBaseFace().getRisk());
+			    	ssu.setPotential(soiValue.getBaseFace().getPotential());
+			    	ssu.setFaucet(soiValue.getBaseFace().getFaucet());
+	        	}		    		    	
 		    	/*
 		    	if(soiValue.getBaseYearInfo()!= null) {
 		    		String combain = soiValue.getBaseYearInfo().getGongJiJin()+":"+soiValue.getBaseYearInfo().getLiRun()+":"+
@@ -1312,17 +1356,8 @@ public class ExcelCommon {
 		    	} else {
 		    	}
 		    	*/
-		    		
-	    		create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getRisk(), 0); 
-	    		create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getPotential(), 0); 	    	
-		    	create07Cell(wb, rowStock, col++, soiValue.getBaseFace().getFaucet(), 0); 
-		    	
-		    	ssu.setRisk(soiValue.getBaseFace().getRisk());
-		    	ssu.setPotential(soiValue.getBaseFace().getPotential());
-		    	ssu.setFaucet(soiValue.getBaseFace().getFaucet());
 	        }       
-	       
-	        
+	             
         }
     	
     }
@@ -1341,13 +1376,13 @@ public class ExcelCommon {
     }
     
     //输出股票内容
-    public static void writeExcelItem(Workbook wb,Sheet sheet, StockExcelItem eItem,int stockRow,int dataType, StockSummary ssu)
+    public static void writeExcelItem(Workbook wb,Sheet sheet, StockExcelItem eItem,int stockRow,int dataType, StockSummary ssu, boolean flag)
     {
     	if(eItem==null)
     		return; 
     	int colNum=0;
     	//每个股票
-    	Row rowStock;
+    	Row rowStock = null;
     	
     	String valuePer1="";//百分比
     	String valuePer2="";//百分比
@@ -1365,8 +1400,11 @@ public class ExcelCommon {
     	String curTrend="";
     	String nextTrend="";
     	String warnDeal="";
+    	  
+    	if(flag){
+    		rowStock = sheet.getRow(stockRow);
+    	}
     	
-    	rowStock = sheet.getRow(stockRow);
     	switch (dataType)
     	{
     	case ConstantsInfo.DayDataType:  
@@ -1407,27 +1445,27 @@ public class ExcelCommon {
     	} else {
     		create07Cell(wb, rowStock, colNum++, "下跌", 0);
     	}
-    	*/
-    	
-    	
+    	*/	
     	
     	//当前 
-    	create07Cell(wb, rowStock, colNum++, eItem.getScValue().getPriDate(), 0);
     	String highorlowest = Float.toString(eItem.getScValue().getPriHighOrLowest());
-    	create07Cell(wb, rowStock, colNum++, highorlowest, 0);
     	String reverregion =  Float.toString(eItem.getScValue().getReversalRegion());
-    	create07Cell(wb, rowStock, colNum++, reverregion, 0);
-    	create07Cell(wb, rowStock, colNum++, eItem.getScValue().getStartDate(), 0);
     	String startValue = Float.toString(eItem.getScValue().getStartValue());
-    	create07Cell(wb, rowStock, colNum++, startValue, 0);
-    	create07Cell(wb, rowStock, colNum++, eItem.getScValue().getEndDate(), 0); 
     	String endValue = Float.toString(eItem.getScValue().getEndValue());
-    	create07Cell(wb, rowStock, colNum++, endValue, 0);    	
-    	create07Cell(wb, rowStock, colNum++, eItem.getScValue().getCurDate(), 0);
     	String curValue = Float.toString(eItem.getScValue().getCurValue());
-    	create07Cell(wb, rowStock, colNum++,curValue, 0);
     	String workRegion = Float.toString(eItem.getScValue().getWorkRegion());
-    	create07Cell(wb, rowStock, colNum++, workRegion, 0);
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, eItem.getScValue().getPriDate(), 0);
+    		create07Cell(wb, rowStock, colNum++, highorlowest, 0);
+        	create07Cell(wb, rowStock, colNum++, reverregion, 0);
+        	create07Cell(wb, rowStock, colNum++, eItem.getScValue().getStartDate(), 0);	
+        	create07Cell(wb, rowStock, colNum++, startValue, 0);
+        	create07Cell(wb, rowStock, colNum++, eItem.getScValue().getEndDate(), 0);   	
+        	create07Cell(wb, rowStock, colNum++, endValue, 0);    	
+        	create07Cell(wb, rowStock, colNum++, eItem.getScValue().getCurDate(), 0); 	
+        	create07Cell(wb, rowStock, colNum++,curValue, 0);
+        	create07Cell(wb, rowStock, colNum++, workRegion, 0);
+    	}
     	
     	switch (dataType)
     	{
@@ -1470,36 +1508,37 @@ public class ExcelCommon {
     	}
     
     	//时间差
-    	String psDateGap = curTrend+Integer.toString(eItem.getScValue().getPointSuspectedDateGap());
-    	create07Cell(wb, rowStock, colNum++, psDateGap, 0); 	
-    	valuePer1=changePercent(eItem.getScValue().getPointSuspectedValueGap());
-    	create07Cell(wb, rowStock, colNum++, valuePer1, 0); 	
-    	String pcDateGap = Integer.toString(eItem.getScValue().getPointCurDateGap());
-    	create07Cell(wb, rowStock, colNum++, pcDateGap, 0); 	
-    	valuePer2=changePercent(eItem.getScValue().getPointCurValueGap());
-    	create07Cell(wb, rowStock, colNum++, valuePer2, 0); 
-    	String scDateGap = nextTrend+Integer.toString(eItem.getScValue().getSuspectedCurDateGap());
-    	create07Cell(wb, rowStock, colNum++,scDateGap , 0); 	
-    	valuePer3=changePercent(eItem.getScValue().getSuspectedCurValueGap());
-    	create07Cell(wb, rowStock, colNum++, valuePer3, 0); 
+    	String psDateGap = curTrend+Integer.toString(eItem.getScValue().getPointSuspectedDateGap());   		
+    	valuePer1=changePercent(eItem.getScValue().getPointSuspectedValueGap());    		
+    	String pcDateGap = Integer.toString(eItem.getScValue().getPointCurDateGap());   		
+    	valuePer2=changePercent(eItem.getScValue().getPointCurValueGap());   	
+    	String scDateGap = nextTrend+Integer.toString(eItem.getScValue().getSuspectedCurDateGap());    	
+    	valuePer3=changePercent(eItem.getScValue().getSuspectedCurValueGap());   	
     	
     	//大盘对比
-    	desc1 = getMarketCompareInfo(eItem.getScValue().getMarketPSDateGap());
-    	create07Cell(wb, rowStock, colNum++, desc1, 0); 	    	
-    	valuePer4=changePercent(eItem.getScValue().getMarketPSSpace());
-    	create07Cell(wb, rowStock, colNum++, valuePer4, 0); 	 
-    	
-    	desc2 = getMarketCompareInfo(eItem.getScValue().getMarketPCDateGap());
-    	create07Cell(wb, rowStock, colNum++, desc2, 0); 	    	
-    	valuePer5=changePercent(eItem.getScValue().getMarketPCSpace());
-    	create07Cell(wb, rowStock, colNum++, valuePer5, 0); 	
-    	desc3 = getMarketCompareInfo(eItem.getScValue().getMarketSCDateGap());
-    	create07Cell(wb, rowStock, colNum++, desc3, 0); 	    	
-    	valuePer6=changePercent(eItem.getScValue().getMarketSCSpace());
-    	create07Cell(wb, rowStock, colNum++, valuePer6, 0); 	    	
+    	desc1 = getMarketCompareInfo(eItem.getScValue().getMarketPSDateGap());    		    	
+    	valuePer4=changePercent(eItem.getScValue().getMarketPSSpace());   	
+    	desc2 = getMarketCompareInfo(eItem.getScValue().getMarketPCDateGap());   		    	
+    	valuePer5=changePercent(eItem.getScValue().getMarketPCSpace());    		
+    	desc3 = getMarketCompareInfo(eItem.getScValue().getMarketSCDateGap());   		    	
+    	valuePer6=changePercent(eItem.getScValue().getMarketSCSpace());	 	    	
     	desc4 = eItem.getScValue().getTrendConsistent()>0?"不一致":"一致";
-    	create07Cell(wb, rowStock, colNum++, desc4, 0); 	
-    	
+    		 	
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, psDateGap, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer1, 0);
+    		create07Cell(wb, rowStock, colNum++, pcDateGap, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer2, 0); 
+    		create07Cell(wb, rowStock, colNum++, scDateGap, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer3, 0); 
+    		create07Cell(wb, rowStock, colNum++, desc1, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer4, 0);
+    		create07Cell(wb, rowStock, colNum++, desc2, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer5, 0); 
+    		create07Cell(wb, rowStock, colNum++, desc3, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer6, 0);
+    		create07Cell(wb, rowStock, colNum++, desc4, 0); 
+    	}
     	
     	switch (dataType)
     	{
@@ -1551,48 +1590,45 @@ public class ExcelCommon {
     	}
     	
     	//预期   	
-    	String desireValue1 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue1());
-    	create07Cell(wb, rowStock, colNum++, desireValue1, 0);
-    	valuePer1=changePercent(eItem.getSdValue().getDesireRange1());
-    	create07Cell(wb, rowStock, colNum++, valuePer1, 0); 
-    	String desireRate1 = Float.toString(eItem.getSdValue().getDesireRate1());
-    	create07Cell(wb, rowStock, colNum++, desireRate1, 0);
-    	
-    	String desireValue2 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue2());
-    	create07Cell(wb, rowStock, colNum++, desireValue2, 0);
-    	valuePer2=changePercent(eItem.getSdValue().getDesireRange2());
-    	create07Cell(wb, rowStock, colNum++, valuePer2, 0); 
-    	String desireRate2 = Float.toString(eItem.getSdValue().getDesireRate2());
-    	create07Cell(wb, rowStock, colNum++, desireRate2, 0);
-    	
-    	String desireValue3 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue3());
-    	create07Cell(wb, rowStock, colNum++,desireValue3, 0);
-    	valuePer3=changePercent(eItem.getSdValue().getDesireRange3());
-    	create07Cell(wb, rowStock, colNum++, valuePer3, 0); 
-    	String desireRate3 = Float.toString(eItem.getSdValue().getDesireRate3());
-    	create07Cell(wb, rowStock, colNum++, desireRate3, 0);
-    	
-    	String desireValue4 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue4());
-    	create07Cell(wb, rowStock, colNum++, desireValue4, 0);
-    	valuePer4=changePercent(eItem.getSdValue().getDesireRange4());
-    	create07Cell(wb, rowStock, colNum++, valuePer4, 0); 
-    	String desireRate4 = Float.toString(eItem.getSdValue().getDesireRate4());
-    	create07Cell(wb, rowStock, colNum++, desireRate4, 0);
-    	
-    	String desireValue5 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue5());
-    	create07Cell(wb, rowStock, colNum++, desireValue5, 0);
-    	valuePer5=changePercent(eItem.getSdValue().getDesireRange5());
-    	create07Cell(wb, rowStock, colNum++, valuePer5, 0); 
-    	String desireRate5 = Float.toString(eItem.getSdValue().getDesireRate5());
-    	create07Cell(wb, rowStock, colNum++, desireRate5, 0);
-    	
-    	String desireValue6 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue6());
-    	create07Cell(wb, rowStock, colNum++,desireValue6, 0);
-    	valuePer6=changePercent(eItem.getSdValue().getDesireRange6());
-    	create07Cell(wb, rowStock, colNum++, valuePer6, 0); 
+    	String desireValue1 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue1());   	
+    	valuePer1=changePercent(eItem.getSdValue().getDesireRange1());   	
+    	String desireRate1 = Float.toString(eItem.getSdValue().getDesireRate1());   	
+    	String desireValue2 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue2());  	
+    	valuePer2=changePercent(eItem.getSdValue().getDesireRange2());   	
+    	String desireRate2 = Float.toString(eItem.getSdValue().getDesireRate2());	
+    	String desireValue3 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue3());   	
+    	valuePer3=changePercent(eItem.getSdValue().getDesireRange3()); 	
+    	String desireRate3 = Float.toString(eItem.getSdValue().getDesireRate3());  	
+    	String desireValue4 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue4());    	
+    	valuePer4=changePercent(eItem.getSdValue().getDesireRange4());   	
+    	String desireRate4 = Float.toString(eItem.getSdValue().getDesireRate4());  	
+    	String desireValue5 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue5());    	
+    	valuePer5=changePercent(eItem.getSdValue().getDesireRange5());   	
+    	String desireRate5 = Float.toString(eItem.getSdValue().getDesireRate5());   	
+    	String desireValue6 = nextTrend+Float.toString(eItem.getSdValue().getDesireValue6());    	
+    	valuePer6=changePercent(eItem.getSdValue().getDesireRange6());    	
     	String desireRate6 = Float.toString(eItem.getSdValue().getDesireRate6());
-    	create07Cell(wb, rowStock, colNum++, desireRate6, 0);
     
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, desireValue1, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer1, 0); 
+    		create07Cell(wb, rowStock, colNum++, desireRate1, 0);
+    		create07Cell(wb, rowStock, colNum++, desireValue2, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer2, 0); 
+    		create07Cell(wb, rowStock, colNum++, desireRate2, 0);
+    		create07Cell(wb, rowStock, colNum++,desireValue3, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer3, 0); 
+    		create07Cell(wb, rowStock, colNum++, desireRate3, 0);
+    		create07Cell(wb, rowStock, colNum++, desireValue4, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer4, 0); 
+    		create07Cell(wb, rowStock, colNum++, desireRate4, 0);
+    		create07Cell(wb, rowStock, colNum++, desireValue5, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer5, 0); 
+    		create07Cell(wb, rowStock, colNum++, desireRate5, 0);
+    		create07Cell(wb, rowStock, colNum++,desireValue6, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer6, 0); 
+    		create07Cell(wb, rowStock, colNum++, desireRate6, 0);
+    	}
     	switch (dataType)
     	{
     	case ConstantsInfo.DayDataType:  
@@ -1657,22 +1693,23 @@ public class ExcelCommon {
     		ssu.setMonthDesireRate6(desireRate6);
     		break;
     	}
-    
     	
     	//预期差距
-    	valuePer1=changePercent(eItem.getSdValue().getDesireValue1Gap());
-    	create07Cell(wb, rowStock, colNum++, valuePer1, 0); 	
-    	valuePer2=changePercent(eItem.getSdValue().getDesireValue2Gap());
-    	create07Cell(wb, rowStock, colNum++, valuePer2, 0); 	
-    	valuePer3=changePercent(eItem.getSdValue().getDesireValue3Gap());
-    	create07Cell(wb, rowStock, colNum++, valuePer3, 0); 	
-    	valuePer4=changePercent(eItem.getSdValue().getDesireValue4Gap());
-    	create07Cell(wb, rowStock, colNum++, valuePer4, 0); 	
-    	valuePer5=changePercent(eItem.getSdValue().getDesireValue5Gap());
-    	create07Cell(wb, rowStock, colNum++, valuePer5, 0); 	
-    	valuePer6=changePercent(eItem.getSdValue().getDesireValue6Gap());
-    	create07Cell(wb, rowStock, colNum++, valuePer6, 0); 	
+    	valuePer1=changePercent(eItem.getSdValue().getDesireValue1Gap());    		
+    	valuePer2=changePercent(eItem.getSdValue().getDesireValue2Gap());    		
+    	valuePer3=changePercent(eItem.getSdValue().getDesireValue3Gap());    	 	
+    	valuePer4=changePercent(eItem.getSdValue().getDesireValue4Gap());  	 	
+    	valuePer5=changePercent(eItem.getSdValue().getDesireValue5Gap());   	
+    	valuePer6=changePercent(eItem.getSdValue().getDesireValue6Gap()); 		
     	
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, valuePer1, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer2, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer3, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer4, 0);
+    		create07Cell(wb, rowStock, colNum++, valuePer5, 0); 
+    		create07Cell(wb, rowStock, colNum++, valuePer6, 0); 
+    	}
     	
     	switch (dataType)
     	{
@@ -1704,19 +1741,26 @@ public class ExcelCommon {
        	     	
     	//操作
     	if (eItem.getFlag() == 0) {//下跌 
-    		valuePer1 = Float.toString(eItem.getScValue().getBugValue());
-    		create07Cell(wb, rowStock, colNum++, valuePer1, 0); 
-    		valuePer2=changePercent(eItem.getScValue().getWinValue());
-	    	create07Cell(wb, rowStock, colNum++, valuePer2, 0); 
-	    	valuePer3=changePercent(eItem.getScValue().getLoseVaule());
-	    	create07Cell(wb, rowStock, colNum++, valuePer3, 0); 	
+    		valuePer1 = Float.toString(eItem.getScValue().getBugValue());  		 
+    		valuePer2=changePercent(eItem.getScValue().getWinValue());	    	
+	    	valuePer3=changePercent(eItem.getScValue().getLoseVaule());    	
+	    	if(flag){
+	    		create07Cell(wb, rowStock, colNum++, valuePer1, 0);
+	    		create07Cell(wb, rowStock, colNum++, valuePer2, 0); 
+	    		create07Cell(wb, rowStock, colNum++, valuePer3, 0); 
+	    	}
     	} else {
+    		valuePer1 = "";
+    		valuePer2 = "";
+    		valuePer3 = "";
     		colNum = colNum+3;
     	}
+    	/*
     	int runSeeDateGap = eItem.getScValue().getPointSuspectedDateGap();
     	int seeDateGap = ConstantsInfo.DEAL_DATE - runSeeDateGap;
     	if(seeDateGap<0)
-    		seeDateGap = runSeeDateGap;    	
+    		seeDateGap = runSeeDateGap; 
+    	*/
     	int ret = eItem.getScValue().getDealWarn();
     	switch (ret) {
     		case ConstantsInfo.DEAL_WARN_SEE: //观望
@@ -1739,11 +1783,12 @@ public class ExcelCommon {
     			//warnDeal = "买入:进行"+runSeeDateGap+dateDesc;
     			//warnRun = "已过:"+overDateGap+dateDesc;
     			break;
-    	}    	
-    	create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	}    
+    	if(flag){
+    		create07Cell(wb, rowStock, colNum++, warnDeal, 0);
+    	}
     	colNum++;
-    	//create07Cell(wb, rowStock, colNum++, warnRun, 0);
-    	
+    	//create07Cell(wb, rowStock, colNum++, warnRun, 0);  	
     	switch (dataType)
     	{
     	case ConstantsInfo.DayDataType:  

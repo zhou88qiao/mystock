@@ -216,6 +216,279 @@ public class StockSummary implements Comparable {
 	private String monthOption;
 	
 	
+	public StockSummary(int id, String fullId, String name, String douRong,
+			String baseExpect, String main, String psychology, String risk,
+			String potential, String faucet, String curRange,
+			String priComState, String priState, String comState,
+			String psState, String daySaleGrade, String daySaleState,
+			String dayPriUpDateGap, String dayUpOrdownDates,
+			String dayWarnDeal, String dayPS, String daySC,
+			String weekSaleGrade, String weekSaleState,
+			String weekUpOrdownDates, String weekWarnDeal, String weekPS,
+			String weekSC, String monthUpOrdownDates, String monthWarnDeal,
+			String monthPS, String monthSC, String dayPriDate,
+			String dayPriHighOrLowest, String dayReversalRegion,
+			String dayStartDate, String dayStartValue, String dayEndDate,
+			String dayEndValue, String dayCurDate, String dayCurValue,
+			String dayWorkRegion, String dayPSDateGap, String dayPSValueGap,
+			String dayPCDateGap, String dayPCValueGap, String daySCDateGap,
+			String daySCValueGap, String dayMarketPSDateGap,
+			String dayMarketPSSpace, String dayMarketPCDateGap,
+			String dayMarketPCSpace, String dayMarketSCDateGap,
+			String dayMarketSCSpace, String dayTrendConsistent,
+			String dayDesireValue1, String dayDesireRange1,
+			String dayDesireRate1, String dayDesireValue2,
+			String dayDesireRange2, String dayDesireRate2,
+			String dayDesireValue3, String dayDesireRange3,
+			String dayDesireRate3, String dayDesireValue4,
+			String dayDesireRange4, String dayDesireRate4,
+			String dayDesireValue5, String dayDesireRange5,
+			String dayDesireRate5, String dayDesireValue6,
+			String dayDesireRange6, String dayDesireRate6,
+			String dayDesireValue1Gap, String dayDesireValue2Gap,
+			String dayDesireValue3Gap, String dayDesireValue4Gap,
+			String dayDesireValue5Gap, String dayDesireValue6Gap,
+			String dayBugValue, String dayWinValue, String dayLoseValue,
+			String dayDealWarn, String dayOption, String weekPriDate,
+			String weekPriHighOrLowest, String weekReversalRegion,
+			String weekStartDate, String weekStartValue, String weekEndDate,
+			String weekEndValue, String weekCurDate, String weekCurValue,
+			String weekWorkRegion, String weekPSDateGap, String weekPSValueGap,
+			String weekPCDateGap, String weekPCValueGap, String weekSCDateGap,
+			String weekSCValueGap, String weekMarketPSDateGap,
+			String weekMarketPSSpace, String weekMarketPCDateGap,
+			String weekMarketPCSpace, String weekMarketSCDateGap,
+			String weekMarketSCSpace, String weekTrendConsistent,
+			String weekDesireValue1, String weekDesireRange1,
+			String weekDesireRate1, String weekDesireValue2,
+			String weekDesireRange2, String weekDesireRate2,
+			String weekDesireValue3, String weekDesireRange3,
+			String weekDesireRate3, String weekDesireValue4,
+			String weekDesireRange4, String weekDesireRate4,
+			String weekDesireValue5, String weekDesireRange5,
+			String weekDesireRate5, String weekDesireValue6,
+			String weekDesireRange6, String weekDesireRate6,
+			String weekDesireValue1Gap, String weekDesireValue2Gap,
+			String weekDesireValue3Gap, String weekDesireValue4Gap,
+			String weekDesireValue5Gap, String weekDesireValue6Gap,
+			String weekBugValue, String weekWinValue, String weekLoseValue,
+			String weekDealWarn, String weekOption, String monthPriDate,
+			String monthPriHighOrLowest, String monthReversalRegion,
+			String monthStartDate, String monthStartValue, String monthEndDate,
+			String monthEndValue, String monthCurDate, String monthCurValue,
+			String monthWorkRegion, String monthPSDateGap,
+			String monthPSValueGap, String monthPCDateGap,
+			String monthPCValueGap, String monthSCDateGap,
+			String monthSCValueGap, String monthMarketPSDateGap,
+			String monthMarketPSSpace, String monthMarketPCDateGap,
+			String monthMarketPCSpace, String monthMarketSCDateGap,
+			String monthMarketSCSpace, String monthTrendConsistent,
+			String monthDesireValue1, String monthDesireRange1,
+			String monthDesireRate1, String monthDesireValue2,
+			String monthDesireRange2, String monthDesireRate2,
+			String monthDesireValue3, String monthDesireRange3,
+			String monthDesireRate3, String monthDesireValue4,
+			String monthDesireRange4, String monthDesireRate4,
+			String monthDesireValue5, String monthDesireRange5,
+			String monthDesireRate5, String monthDesireValue6,
+			String monthDesireRange6, String monthDesireRate6,
+			String monthDesireValue1Gap, String monthDesireValue2Gap,
+			String monthDesireValue3Gap, String monthDesireValue4Gap,
+			String monthDesireValue5Gap, String monthDesireValue6Gap,
+			String monthBugValue, String monthWinValue, String monthLoseValue,
+			String monthDealWarn, String monthOption) {
+		super();
+		this.id = id;
+		this.fullId = fullId;
+		this.name = name;
+		this.douRong = douRong;
+		this.baseExpect = baseExpect;
+		this.main = main;
+		this.psychology = psychology;
+		this.risk = risk;
+		this.potential = potential;
+		this.faucet = faucet;
+		this.curRange = curRange;
+		this.priComState = priComState;
+		this.priState = priState;
+		this.comState = comState;
+		this.psState = psState;
+		this.daySaleGrade = daySaleGrade;
+		this.daySaleState = daySaleState;
+		this.dayPriUpDateGap = dayPriUpDateGap;
+		this.dayUpOrdownDates = dayUpOrdownDates;
+		this.dayWarnDeal = dayWarnDeal;
+		this.dayPS = dayPS;
+		this.daySC = daySC;
+		this.weekSaleGrade = weekSaleGrade;
+		this.weekSaleState = weekSaleState;
+		this.weekUpOrdownDates = weekUpOrdownDates;
+		this.weekWarnDeal = weekWarnDeal;
+		this.weekPS = weekPS;
+		this.weekSC = weekSC;
+		this.monthUpOrdownDates = monthUpOrdownDates;
+		this.monthWarnDeal = monthWarnDeal;
+		this.monthPS = monthPS;
+		this.monthSC = monthSC;
+		this.dayPriDate = dayPriDate;
+		this.dayPriHighOrLowest = dayPriHighOrLowest;
+		this.dayReversalRegion = dayReversalRegion;
+		this.dayStartDate = dayStartDate;
+		this.dayStartValue = dayStartValue;
+		this.dayEndDate = dayEndDate;
+		this.dayEndValue = dayEndValue;
+		this.dayCurDate = dayCurDate;
+		this.dayCurValue = dayCurValue;
+		this.dayWorkRegion = dayWorkRegion;
+		this.dayPSDateGap = dayPSDateGap;
+		this.dayPSValueGap = dayPSValueGap;
+		this.dayPCDateGap = dayPCDateGap;
+		this.dayPCValueGap = dayPCValueGap;
+		this.daySCDateGap = daySCDateGap;
+		this.daySCValueGap = daySCValueGap;
+		this.dayMarketPSDateGap = dayMarketPSDateGap;
+		this.dayMarketPSSpace = dayMarketPSSpace;
+		this.dayMarketPCDateGap = dayMarketPCDateGap;
+		this.dayMarketPCSpace = dayMarketPCSpace;
+		this.dayMarketSCDateGap = dayMarketSCDateGap;
+		this.dayMarketSCSpace = dayMarketSCSpace;
+		this.dayTrendConsistent = dayTrendConsistent;
+		this.dayDesireValue1 = dayDesireValue1;
+		this.dayDesireRange1 = dayDesireRange1;
+		this.dayDesireRate1 = dayDesireRate1;
+		this.dayDesireValue2 = dayDesireValue2;
+		this.dayDesireRange2 = dayDesireRange2;
+		this.dayDesireRate2 = dayDesireRate2;
+		this.dayDesireValue3 = dayDesireValue3;
+		this.dayDesireRange3 = dayDesireRange3;
+		this.dayDesireRate3 = dayDesireRate3;
+		this.dayDesireValue4 = dayDesireValue4;
+		this.dayDesireRange4 = dayDesireRange4;
+		this.dayDesireRate4 = dayDesireRate4;
+		this.dayDesireValue5 = dayDesireValue5;
+		this.dayDesireRange5 = dayDesireRange5;
+		this.dayDesireRate5 = dayDesireRate5;
+		this.dayDesireValue6 = dayDesireValue6;
+		this.dayDesireRange6 = dayDesireRange6;
+		this.dayDesireRate6 = dayDesireRate6;
+		this.dayDesireValue1Gap = dayDesireValue1Gap;
+		this.dayDesireValue2Gap = dayDesireValue2Gap;
+		this.dayDesireValue3Gap = dayDesireValue3Gap;
+		this.dayDesireValue4Gap = dayDesireValue4Gap;
+		this.dayDesireValue5Gap = dayDesireValue5Gap;
+		this.dayDesireValue6Gap = dayDesireValue6Gap;
+		this.dayBugValue = dayBugValue;
+		this.dayWinValue = dayWinValue;
+		this.dayLoseValue = dayLoseValue;
+		this.dayDealWarn = dayDealWarn;
+		this.dayOption = dayOption;
+		this.weekPriDate = weekPriDate;
+		this.weekPriHighOrLowest = weekPriHighOrLowest;
+		this.weekReversalRegion = weekReversalRegion;
+		this.weekStartDate = weekStartDate;
+		this.weekStartValue = weekStartValue;
+		this.weekEndDate = weekEndDate;
+		this.weekEndValue = weekEndValue;
+		this.weekCurDate = weekCurDate;
+		this.weekCurValue = weekCurValue;
+		this.weekWorkRegion = weekWorkRegion;
+		this.weekPSDateGap = weekPSDateGap;
+		this.weekPSValueGap = weekPSValueGap;
+		this.weekPCDateGap = weekPCDateGap;
+		this.weekPCValueGap = weekPCValueGap;
+		this.weekSCDateGap = weekSCDateGap;
+		this.weekSCValueGap = weekSCValueGap;
+		this.weekMarketPSDateGap = weekMarketPSDateGap;
+		this.weekMarketPSSpace = weekMarketPSSpace;
+		this.weekMarketPCDateGap = weekMarketPCDateGap;
+		this.weekMarketPCSpace = weekMarketPCSpace;
+		this.weekMarketSCDateGap = weekMarketSCDateGap;
+		this.weekMarketSCSpace = weekMarketSCSpace;
+		this.weekTrendConsistent = weekTrendConsistent;
+		this.weekDesireValue1 = weekDesireValue1;
+		this.weekDesireRange1 = weekDesireRange1;
+		this.weekDesireRate1 = weekDesireRate1;
+		this.weekDesireValue2 = weekDesireValue2;
+		this.weekDesireRange2 = weekDesireRange2;
+		this.weekDesireRate2 = weekDesireRate2;
+		this.weekDesireValue3 = weekDesireValue3;
+		this.weekDesireRange3 = weekDesireRange3;
+		this.weekDesireRate3 = weekDesireRate3;
+		this.weekDesireValue4 = weekDesireValue4;
+		this.weekDesireRange4 = weekDesireRange4;
+		this.weekDesireRate4 = weekDesireRate4;
+		this.weekDesireValue5 = weekDesireValue5;
+		this.weekDesireRange5 = weekDesireRange5;
+		this.weekDesireRate5 = weekDesireRate5;
+		this.weekDesireValue6 = weekDesireValue6;
+		this.weekDesireRange6 = weekDesireRange6;
+		this.weekDesireRate6 = weekDesireRate6;
+		this.weekDesireValue1Gap = weekDesireValue1Gap;
+		this.weekDesireValue2Gap = weekDesireValue2Gap;
+		this.weekDesireValue3Gap = weekDesireValue3Gap;
+		this.weekDesireValue4Gap = weekDesireValue4Gap;
+		this.weekDesireValue5Gap = weekDesireValue5Gap;
+		this.weekDesireValue6Gap = weekDesireValue6Gap;
+		this.weekBugValue = weekBugValue;
+		this.weekWinValue = weekWinValue;
+		this.weekLoseValue = weekLoseValue;
+		this.weekDealWarn = weekDealWarn;
+		this.weekOption = weekOption;
+		this.monthPriDate = monthPriDate;
+		this.monthPriHighOrLowest = monthPriHighOrLowest;
+		this.monthReversalRegion = monthReversalRegion;
+		this.monthStartDate = monthStartDate;
+		this.monthStartValue = monthStartValue;
+		this.monthEndDate = monthEndDate;
+		this.monthEndValue = monthEndValue;
+		this.monthCurDate = monthCurDate;
+		this.monthCurValue = monthCurValue;
+		this.monthWorkRegion = monthWorkRegion;
+		this.monthPSDateGap = monthPSDateGap;
+		this.monthPSValueGap = monthPSValueGap;
+		this.monthPCDateGap = monthPCDateGap;
+		this.monthPCValueGap = monthPCValueGap;
+		this.monthSCDateGap = monthSCDateGap;
+		this.monthSCValueGap = monthSCValueGap;
+		this.monthMarketPSDateGap = monthMarketPSDateGap;
+		this.monthMarketPSSpace = monthMarketPSSpace;
+		this.monthMarketPCDateGap = monthMarketPCDateGap;
+		this.monthMarketPCSpace = monthMarketPCSpace;
+		this.monthMarketSCDateGap = monthMarketSCDateGap;
+		this.monthMarketSCSpace = monthMarketSCSpace;
+		this.monthTrendConsistent = monthTrendConsistent;
+		this.monthDesireValue1 = monthDesireValue1;
+		this.monthDesireRange1 = monthDesireRange1;
+		this.monthDesireRate1 = monthDesireRate1;
+		this.monthDesireValue2 = monthDesireValue2;
+		this.monthDesireRange2 = monthDesireRange2;
+		this.monthDesireRate2 = monthDesireRate2;
+		this.monthDesireValue3 = monthDesireValue3;
+		this.monthDesireRange3 = monthDesireRange3;
+		this.monthDesireRate3 = monthDesireRate3;
+		this.monthDesireValue4 = monthDesireValue4;
+		this.monthDesireRange4 = monthDesireRange4;
+		this.monthDesireRate4 = monthDesireRate4;
+		this.monthDesireValue5 = monthDesireValue5;
+		this.monthDesireRange5 = monthDesireRange5;
+		this.monthDesireRate5 = monthDesireRate5;
+		this.monthDesireValue6 = monthDesireValue6;
+		this.monthDesireRange6 = monthDesireRange6;
+		this.monthDesireRate6 = monthDesireRate6;
+		this.monthDesireValue1Gap = monthDesireValue1Gap;
+		this.monthDesireValue2Gap = monthDesireValue2Gap;
+		this.monthDesireValue3Gap = monthDesireValue3Gap;
+		this.monthDesireValue4Gap = monthDesireValue4Gap;
+		this.monthDesireValue5Gap = monthDesireValue5Gap;
+		this.monthDesireValue6Gap = monthDesireValue6Gap;
+		this.monthBugValue = monthBugValue;
+		this.monthWinValue = monthWinValue;
+		this.monthLoseValue = monthLoseValue;
+		this.monthDealWarn = monthDealWarn;
+		this.monthOption = monthOption;
+	}
+
+
 	public StockSummary(){  
 		  
 	}  
