@@ -549,7 +549,7 @@ public class FileReader {
 	 * @throws InstantiationException 
 	 * @throws SecurityException 
 	 */
-	public int loadAllDataInfile(String loadDate) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
+	public int loadAllDataInfile() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
 	{
 		
 		CalculationStock cas =new CalculationStock(sbDao,sdDao);
@@ -665,7 +665,7 @@ public class FileReader {
 	  }
 	
 	//导入商品数据
-	public int loadAllFuturesDataInfile(String loadDate) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
+	public int loadAllFuturesDataInfile() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
 	{
 		
 		CalculationStock cas =new CalculationStock(sbDao,sdDao);
@@ -1063,8 +1063,8 @@ public class FileReader {
 		//fr.loadAllConceptContainStockInfile();//导入概念下对应股票
 		//loadreadIndustryInfile();//读取三行行业名
 		//loadAllIndustryContainStockInfile(); //导入三级行业下对应 股票
-     fr.loadAllFuturesDataInfile(dateNowStr);
-      fr.loadAllDataInfile(dateNowStr);
+     fr.loadAllFuturesDataInfile();
+      fr.loadAllDataInfile();
  	//	fr.loadSingleAllDataInfile(dateNowStr);	
 		
 		//fr.deleteDataInfile();

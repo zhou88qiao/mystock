@@ -1097,17 +1097,17 @@ public class StockBaseManager {
 	//1导入交易数据
 	public void loadStockData(int type){
 		
-		Date startDate = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
-        String dateNowStr = sdf.format(startDate);  
+		Date start = new Date();
 		fr=new FileReader(sbDao,sdDao,spDao,ssDao);		
 		int ret = 0;
+		
+		stockLogger.logger.fatal("******load stock data start*****");
 		//导入 部分日数据 并计算ma5 涨幅
 		try {
 				if(type == ConstantsInfo.StockMarket)
-					ret=fr.loadAllDataInfile(dateNowStr);
+					ret=fr.loadAllDataInfile();
 				else 
-					ret=fr.loadAllFuturesDataInfile(dateNowStr);
+					ret=fr.loadAllFuturesDataInfile();
 			//	ret=fr.deleteDataInfile(); //删除数据
 			} catch (SecurityException e3) {
 				// TODO Auto-generated catch block
@@ -1130,12 +1130,18 @@ public class StockBaseManager {
 			} catch (NoSuchFieldException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
-			}				
+			}
+			
+			 Date end = new Date();
+		     long minute =(end.getTime() - start.getTime())/6000;
+				
+		    stockLogger.logger.fatal("load stock data consume "+ minute +" minute");
+		    stockLogger.logger.fatal("******load stock data end*****");	
 							
 			jop=new JOptionPane();					
 			jFrame.add(jop,BorderLayout.NORTH);
 			if (ret == 0)
-				jop.showMessageDialog(jFrame, "数据已经导入完成","提示", JOptionPane.INFORMATION_MESSAGE); 
+				jop.showMessageDialog(jFrame, "数据导入成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 			else
 				jop.showMessageDialog(jFrame, "数据已经导入，不用重复","提示", JOptionPane.INFORMATION_MESSAGE); 
 			return;
@@ -1144,7 +1150,9 @@ public class StockBaseManager {
 	//2分析股票交易数据
 	public void analyseStockData(int type, String startdate, String enddate){
 		
-		PointClass pc = new PointClass(sbDao,sdDao,spDao);				
+		PointClass pc = new PointClass(sbDao,sdDao,spDao);	
+		stockLogger.logger.fatal("******analyse point start*****");
+		 Date start = new Date();
 		try {
 			//计算当天数据
 				if(type == ConstantsInfo.StockMarket){ 
@@ -1173,10 +1181,15 @@ public class StockBaseManager {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-			
+			 Date end = new Date();
+		     long minute =(end.getTime() - start.getTime())/6000;
+				
+		    stockLogger.logger.fatal("analyse point consume "+ minute +" minute");
+		    stockLogger.logger.fatal("******analyse point end*****");	
+		    
 			jop=new JOptionPane();					
 			jFrame.add(jop,BorderLayout.NORTH);
-			jop.showMessageDialog(jFrame, "数据已经分析完成","提示", JOptionPane.INFORMATION_MESSAGE); 
+			jop.showMessageDialog(jFrame, "极点分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 			return;
 	}
 	
@@ -1225,11 +1238,14 @@ public class StockBaseManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
+		 stockLogger.logger.fatal("******analyse summary and export all execl start*****");	
+		 Date start = new Date();
 		int size =  listStockDate.size();
 		
         for(int i = 0; i < listStockDate.size(); i++) {        	
-        	String date = listStockDate.get(i);	    
+        	String date = listStockDate.get(i);	
+        	stockLogger.logger.fatal("analyse summary time:"+date);
+    		
 			try {
 				if(type == ConstantsInfo.StockMarket) {
 					if(i == size -1){
@@ -1271,11 +1287,17 @@ public class StockBaseManager {
 			}
 				//sep.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);	
         }
+        
+        Date end = new Date();
+	     long minute =(end.getTime() - start.getTime())/6000;
+			
+	    stockLogger.logger.fatal("analyse summary and export all execl consume "+ minute +" minute");
+	    stockLogger.logger.fatal("******analyse summary and export all execl end*****");	
 	    
 		jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.SOUTH);
 		
-		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "导出成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
 	 }
     
@@ -1370,6 +1392,7 @@ public class StockBaseManager {
     		if(date_rectely==null || date_rectely == ""){
     			return;
     		}
+    		stockLogger.logger.fatal("export summary excel time:"+date_rectely);
     		if(type == ConstantsInfo.StockMarket) {
     			sep.writeSummaryExcelFormConceptInFirstIndustryOrderBy("export\\",date_rectely);
     		} else {
@@ -1413,25 +1436,6 @@ public class StockBaseManager {
     {	
 		StockExcelOperationMain sop = new StockExcelOperationMain(sbDao,sdDao,spDao,ssDao);	 
     	
-	/*
-			try {
-				if(type == ConstantsInfo.StockMarket) {
-					sop.delete_data(ConstantsInfo.StockMarket);
-				} else {
-					sop.delete_data(ConstantsInfo.FuturesMarket);
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		*/
-		
 		List<String> listStockDate = new ArrayList<String>();	         
         try {
 			listStockDate = sdDao.getDatesFromSH000001ForStartEnd(startdate,enddate);
@@ -1439,10 +1443,12 @@ public class StockBaseManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-         
+        
+		stockLogger.logger.fatal("******analy operation start******");
+		Date start = new Date();
         for(int i = 0; i < listStockDate.size(); i++) {        	
         	String date = listStockDate.get(i);	
-    	
+        	stockLogger.logger.fatal("analy operation time:"+date);
 			try {
 				if(type == ConstantsInfo.StockMarket) {
 					sop.analyseStockOperationAll(ConstantsInfo.StockMarket,date);			
@@ -1472,10 +1478,15 @@ public class StockBaseManager {
 				e.printStackTrace();
 			}
         }
+        Date end = new Date();
+        long minute =(end.getTime() - start.getTime())/6000;
+		
+		stockLogger.logger.fatal("analy operation consume "+ minute +" minute");
+        stockLogger.logger.fatal("*****analy operation end*****");
 
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "操作分析成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "操作分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
 	 
@@ -1486,13 +1497,15 @@ public class StockBaseManager {
     	Date startDate1 = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
 		String dateNowStr1 = sdf1.format(startDate1);    	
-			
+		
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
     		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
     		if(date_rectely==null || date_rectely == ""){
     			return;
     		}
+    		
+    		stockLogger.logger.fatal("export operation excel time:"+date_rectely);
     		if(type == ConstantsInfo.StockMarket) {
     		//	sep.writeOperationExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
     		//	sep.writeOperationExcelFormIndustryOrderBy("export\\",dateNowStr1);
@@ -1543,15 +1556,14 @@ public class StockBaseManager {
     	Date startDate1 = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
 		String dateNowStr1 = sdf1.format(startDate1);    	
-		
-		
-			
+		stockLogger.logger.fatal("******export total operation start*****");	
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
     		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
     		if(date_rectely==null || date_rectely == ""){
     			return;
     		}
+    		stockLogger.logger.fatal("export total operation excel time:"+date_rectely);
     		if(type == ConstantsInfo.StockMarket) {
 
     			//sep.writeTotalOperationExcelFormIndustryOrderBy("export\\",dateNowStr1);
@@ -1560,7 +1572,11 @@ public class StockBaseManager {
     			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",date_rectely,ConstantsInfo.MonthDataType);
 
     		} else {
-    			sep.writeTotalOperationExcelFormFuturesOrderBy("export\\",date_rectely);
+    			//sep.writeTotalOperationExcelFormFuturesOrderBy("export\\",date_rectely);
+    			sep.writeTotalOperationExcelFormFuturesOrderByAllType("export\\",date_rectely,ConstantsInfo.DayDataType);
+    			sep.writeTotalOperationExcelFormFuturesOrderByAllType("export\\",date_rectely,ConstantsInfo.WeekDataType);
+    			sep.writeTotalOperationExcelFormFuturesOrderByAllType("export\\",date_rectely,ConstantsInfo.MonthDataType);
+
     		}
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
@@ -1587,10 +1603,14 @@ public class StockBaseManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
+		 Date end = new Date();
+	     long minute =(end.getTime() - startDate1.getTime())/6000;
+			
+	    stockLogger.logger.fatal("analy total operation consume "+ minute +" minute");
+	    stockLogger.logger.fatal("******export total operation end*****");	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "总操作导出成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
 	 

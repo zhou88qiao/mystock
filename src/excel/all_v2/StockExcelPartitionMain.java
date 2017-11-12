@@ -800,8 +800,14 @@ public class StockExcelPartitionMain {
 		    	}
 		    	
 		    	if(flag){
-		    		ExcelCommon.writeTotalOperationExcelItem(wb,sheet,sSop,extremeCol,stockRow);
-		    	}
+		    		//将日周月展示
+		        	List<StockOperation> stockOperationInfoByDate=new ArrayList<StockOperation>();
+		        	stockOperationInfoByDate = ssDao.getOperationFromOperationTableByDate(sSop.getFullId(),sSop.getOpDate());
+		        	for (int datesize=0;datesize<stockOperationInfoByDate.size();datesize++){
+		        		StockOperation sSopDate = stockOperationInfoByDate.get(datesize);
+		        		ExcelCommon.writeTotalOperationExcelItem(wb,sheet,sSopDate,extremeCol,stockRow);
+					}		
+		    	}  
 		    	
 		 	}
 		    
@@ -3284,7 +3290,7 @@ public class StockExcelPartitionMain {
 	}
 	
 	//按概念在一级行业下生成excel orderby
-	public void writeTotalOperationExcelFormFuturesOrderBy(String filePath, String fileTime) throws SQLException, IOException, ClassNotFoundException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException
+	public void writeTotalOperationExcelFormFuturesOrderByAllType(String filePath, String fileTime,int dateType) throws SQLException, IOException, ClassNotFoundException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException
 	{
 		List<StockMarket> listMarket = new ArrayList<StockMarket>(); 
 		 
@@ -3319,13 +3325,11 @@ public class StockExcelPartitionMain {
 		   			// 创建第一个sheet     
 		   			sheet=  wb.createSheet("allstock");		
 		   			sheetCount++;
-		   			excleFileName="Stock_Futures_"+fileTime+"_total_operation_"+sheetCount+".xlsx";	   		    
+		   			excleFileName= getExcelFileName("Futures",dateType,fileTime,"total_operation",sheetCount);	   		    
 		   		    stockRow = 1;
 		   	    	stockDateColumnmap.clear();
 		   			//创建excel
-		   	    	
-		   	 		ExcelCommon.createTotalOperationExcel(wb,sheet,filePath,excleFileName,sdDao,stockDateColumnmap,ConstantsInfo.DayDataType);
-		   	 		//writeSummaryExcelFromMarket(wb,sheet,filePath,excleFileName,fileTime);
+		   	 		ExcelCommon.createTotalOperationExcel(wb,sheet,filePath,excleFileName,sdDao,stockDateColumnmap,dateType);
 		   			FileOutputStream fileOStream = new FileOutputStream(filePath +fileTime+ "\\"+excleFileName);;
 		   			wb.write(fileOStream);		
 		   	        fileOStream.close(); 
@@ -3333,10 +3337,8 @@ public class StockExcelPartitionMain {
 		   	        sheet=null;
 	   			}
 	   			
-	   			StockExcelStatItem  statItem;   	
-	   			
-	   			excleFileName="Stock_Futures_"+fileTime+"_total_operation_"+sheetCount+".xlsx";
-	 			
+	   			StockExcelStatItem  statItem;   		
+	   			excleFileName= getExcelFileName("Futures",dateType,fileTime,"total_operation",sheetCount);	   		    	   		    
 	   			File file = new File(filePath +fileTime+ "\\"+excleFileName);
 				// 输入流   
 				FileInputStream fileIStream = new FileInputStream(file);  	
@@ -3415,23 +3417,51 @@ public class StockExcelPartitionMain {
 	   				
 			   	//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();			 	
-			   		stockOperationInfo = ssDao.getOperationFromOperationTable(stockFullId, -1, 120);
-			   
+			   		
+			   		int nums = ConstantsInfo.ExportNum(dateType);
+			   		stockOperationInfo = ssDao.getOperationFromOperationTable(stockFullId,dateType, nums);
+			 	   				   
 			   		int extremeCol = 0;		
 			   		int earn=0,stop=0,loss=0;
 			   		float totalShouyi=0;
 			   		//查找对应位置并写入excel
 				    for (int ij=0;ij<stockOperationInfo.size();ij++)	
 					{
-				    	StockOperation sSop = stockOperationInfo.get(ij);
-				    	            
-				    	if(sSop!=null && stockDateColumnmap.containsKey(sSop.getOpDate())) {
-				        	extremeCol = stockDateColumnmap.get(sSop.getOpDate());			
+				    	StockOperation sSop = stockOperationInfo.get(ij);           
+				    	if (sSop==null){
+				    		continue;
+				    	}
+				    	
+				    	boolean flag = false;
+				    	
+				    	//先hash查找
+				    	if(stockDateColumnmap.containsKey(sSop.getOpDate())) {
+				        	extremeCol = stockDateColumnmap.get(sSop.getOpDate());	
+				        	flag = true;
 				        	
-				        	///String psState = ssDao.getpsStatusFromSummaryTable(stockFullId,sSop.getOpDate());			        	
-				        	ExcelCommon.writeTotalOperationExcelItem(wb,sheet,sSop,extremeCol,stockRow);
-				        						     
-				    	}    	
+				    	} else {
+				    		if (dateType == ConstantsInfo.WeekDataType || dateType == ConstantsInfo.MonthDataType){
+				    			//再遍历
+				    			for(String key: stockDateColumnmap.keySet()) {
+				    				//System.out.println("key:"+key+"data:"+ sSop.getOpDate());
+				    				if(StockDateTimer.isSameDate(key, sSop.getOpDate(), dateType)){
+				    					flag = true;
+				    					extremeCol = stockDateColumnmap.get(key);
+				    					break;
+				    				}	
+				    			}	
+				    		} 
+				    	}
+				    	
+				    	if(flag){
+				    		//将日周月展示
+				        	List<StockOperation> stockOperationInfoByDate=new ArrayList<StockOperation>();
+				        	stockOperationInfoByDate = ssDao.getOperationFromOperationTableByDate(sSop.getFullId(),sSop.getOpDate());
+				        	for (int datesize=0;datesize<stockOperationInfoByDate.size();datesize++){
+				        		StockOperation sSopDate = stockOperationInfoByDate.get(datesize);
+				        		ExcelCommon.writeTotalOperationExcelItem(wb,sheet,sSopDate,extremeCol,stockRow);
+							}		
+				    	}  	
 				 	}	
 	   			}
    	   			}
@@ -4966,20 +4996,12 @@ public class StockExcelPartitionMain {
 					    	if(stockDateColumnmap.containsKey(sSop.getOpDate())) {
 					        	extremeCol = stockDateColumnmap.get(sSop.getOpDate());	
 					        	flag = true;
-					        	/*
-					        	List<StockOperation> stockOperationInfoByDate=new ArrayList<StockOperation>();
-					        	stockOperationInfoByDate = ssDao.getOperationFromOperationTableByDate(sSop.getFullId(),sSop.getOpDate());
-					        	for (int datesize=0;datesize<stockOperationInfoByDate.size();datesize++)	
-								{
-					        		StockOperation sSopDate = stockOperationInfoByDate.get(datesize);
-					        		ExcelCommon.writeTotalOperationExcelItem(wb,sheet,sSopDate,extremeCol,stockRow);
-								}
-					        	*/
+					        	
 					    	} else {
 					    		if (dateType == ConstantsInfo.WeekDataType || dateType == ConstantsInfo.MonthDataType){
 					    			//再遍历
 					    			for(String key: stockDateColumnmap.keySet()) {
-					    				System.out.println("key:"+key+"data:"+ sSop.getOpDate());
+					    				//System.out.println("key:"+key+"data:"+ sSop.getOpDate());
 					    				if(StockDateTimer.isSameDate(key, sSop.getOpDate(), dateType)){
 					    					flag = true;
 					    					extremeCol = stockDateColumnmap.get(key);
@@ -4990,7 +5012,16 @@ public class StockExcelPartitionMain {
 					    	}
 					    	
 					    	if(flag){
-					    		ExcelCommon.writeTotalOperationExcelItem(wb,sheet,sSop,extremeCol,stockRow);
+					    		
+					    		//将日周月展示
+					        	List<StockOperation> stockOperationInfoByDate=new ArrayList<StockOperation>();
+					        	stockOperationInfoByDate = ssDao.getOperationFromOperationTableByDate(sSop.getFullId(),sSop.getOpDate());
+					        	for (int datesize=0;datesize<stockOperationInfoByDate.size();datesize++)	
+								{
+					        		StockOperation sSopDate = stockOperationInfoByDate.get(datesize);
+					        		ExcelCommon.writeTotalOperationExcelItem(wb,sheet,sSopDate,extremeCol,stockRow);
+								}	
+					    		
 					    	}
 					 	}	
 					

@@ -118,8 +118,7 @@ public class StockPointDao extends BaseDao{
 			
 			break;
 		}	
-		System.out.println(selectSql);
-		stockLogger.logger.debug(selectSql);
+		
 		return super.executeSingleQuery(selectSql,StockPoint.class); 	
 	}	
 	

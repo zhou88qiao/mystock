@@ -1673,8 +1673,7 @@ public class StockDataDao extends BaseDao{
 			break;
 		}
 		
-		stockLogger.logger.fatal("select data sql£º"+selectSql.toString());
-		System.out.println(selectSql.toString());
+		//stockLogger.logger.fatal("select data sql£º"+selectSql.toString());
 		dates=getQuery(selectSql.toString(),null);
 		return dates;
 	}
