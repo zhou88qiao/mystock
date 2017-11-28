@@ -108,20 +108,17 @@ public class PointClass {
 			//查询最后一条记录
 			lastSp=spDao.getLastPointStock(fullId, stockType, analyTime);
 			if(lastSp==null) { //重新计算，是否存在新的极点
-				//stockLogger.logger.fatal("no point data");
+				stockLogger.logger.fatal("no point data");
 				System.out.println("no point data");
 				timeStart = 1;
 				extremeCurPrice=0;
-			} else {
-				//System.out.println("last start date:"+lastSp.getFromDate());
-			//	System.out.println("last end date:"+lastSp.getToDate());
-				//dayStart=dayDate.indexOf(lastSp.getExtremeDate());
-				System.out.println("extreme end date:"+lastSp.getExtremeDate());
-				//pointLastExtremeDate = lastSp.getExtremeDate().toString();//初值
-				
+			} else {	
+				System.out.println("extreme end date:"+lastSp.getExtremeDate());			
+			
 				if(stockType == ConstantsInfo.DayDataType){
 					timeStart=dayDate.indexOf(""+lastSp.getToDate()+""); //初值	
 					extremeCurPrice = lastSp.getExtremePrice();
+					stockLogger.logger.fatal("last extreme id:"+lastSp.getId()+" date:"+lastSp.getExtremeDate()+" start:"+lastSp.getFromDate()+" to:"+lastSp.getToDate());					
 				} else if(stockType == ConstantsInfo.WeekDataType) {
 					
 					//StockData sdata = sdDao.getLastDataStock(fullId,ConstantsInfo.WeekDataType);
@@ -130,9 +127,6 @@ public class PointClass {
 					StockData sdata = sdDao.getZhiDingDataStock(fullId,ConstantsInfo.WeekDataType,lastSp.getToDate().toString());
 					String sdDate = sdata.getDate().toString();
 			       
-			     //   System.out.println("spdata date:"+spDate);
-			     //   System.out.println("sdata date:"+sdata.getDate().toString());
-			        
 			        //周时间已经更新
 					if(!spDate.equals(sdDate)) {
 						//删除此条，重新计算，万一月不是交叉点
@@ -145,6 +139,7 @@ public class PointClass {
 						} else {
 							timeStart = dayDate.indexOf(""+lastSp.getToDate().toString()+""); //再取倒数第二条结束时间初值
 							extremeCurPrice = lastSp.getExtremePrice();
+							stockLogger.logger.fatal("last extreme id:"+lastSp.getId()+" date:"+lastSp.getExtremeDate()+" start:"+lastSp.getFromDate()+" to:"+lastSp.getToDate());							
 						}
 					} else {
 						timeStart=dayDate.indexOf(""+lastSp.getToDate()+""); //初值	
@@ -169,10 +164,12 @@ public class PointClass {
 						} else {
 							timeStart = dayDate.indexOf(""+lastSp.getToDate().toString()+""); //再取倒数第二条结束时间初值
 							extremeCurPrice = lastSp.getExtremePrice();
+							stockLogger.logger.fatal("last extreme id:"+lastSp.getId()+" date:"+lastSp.getExtremeDate()+" start:"+lastSp.getFromDate()+" to:"+lastSp.getToDate());							
 						}
 					} else {
 						timeStart = dayDate.indexOf(""+lastSp.getToDate()+""); //初值	
 						extremeCurPrice = lastSp.getExtremePrice();
+						stockLogger.logger.fatal("last extreme id:"+lastSp.getId()+" date:"+lastSp.getExtremeDate()+" start:"+lastSp.getFromDate()+" to:"+lastSp.getToDate());							
 					}
 				}
 							
@@ -246,14 +243,12 @@ public class PointClass {
 						priceFlag = curFlag;//与上次状态不一致*/
 						if(!dateZero.equals(""))
 							curDate = dateZero;
-						//System.out.println("333："+dateZero);
 					}
 				} 
 			} else if (priFlag>0) {   //下跌趋势
 				if(pointFlag==0){ //当前ma5=ma10 ,保留
 					dateZero = curDate;
-					pointZeroFlag = 0;//下跌
-					//System.out.println("1111："+dateZero);
+					pointZeroFlag = 0;//下跌			
 					continue;
 				} else if(pointFlag<0)
 					priceFlag = 0;//下跌
@@ -263,7 +258,6 @@ public class PointClass {
 				if(pointFlag==0){ //当前ma5=ma10   //上涨趋势
 					dateZero = curDate;//保留时间
 					pointZeroFlag = 1;//保留趋势
-					//System.out.println("2222："+dateZero);
 					continue;
 				}else if(pointFlag<0)
 					priceFlag = 1;//上涨
@@ -276,8 +270,7 @@ public class PointClass {
 				stockLogger.logger.debug("priceWillFall:"+priceFlag);
 				pointDate=curDate;	//更新交叉点
 			
-				stockLogger.logger.debug("***pointDate**:"+pointDate);	
-			//	System.out.println("***pointDate**:"+pointDate);
+				stockLogger.logger.debug("***pointDate**:"+pointDate);				
 				switch(getStartflag)
 				{
 					case 2:
@@ -292,15 +285,10 @@ public class PointClass {
 						//System.out.println("pointEndDate:"+curDate);
 						break;
 						*/
-					case 0:
-						
-						//pointStartDate=curDate;//第一次
-						//getStartflag++;	
-						
+					case 0:									
 						pointStartDate=firstDate;
 						pointEndDate=pointDate;
 						getStartflag=getStartflag+2;	
-						//System.out.println("pointStartDate:"+curDate);
 						break;
 				}						
 				
@@ -380,12 +368,13 @@ public class PointClass {
 						break;
 					case ConstantsInfo.MonthDataType:
 						System.out.println("insert month point date:"+extremeDate);
-						stockLogger.logger.debug("insert week point date:"+extremeDate);
+						stockLogger.logger.debug("insert month point date:"+extremeDate);
 						break;			
 					}
 					//sp=new StockPoint(stockType,Date.valueOf(extremeDate),extremePrice,Date.valueOf(pointStartDate),Date.valueOf(pointEndDate),priceFlag,ratio,0);
-					sp=new StockPoint(0,stockType,Date.valueOf(extremeDate),extremePrice,Date.valueOf(pointTrueStartDate),Date.valueOf(pointEndDate),flagRiseFall,ratio,0);
+					sp = new StockPoint(0,stockType,Date.valueOf(extremeDate),extremePrice,Date.valueOf(pointTrueStartDate),Date.valueOf(pointEndDate),flagRiseFall,ratio,0);
 					lastSp = sp;
+					
 					spDao.insertPointStockTable(sp,fullId);							
 				}	
 						
@@ -1119,15 +1108,12 @@ public class PointClass {
 				listStockMonths=sdDao.getDatesFromTo(fullId,ConstantsInfo.MonthDataType,null,alyseTimeEnd);
 				dStock=new DateStock(listStockDays,listStockWeeks,listStockMonths,listStockSeasons,listStockYears);
 				
-				System.out.println("------------");
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);
-			//	getStockDayExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData); ///日极点
-				System.out.println("-----------");
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);
-			//	getStockWeekExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData);//周极点
-				System.out.println("------------");
-				getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);
-			//	getStockMonthExtremePoint(fullId,dStock,ConstantsInfo.StockCalCurData);//部分月极点
+				stockLogger.logger.fatal("-----day point-------");				
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.DayDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);			
+				stockLogger.logger.fatal("-----week point------");
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.WeekDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);		
+				stockLogger.logger.fatal("-----month point-------");
+				getStockExtremePointValue(fullId,dStock,ConstantsInfo.MonthDataType,ConstantsInfo.StockCalCurData, alyseTimeStart);			
 				break;
 		}
 		
@@ -1279,7 +1265,7 @@ public class PointClass {
         List<String> listStockDays=new ArrayList<String>();
 
 	
-		pc.getPiontToTableForSingleStock("SH000001",ConstantsInfo.StockCalCurData, "2017-11-03", "2017-11-12");
+		pc.getPiontToTableForSingleStock("SH000001",ConstantsInfo.StockCalCurData, "2017-11-10", "2017-11-10");
 		//pc.getPiontToTableForSingleStock("SH000001",ConstantsInfo.StockCalAllData, null, null);
 		
 		//pc.getPiontToTableForSingleStock("SZ002696",ConstantsInfo.StockCalCurData);

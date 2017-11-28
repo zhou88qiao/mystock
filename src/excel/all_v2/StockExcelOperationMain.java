@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -67,6 +68,10 @@ public class StockExcelOperationMain {
 			
 			//if(!fullId.equals("SH601128"))
    			//	continue;
+					
+		//	if(i==2)
+		//		throw new IOException();
+			
 			ret = analyseSingleStockOperation(fullId,anaylseDate,ConstantsInfo.DayDataType);
 			if (ret> 0){
 				ret = analyseSingleStockOperation(fullId,anaylseDate,ConstantsInfo.WeekDataType);
@@ -78,8 +83,7 @@ public class StockExcelOperationMain {
 		}
 	}
 	
-	public int analyseSingleStockOperation(String fullId, String anaylseDate, int dateType) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException 
-	{
+	public int analyseSingleStockOperation(String fullId, String anaylseDate, int dateType) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException{
 			
 		//if(!fullId.equals("SH601111"))
 		//	continue;
@@ -90,10 +94,10 @@ public class StockExcelOperationMain {
 		if(isTableExist==0){//不存在
 			return -1;
 		}
-		
+				
 		isTableExist=sdDao.isExistStockTable(fullId,ConstantsInfo.TABLE_OPERATION_STOCK);
 		if(isTableExist==0){//不存在
-			ssDao.createStockOperationTable(fullId);
+			ssDao.createStockOperationTable(fullId);		
 		} 
 		
 		//最后一天汇总数据
@@ -401,13 +405,22 @@ public class StockExcelOperationMain {
         StockExcelOperationMain seOp = new StockExcelOperationMain(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
 		
         
+       // seOp.analyseSingleStockOperation("666","12-91-1",1);
+        
+        StockOperation sop = new StockOperation("111001", 4, "2017-11-24",(float)1.3,(float)1.2,(float)3.4,(float)2.3,(float)7.9,(float)1.8,1,1);
+		
+        
+        seOp.ssDao.updateStockOperationTable(sop, "111001",1);
+        
         
         //排序
         //"2016-04-11"
       //  seOp.analyseStockOperation(ConstantsInfo.StockMarket,"2016-07-19");
     //   seOp.analyseStockOperation(ConstantsInfo.StockMarket,"2016-07-29");
       // seOp.analyseStockOperation(ConstantsInfo.FuturesMarket,null);
-       seOp.analyseStockOperationAll(ConstantsInfo.StockMarket,"2017-11-07");
+        
+     //  seOp.analyseStockOperationAll(ConstantsInfo.StockMarket,"2017-11-07");
+        
      //  seOp.analyseStockOperationAll(ConstantsInfo.StockMarket,null,ConstantsInfo.WeekDataType);
       
       //  seOp.delete_data(ConstantsInfo.StockMarket);

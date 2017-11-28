@@ -118,7 +118,7 @@ public class StockPointDao extends BaseDao{
 			
 			break;
 		}	
-		
+		//System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql,StockPoint.class); 	
 	}	
 	
@@ -320,7 +320,7 @@ public class StockPointDao extends BaseDao{
 		//delete from day_stock_sz000010  where id in (select id from (select  max(id) as id,count(date) as count from day_stock_sz000010 group by date having count >1 order by count desc) as tab );
 		String selectSql;
 		selectSql="delete from "+stockTable+" where id='"+id+"'";
-		//System.out.println(selectSql);
+	//	System.out.println(selectSql);
 		return super.saveOrUpdate(selectSql);
 	}
 	

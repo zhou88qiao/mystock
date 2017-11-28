@@ -18,6 +18,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,10 +29,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -45,23 +49,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
-
-import com.calculation.stock.CalculationStock;
 import com.eltima.components.ui.DatePicker;
 import com.point.stock.PointClass;
-import com.timer.stock.DateStock;
 import com.timer.stock.StockDateTimer;
-
 import common.ConstantsInfo;
 import common.stockLogger;
-
 import dao.DbConn;
 import dao.StockBaseDao;
 import dao.StockConcept;
@@ -88,6 +87,7 @@ import stockGUI.stocktable.StockIndustryTableModel;
 import stockGUI.stocktable.StockMarketTableModel;
 import stockGUI.stocktable.StockRegionalTableModel;
 import stockGUI.stocktable.StockSingleTableModel;
+
 
 
 
@@ -175,6 +175,7 @@ public class StockBaseManager {
 	JLabel jlStockConcept=new JLabel("概念");
 	JTextField jtfMarket=new JTextField(10);//
 	JTextField jtfConcept=new JTextField(10);
+	JLabel tishiLabel = new JLabel("");
 	
 	JTextField jtfFirstIndustry=new JTextField(10);
 	JTextField jtfSecondIndustry=new JTextField(10);
@@ -201,7 +202,9 @@ public class StockBaseManager {
 	JScrollPane stockSP;
 	JPanel operationPane;
 	JPanel timerPane;
-	JOptionPane jop;	
+	JOptionPane jop;
+	
+	Task task;
 	List<StockMarket> listStockMarket = new ArrayList<StockMarket>(); 
 	List<StockConcept> listStockConcept = new ArrayList<StockConcept>(); 
 	List<StockIndustry> listStockIndustry = new ArrayList<StockIndustry>(); 
@@ -276,8 +279,7 @@ public class StockBaseManager {
 		FuturesLoadOperationExcel.setActionCommand(""+37); //导出操作分析表
 		FuturesLoadPointOpExcel.setActionCommand(""+38);//导出极点数据
 		FuturesLoadTotalOperationExcel.setActionCommand(""+39); //导出总操作分析表
-		
-		
+			
 		
 		LoadIndustry.setActionCommand(""+9); //导入行业
 		LoadFirstIndustryConcept.setActionCommand(""+10); // 导入一级行业对应的概念
@@ -329,7 +331,6 @@ public class StockBaseManager {
 		stockFunction.add(LoadOperationExcel);	
 		stockFunction.add(LoadTotalOperationExcel);
 		
-	
 		futuresFunction.add(GetFuturesData);
 		futuresFunction.add(FuturesExtremeAnalyze);		
 		futuresFunction.add(FuturesLoadPointExcel);
@@ -347,8 +348,7 @@ public class StockBaseManager {
 		mb.add(stockOperate);		
 		mb.add(stockMessage);
 		
-	//	Panel.add(mb);
-		
+	//	Panel.add(mb);		
 	//	jFrame.addMouseListener(mouseL);
 		
 		
@@ -372,7 +372,6 @@ public class StockBaseManager {
 
 		    });
 	}
-	
 	
 	class menuActionListenter implements ActionListener
 	{
@@ -400,10 +399,11 @@ public class StockBaseManager {
 			}
 			
 			timerPane = new JPanel();
+			timerPane.add(tishiLabel);
 			timerPane.add(datepickStart);
 			timerPane.add(datepickEnd);
 			timerPane.add(checkButton);
-			
+		
 			//复用按钮
 			operationPane=new JPanel();
 			operationPane.add(addButton);
@@ -532,42 +532,43 @@ public class StockBaseManager {
 				operationPane.add(jlStockIndustry);
 				operationPane.add(jtfStockIndustry);
 				operationPane.add(jlStockConcept);				
-				operationPane.add(jtfStockConcept);
-				
+				operationPane.add(jtfStockConcept);			
 				break;
-		
-			case 6://导入交易数据
-				loadStockData(ConstantsInfo.StockMarket);
+			case 6://导入交易数据	
+				loadStockData(ConstantsInfo.StockMarket);				
 				return;
 			case 31:				
 				loadStockData(ConstantsInfo.FuturesMarket);
 				return;
 			case 7://分析当天极点数据
+				tishiLabel.setText("第2步：");
 				timerPane.setName("stock_analy_point");
 				jFrame.add(timerPane,BorderLayout.NORTH);
 				jFrame.validate();
 				//analyseStockData(ConstantsInfo.StockMarket); 
 				return;
 			case 32://分析当天极点数据
+				tishiLabel.setText("第2步：");
 				timerPane.setName("future_analy_point");
 				jFrame.add(timerPane,BorderLayout.NORTH);
 				jFrame.validate();
 				//analyseStockData(ConstantsInfo.FuturesMarket); 
 				return;
 			case 8: //导出数据
+				tishiLabel.setText("第3步：");
 				timerPane.setName("stock_analy_summary");
 				jFrame.add(timerPane,BorderLayout.NORTH);
 				jFrame.validate();
 				//exportExcelFile(ConstantsInfo.StockMarket); 
 				return;
 			case 33: //导出数据
+				tishiLabel.setText("第3步：");
 				timerPane.setName("future_analy_summary");
 				jFrame.add(timerPane,BorderLayout.NORTH);
 				jFrame.validate();
 				//exportExcelFile(ConstantsInfo.FuturesMarket); 
-				return;
-				
-			case 20:
+				return;			
+			case 20:			
 				loadSummaryExcelFile(ConstantsInfo.StockMarket);
 				return;
 			case 34:
@@ -581,12 +582,14 @@ public class StockBaseManager {
 				return;
 				
 			case 22://分析操作数据
+				tishiLabel.setText("第7步：");				
 				timerPane.setName("stock_analy_operation");
 				jFrame.add(timerPane,BorderLayout.NORTH);
 				jFrame.validate();
 				//analyseOperation(ConstantsInfo.StockMarket);
 				return;
 			case 36://分析操作数据
+				tishiLabel.setText("第7步：");	
 				timerPane.setName("stock_analy_operation");
 				jFrame.add(timerPane,BorderLayout.NORTH);
 				jFrame.validate();
@@ -612,8 +615,7 @@ public class StockBaseManager {
 			case 39://导出操作数据
 				exportTotalOperationExcelFile(ConstantsInfo.FuturesMarket);
 				return;	
-				
-				
+						
 			case 9: 		
 			case 10: 	
 			case 11: 		
@@ -639,7 +641,6 @@ public class StockBaseManager {
 				return;
 			default:
 				break;
-			
 			}
 			
 			//增加操作pane
@@ -941,10 +942,19 @@ public class StockBaseManager {
         			analyseStockData(ConstantsInfo.StockMarket,startTime, endTime);
         		else if (timeNmae.equals("future_analy_point"))
         			analyseStockData(ConstantsInfo.FuturesMarket,startTime, endTime);
-        		else if(timeNmae.equals("stock_analy_operation"))
+        		else if(timeNmae.equals("stock_analy_operation")){
+        			/*
+        			progressMonitor = new ProgressMonitor(progressPane,
+                            "Running a Long Task",
+                            "", 0, 100);
+        			 progressMonitor.setProgress(0);
+        			 task = new Task();
+        			 task.addPropertyChangeListener(actionP);       		
+        			 task.execute();*/
         			analyseOperation(ConstantsInfo.StockMarket,startTime, endTime);
+        		}
         		else if (timeNmae.equals("future_analy_operation"))
-        			analyseOperation(ConstantsInfo.FuturesMarket,startTime, endTime);
+        			 analyseOperation(ConstantsInfo.FuturesMarket,startTime, endTime);
             }
 			
 		
@@ -1094,6 +1104,35 @@ public class StockBaseManager {
 	}
 	
 	
+	class Task extends SwingWorker<Void, Void> {
+        @Override
+        public Void doInBackground() {
+            Random random = new Random();
+            int progress = 0;
+            setProgress(0);
+            try {
+                Thread.sleep(1000);
+                while (progress < 100 && !isCancelled()) {
+                    //Sleep for up to one second.
+                    Thread.sleep(random.nextInt(1000));
+                    //Make random progress.
+                    progress += random.nextInt(10);
+                    setProgress(Math.min(progress, 100));
+                }
+            } catch (InterruptedException ignore) {}
+            return null;
+        }
+ 
+        @Override
+        public void done() {
+            Toolkit.getDefaultToolkit().beep();
+           // startButton.setEnabled(true);
+           // progressMonitor.setProgress(0);
+        }
+        
+    }
+	
+	
 	//1导入交易数据
 	public void loadStockData(int type){
 		
@@ -1112,28 +1151,42 @@ public class StockBaseManager {
 			} catch (SecurityException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IOException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
+				errorDialog();
+				return;
 			} catch (ClassNotFoundException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
+				errorDialog();
+				return;
 			} catch (SQLException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
+				errorDialog();
+				return;
 			} catch (InstantiationException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IllegalAccessException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
+				errorDialog();
+				return;
 			} catch (NoSuchFieldException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
+				errorDialog();
+				return;
 			}
 			
 			 Date end = new Date();
-		     long minute =(end.getTime() - start.getTime())/6000;
+		     long minute =(end.getTime() - start.getTime())/60000;
 				
 		    stockLogger.logger.fatal("load stock data consume "+ minute +" minute");
 		    stockLogger.logger.fatal("******load stock data end*****");	
@@ -1141,11 +1194,13 @@ public class StockBaseManager {
 			jop=new JOptionPane();					
 			jFrame.add(jop,BorderLayout.NORTH);
 			if (ret == 0)
-				jop.showMessageDialog(jFrame, "数据导入成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+				jop.showMessageDialog(jFrame, "第1步数据导入成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 			else
-				jop.showMessageDialog(jFrame, "数据已经导入，不用重复","提示", JOptionPane.INFORMATION_MESSAGE); 
+				jop.showMessageDialog(jFrame, "第1步数据已经导入，不用重复","提示", JOptionPane.INFORMATION_MESSAGE); 
 			return;
 	}
+	
+	
 	
 	//2分析股票交易数据
 	public void analyseStockData(int type, String startdate, String enddate){
@@ -1153,6 +1208,7 @@ public class StockBaseManager {
 		PointClass pc = new PointClass(sbDao,sdDao,spDao);	
 		stockLogger.logger.fatal("******analyse point start*****");
 		 Date start = new Date();
+		 		 
 		try {
 			//计算当天数据
 				if(type == ConstantsInfo.StockMarket){ 
@@ -1162,34 +1218,49 @@ public class StockBaseManager {
 			} catch (SecurityException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IOException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
+				errorDialog();
+				return;
 			} catch (ClassNotFoundException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
+				errorDialog();
+				return;
 			} catch (SQLException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
+				errorDialog();
+				return;
 			} catch (InstantiationException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IllegalAccessException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
+				errorDialog();
+				return;
 			} catch (NoSuchFieldException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
+				errorDialog();
+				return;
 			}
+			
 			 Date end = new Date();
-		     long minute =(end.getTime() - start.getTime())/6000;
+		     long minute =(end.getTime() - start.getTime())/60000;
 				
 		    stockLogger.logger.fatal("analyse point consume "+ minute +" minute");
 		    stockLogger.logger.fatal("******analyse point end*****");	
 		    
 			jop=new JOptionPane();					
 			jFrame.add(jop,BorderLayout.NORTH);
-			jop.showMessageDialog(jFrame, "极点分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+			jop.showMessageDialog(jFrame, "第2步极点分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 			return;
 	}
 	
@@ -1263,33 +1334,49 @@ public class StockBaseManager {
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (NoSuchFieldException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			}
 				//sep.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);	
         }
         
         Date end = new Date();
-	     long minute =(end.getTime() - start.getTime())/6000;
+	     long minute =(end.getTime() - start.getTime())/60000;
 			
 	    stockLogger.logger.fatal("analyse summary and export all execl consume "+ minute +" minute");
 	    stockLogger.logger.fatal("******analyse summary and export all execl end*****");	
@@ -1297,7 +1384,7 @@ public class StockBaseManager {
 		jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.SOUTH);
 		
-		jop.showMessageDialog(jFrame, "导出成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "第3步导出成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
 	 }
     
@@ -1322,7 +1409,7 @@ public class StockBaseManager {
 		}
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "导入成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "第4步导入成功","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
     
@@ -1374,7 +1461,7 @@ public class StockBaseManager {
     	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "第5步导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
     
@@ -1401,32 +1488,48 @@ public class StockBaseManager {
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		} catch (NoSuchFieldException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorDialog();
+			return;
 		}
     	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "第6步导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
     
@@ -1458,35 +1561,57 @@ public class StockBaseManager {
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			} catch (NoSuchFieldException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorDialog();
+				return;
 			}
         }
         Date end = new Date();
-        long minute =(end.getTime() - start.getTime())/6000;
+        long minute =(end.getTime() - start.getTime())/60000;
 		
 		stockLogger.logger.fatal("analy operation consume "+ minute +" minute");
         stockLogger.logger.fatal("*****analy operation end*****");
 
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "操作分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "第7步操作分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+		return;
+    }
+    
+    public void errorDialog()
+    {
+    	jop=new JOptionPane();					
+		jFrame.add(jop,BorderLayout.NORTH);
+		jop.showMessageDialog(jFrame, "分析失败,请检查日志","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
 	 
@@ -1507,8 +1632,6 @@ public class StockBaseManager {
     		
     		stockLogger.logger.fatal("export operation excel time:"+date_rectely);
     		if(type == ConstantsInfo.StockMarket) {
-    		//	sep.writeOperationExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);
-    		//	sep.writeOperationExcelFormIndustryOrderBy("export\\",dateNowStr1);
     			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",date_rectely, ConstantsInfo.DayDataType);
     			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",date_rectely, ConstantsInfo.WeekDataType);
     			sep.writeOperationExcelFormIndustryOrderByAllType("export\\",date_rectely, ConstantsInfo.MonthDataType);
@@ -1546,7 +1669,7 @@ public class StockBaseManager {
     	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "第8步导出成功","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
     
@@ -1604,13 +1727,13 @@ public class StockBaseManager {
 			e.printStackTrace();
 		}
 		 Date end = new Date();
-	     long minute =(end.getTime() - startDate1.getTime())/6000;
+	     long minute =(end.getTime() - startDate1.getTime())/60000;
 			
 	    stockLogger.logger.fatal("analy total operation consume "+ minute +" minute");
 	    stockLogger.logger.fatal("******export total operation end*****");	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
-		jop.showMessageDialog(jFrame, "总操作导出成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+		jop.showMessageDialog(jFrame, "第9步总操作导出成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
 	 
@@ -1702,14 +1825,12 @@ public class StockBaseManager {
 			
 			//概念选择框
 			jlistConcept.addListSelectionListener(new ListSelectionListener()
-			{
-			
+			{			
 				public void valueChanged(ListSelectionEvent arg0) {
 					// TODO Auto-generated method stub
 					int tmp = 0;	
 					jtfieldConc.setText(((JList)arg0.getSource()).getSelectedValue().toString());				       
 				}
-
 			});
 			
 			

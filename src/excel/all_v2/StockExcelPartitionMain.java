@@ -269,7 +269,11 @@ public class StockExcelPartitionMain {
  	public float getReversalRegion(float suspectedValue, float lastExtrmeValue,float priHighOrLowestValue){
  		float tmpValue =0;
  		float reversalRegion = 0;
- 		tmpValue = (lastExtrmeValue- suspectedValue)/(lastExtrmeValue -priHighOrLowestValue);
+ 		
+ 		float tmp = lastExtrmeValue -priHighOrLowestValue;
+ 		if(tmp>-0.000001 && tmp<0.000001)
+ 			return 0;
+ 		tmpValue = (lastExtrmeValue- suspectedValue)/tmp;
  	
  		/*
  		if(tmpValue < ConstantsInfo.STOCK_DESIRE1)
@@ -5071,7 +5075,7 @@ public class StockExcelPartitionMain {
 	//¹ÉÆ± ·ÖÎö
 	//se.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr);
 		
-	//se.writeExcelFormIndustryOrderBy("export\\","2017-11-03", true);
+	se.writeExcelFormIndustryOrderBy("export\\","2017-11-03", true);
 	
 //	se.writeOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr, ConstantsInfo.WeekDataType);
 	//se.writeOperationExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr);	

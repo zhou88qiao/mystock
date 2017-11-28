@@ -21,14 +21,14 @@ public class StockOperation {
 		  
 	}
 
-	public StockOperation(String fullId,int assId,String opDate,float buyValue,float stopValue,float saleValue,
+	public StockOperation(String fullId,int assId,String opDate,float buyValue,float stopValue,float asaleValueleValue,
 			float earnRatio,float stopRatio,float lossRatio,int opType, int dateType){ 
 		this.fullId = fullId;
 		this.assId = assId;
 		this.opDate = opDate;
 		this.buyValue = buyValue;
 		this.stopValue = stopValue;
-		this.saleValue = saleValue;
+		this.saleValue = asaleValueleValue;
 		this.earnRatio = earnRatio;
 		this.stopRatio = stopRatio;
 		this.lossRatio = lossRatio;
@@ -36,6 +36,8 @@ public class StockOperation {
 		this.dateType = dateType;
 	 
 	}
+	
+
 	public int getId() {
 		return id;
 	}

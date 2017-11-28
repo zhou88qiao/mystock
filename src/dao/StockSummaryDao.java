@@ -531,7 +531,7 @@ public class StockSummaryDao extends BaseDao{
 	  }
 	  
 	  
-	  public int updateStockOperationTable(StockOperation op,String stockFullId,int id) throws IOException, ClassNotFoundException, SQLException
+	 public int updateStockOperationTable11(StockOperation op,String stockFullId,int id) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_OPERATION_TABLE_NAME+stockFullId;
 	//id唯一	只更新四个值
@@ -539,9 +539,21 @@ public class StockSummaryDao extends BaseDao{
 		"',stopValue='"+op.getStopValue()+"',saleValue='"+op.getSaleValue()+
 		"',earnRatio='"+op.getEarnRatio()+"',stopRatio='"+op.getStopRatio()+
 		"',lossRatio='"+op.getLossRatio()+"' where id="+id;
-		//System.out.println(updateSql);
-		return super.saveOrUpdate(updateSql);		
+		System.out.println(updateSql);
+		return super.saveOrUpdate(updateSql);	
 	}
+	 
+	 public int updateStockOperationTable(StockOperation op,String stockFullId,int id) throws IOException, ClassNotFoundException, SQLException
+		{
+			String stockTable=ConstantsInfo.STOCK_OPERATION_TABLE_NAME+stockFullId;
+		//id唯一	只更新四个值
+			String updateSql = "update "+stockTable+" set assId="+op.getAssId()+",opDate='"+op.getOpDate()+"',buyValue="+op.getBuyValue()+
+			",stopValue="+op.getStopValue()+",saleValue="+op.getSaleValue()+
+			",earnRatio="+op.getEarnRatio()+",stopRatio="+op.getStopRatio()+
+			",lossRatio="+op.getLossRatio()+" where id="+id;
+			System.out.println(updateSql);
+			return super.saveOrUpdate(updateSql);	
+		}
 	  
 	  
 	  
