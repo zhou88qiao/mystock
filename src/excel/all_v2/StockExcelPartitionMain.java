@@ -622,14 +622,16 @@ public class StockExcelPartitionMain {
  		//取当天取大盘时间对比，是否有停牌
  		//StockData sdata = sdDao.getZhiDingDataStock(stockFullId,ConstantsInfo.DayDataType, time);
  		if(sdata == null){
- 			stockLogger.logger.fatal(time+" data null");
- 			return 0;
+ 			stockLogger.logger.fatal("tingpai "+ time+" data null");
+ 			return 1;
  		}
  			
- 		if(SHDate.equals(sdata.getDate().toString()))
+ 		if(SHDate.equals(sdata.getDate().toString())){
  			return 0;
- 		else
+ 		} else {
+ 			stockLogger.logger.fatal("tingpai sh000001 time:"+SHDate+" anayle time:"+sdata.getDate().toString());
  			return 1;//停牌
+ 		}
  	}
  	
  	
@@ -843,7 +845,6 @@ public class StockExcelPartitionMain {
 	   		System.out.println(stockFullId);
 	   		stockType=sbDao.getMarketType(stockFullId);
 	 
-	   		
 	   		//if(!sMarket.getCode().toString().equals("sh000001"))
 	   		//	continue;
 	   		
@@ -967,6 +968,8 @@ public class StockExcelPartitionMain {
 		int stockType=0;
 		StockData smarket_data = sdDao.getZhiDingDataStock("SH000001",ConstantsInfo.DayDataType, filetime);
    		SHDate = smarket_data.getDate().toString();
+   	
+		stockLogger.logger.fatal("sh000001 time:"+SHDate);
 	   	for(Iterator itMarket = listStockMarket.iterator();itMarket.hasNext();)
 	   	{
 	   		StockMarket sMarket = (StockMarket)itMarket.next();	
@@ -991,6 +994,7 @@ public class StockExcelPartitionMain {
 	   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,sMarket.getName().toString(),0,0,baseFace,yearInfo);		
 	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,1,ssu, flag);
 	   		StockData sdata = sdDao.getZhiDingDataStock(stockFullId,ConstantsInfo.DayDataType, filetime);
+	   			
 	   		//分析日
 	   	//	stockLogger.logger.debug("*****分析日*****");
 	   		StockExcelItem dayItem = getExcelItem(stockFullId,ConstantsInfo.DayDataType,stockType, filetime, sdata); 
@@ -1379,7 +1383,7 @@ public class StockExcelPartitionMain {
    					continue;  
    				}
    		    	
-   				//if(!stockFullId.equals("SH603928"))
+   				//if(!stockFullId.equals("SH600004"))
    				//	continue;
    		    	
    				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");
@@ -1390,7 +1394,7 @@ public class StockExcelPartitionMain {
 				
 				StockData sdata = sdDao.getZhiDingDataStock(stockFullId,ConstantsInfo.DayDataType, fileTime);
 				//是否停牌
-				int enableTingPai = getEnableTingPai(stockFullId, fileTime, sdata);		
+				int enableTingPai = getEnableTingPai(stockFullId, fileTime, sdata);					
 				//是否两融
 				int enableTwoRong = sbDao.lookUpStockTwoRong(stockFullId);		
 				//基本面
@@ -3208,15 +3212,6 @@ public class StockExcelPartitionMain {
 	   				//	continue;
 	    				
 	   				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");
-	   				
-	   				int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
-	   		    	if(isTableExist == 0){//不存在
-	   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
-	   					System.out.println(stockFullId+"统计表不存在****");
-	   					continue;  
-	   				}
-	   		    	
-	   		    	//ssDao.truncateSummaryStock(stockFullId);
 	   		    		   		    	
 					//其他值
 			   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,toConstock.getName(),0,0,null,null);
@@ -3224,7 +3219,12 @@ public class StockExcelPartitionMain {
 			   		
 			   		stockRow++;
 			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
-	   				
+			   		int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
+	   		    	if(isTableExist == 0){//不存在
+	   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
+	   					System.out.println(stockFullId+"统计表不存在****");
+	   					continue;  
+	   				}
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
 			   		
@@ -3401,16 +3401,7 @@ public class StockExcelPartitionMain {
 	   				//if(!stockFullId.equals("SH600895"))
 	   				//	continue;
 	   				System.out.println("stockFullId:"+stockFullId);	   				
-	   				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");
-	   				
-	   				int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
-	   		    	if(isTableExist == 0){//不存在
-	   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
-	   					System.out.println(stockFullId+"统计表不存在****");
-	   					continue;  
-	   				}
-	   		    	
-	   		    	//ssDao.truncateSummaryStock(stockFullId);
+	   				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");	   		
 	   		    		   		    	
 					//其他值
 			   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,toConstock.getName(),0,0,null,null);
@@ -3418,7 +3409,12 @@ public class StockExcelPartitionMain {
 			   		
 			   		stockRow++;
 			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow,0,null, true);
-	   				
+			   		int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
+	   		    	if(isTableExist == 0){//不存在
+	   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
+	   					System.out.println(stockFullId+"统计表不存在****");
+	   					continue;  
+	   				}
 			   	//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();			 	
 			   		
@@ -4347,9 +4343,9 @@ public class StockExcelPartitionMain {
  			
    			File file = new File(filePath +fileTime+ "\\"+excleFileName);
 			// 输入流   
-				FileInputStream fileIStream = new FileInputStream(file);  	
-				wb = new XSSFWorkbook(fileIStream);   
-				sheet = wb.getSheetAt(0);  
+			FileInputStream fileIStream = new FileInputStream(file);  	
+			wb = new XSSFWorkbook(fileIStream);   
+			sheet = wb.getSheetAt(0);  
  
 				//当前行业
 			StockIndustry indu = listIndustry.get(countI);	
@@ -4357,6 +4353,10 @@ public class StockExcelPartitionMain {
 			String induName = indu.getThirdname();
 			if(induCode == null || induName == null)
 				continue;				
+			
+			//if(!induCode.equals("620101"))
+   			//	continue;
+			
 			stockLogger.logger.fatal("行业："+induName);   		
 			System.out.println("行业："+induName);			
 			//行业标题 
@@ -4387,26 +4387,15 @@ public class StockExcelPartitionMain {
    			{
    	   			for (int j=0;j<listIndustryStock.size();j++)	
    	   			{
-   	   				
    	   				StockToIndustry toConstock =(StockToIndustry) listIndustryStock.get(j);
    	   				if(!listName.get(kk).equals(toConstock.getStockName()))
-   	   					continue;
-	   				//stockRow++;  			
+   	   					continue;   							
 	   				String stockFullId = toConstock.getStockFullId();
 	   				
 	   			//	if(!stockFullId.equals("SZ002442"))
 	   			//		continue;
-	   				
-	   				//System.out.println("stockFullId:"+stockFullId);	   				
-	   				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");
-	   				
-	   				int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
-	   		    	if(isTableExist == 0){//不存在
-	   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
-	   					System.out.println(stockFullId+"统计表不存在****");
-	   					continue;  
-	   				}
-	   		    	
+	   							   				
+	   				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");	   		    	
 	   		    	//ssDao.truncateSummaryStock(stockFullId);
 	   		    		   		    	
 					//其他值
@@ -4416,6 +4405,12 @@ public class StockExcelPartitionMain {
 			   		stockRow++;
 			   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 	   				
+			   		int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
+	   		    	if(isTableExist == 0){//不存在
+	   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
+	   					System.out.println(stockFullId+"统计表不存在****");
+	   					continue;  
+	   				}
 			   		//获取最近统计数据
 			   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
 			   		
@@ -4955,18 +4950,8 @@ public class StockExcelPartitionMain {
 		   				
 		   			//	if(!stockFullId.equals("SZ002442"))
 		   			//		continue;
-		   				
-		   				//System.out.println("stockFullId:"+stockFullId);	   				
-		   				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");
-		   				
-		   				int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
-		   		    	if(isTableExist == 0){//不存在
-		   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
-		   					System.out.println(stockFullId+"统计表不存在****");
-		   					continue;  
-		   				}
-		   		    	
-		   		    	//ssDao.truncateSummaryStock(stockFullId);
+		   				   				
+		   				stockLogger.logger.fatal("****stockFullId："+stockFullId+"****");		   				
 		   		    		   		    	
 						//其他值
 				   		StockOtherInfoValue soiValue=new StockOtherInfoValue(stockFullId,toConstock.getStockName(),0,0,null,null);
@@ -4975,6 +4960,12 @@ public class StockExcelPartitionMain {
 				   		stockRow++;
 				   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 		   				
+				   		int isTableExist=sdDao.isExistStockTable(stockFullId,ConstantsInfo.TABLE_OPERATION_STOCK);
+		   		    	if(isTableExist == 0){//不存在
+		   					stockLogger.logger.fatal("****stockFullId："+stockFullId+"不存在统计表****");
+		   					System.out.println(stockFullId+"统计表不存在****");
+		   					continue;  
+		   				}
 				   		//获取最近统计数据
 				   		List<StockOperation> stockOperationInfo=new ArrayList<StockOperation>();
 				   		//stockOperationInfo = ssDao.getOperationFromOperationTable(stockFullId, -1, 120);
@@ -5075,9 +5066,9 @@ public class StockExcelPartitionMain {
 	//股票 分析
 	//se.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr);
 		
-	se.writeExcelFormIndustryOrderBy("export\\","2017-11-03", true);
+	//se.writeExcelFormIndustryOrderBy("export\\","2017-11-17", true);
+	se.writeOperationExcelFormIndustryOrderByAllType("export\\","2017-11-17", ConstantsInfo.DayDataType);
 	
-//	se.writeOperationExcelFormIndustryOrderByAllType("export\\",dateNowStr, ConstantsInfo.WeekDataType);
 	//se.writeOperationExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr);	
 	//se.writeOperationExcelFormConceptInFirstIndustryOrderByAllType("export\\",dateNowStr, ConstantsInfo.DayDataType);
 	//se.writeOperationExcelFormIndustryOrderBy("export\\",dateNowStr);	
@@ -5087,8 +5078,9 @@ public class StockExcelPartitionMain {
 //	se.writePointExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr);
 
 	
+	
 	//se.writeTotalOperationExcelFormIndustryOrderBy("export\\",dateNowStr);
-	se.writeTotalOperationExcelFormIndustryOrderByAllType("export\\","2017-11-03",ConstantsInfo.WeekDataType);
+	//se.writeTotalOperationExcelFormIndustryOrderByAllType("export\\","2017-11-03",ConstantsInfo.WeekDataType);
 	
 	//StockSummary ssu = new StockSummary(0, "","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","");
 	//ssu.setFullId("SH603330");

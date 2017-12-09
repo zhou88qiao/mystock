@@ -84,9 +84,15 @@ public class ConstantsInfo {
 	public final static int  DEAL_WARN_SEE=0;//
 	
 	
-	public final static int  BUG=1;//买入
+	public final static int  BUY=1;//买入
 	public final static int  STOP=2;//止
 	public final static int  SALE=3;//卖出
+	
+	
+	public final static int  OP_STATUS_1=1;//买入 1
+	public final static int  OP_STATUS_2=2;//买入 2
+	public final static int  OP_STATUS_3=3;//止损
+	public final static int  OP_STATUS_4=4;//卖出
 	
 	public final static int  DEAL_DATE=11;//
 	

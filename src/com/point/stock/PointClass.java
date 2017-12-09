@@ -78,8 +78,7 @@ public class PointClass {
 		List<String> dayDate=null;
 		int timeStart=1; //计算初始位置
 		int daySize = 0;
-		StockDateTimer sdateTimer=new StockDateTimer();
-		
+	
 		switch (stockType)
 		{
 		case ConstantsInfo.DayDataType:
@@ -187,8 +186,7 @@ public class PointClass {
 			return -1;
 		}
 			
-		System.out.println("start:"+timeStart+" StartDate:"+firstDate);
-		stockLogger.logger.debug("StartDate::"+firstDate);
+		stockLogger.logger.info("StartDate::"+firstDate);
 		float pointFlag =0;
 		float priFlag =0;
 		int curFlag=0;
@@ -208,8 +206,8 @@ public class PointClass {
 			md5Cur=sdDao.getStockMaData(fullId,curDate,5,stockType);
 			md10Cur=sdDao.getStockMaData(fullId,curDate,10,stockType);
 			stockLogger.logger.debug("curDate:"+curDate);
-			stockLogger.logger.debug("md5Pri:"+md5Pri+"md10Pri:"+md10Pri);
-			stockLogger.logger.debug("md5Cur:"+md5Cur+"md10Cur:"+md10Cur);
+			stockLogger.logger.debug("md5Pri:"+md5Pri+" md10Pri:"+md10Pri);
+			stockLogger.logger.debug("md5Cur:"+md5Cur+" md10Cur:"+md10Cur);
 		//	stockLogger.logger.debug("curDate:"+pointDate);
 			if(md5Pri==0 || md10Pri==0 || md5Cur==0 || md10Cur==0)
 			{
@@ -222,9 +220,6 @@ public class PointClass {
 				pointFlag = 0;
 			else 
 				pointFlag = (md5Cur-md10Cur)/(md5Pri- md10Pri);
-			//System.out.println("curDate:"+curDate);
-			//System.out.println("priFlag："+priFlag);
-			//System.out.println("pointFlag："+pointFlag);
 			if(priFlag  == 0) {
 				if(pointFlag == 0) {//前一个ma5=ma10 ,保留
 					tmpValue = md5Cur - md10Cur;
@@ -235,8 +230,6 @@ public class PointClass {
 					else
 						continue; //继续相等
 					
-				//	System.out.println("curFlag："+curFlag);
-				//	System.out.println("flagRiseFall："+flagRiseFall);
 					if(curFlag != pointZeroFlag){ //与上次状态一致
 						continue;
 					} else {
@@ -268,9 +261,8 @@ public class PointClass {
 			if(priceFlag==0 || priceFlag == 1)
 			{
 				stockLogger.logger.debug("priceWillFall:"+priceFlag);
-				pointDate=curDate;	//更新交叉点
-			
-				stockLogger.logger.debug("***pointDate**:"+pointDate);				
+				pointDate=curDate;	//更新交叉点		
+				stockLogger.logger.fatal("***pointDate**:"+pointDate);				
 				switch(getStartflag)
 				{
 					case 2:
@@ -293,21 +285,8 @@ public class PointClass {
 				}						
 				
 				if(getStartflag==2)
-				{
-			
-					//计算最后一个极点
-					/*
-					switch(calType)
-					{
-					case ConstantsInfo.StockCalAllData:			
-						lastSp=spDao.getLastPointStock(fullId,stockType, null);
-						break;
-					case ConstantsInfo.StockCalCurData:
-						lastSp=spDao.getLastPointStock(fullId,stockType, analyTime);
-						break;
-					}
-					priveSpe = lastSp;
-					*/
+				{			
+					//计算最后一个极点	
 					if(lastSp==null) { //重新计算，是否存在新的极点			
 					//	System.out.println("no point data");	
 						pointTrueStartDate=pointStartDate;
@@ -348,30 +327,25 @@ public class PointClass {
 					if(calType == ConstantsInfo.StockCalCurData && extremeDate.equals(pointLastExtremeDate))
 						continue;
 					
-					stockLogger.logger.debug("extremeDate:"+extremeDate);
-					stockLogger.logger.debug("extremePrice:"+extremePrice);
-					stockLogger.logger.debug("pointStartDate:"+pointStartDate);
-					stockLogger.logger.debug("pointEndDate:"+pointEndDate);					
-					stockLogger.logger.debug("ratio:"+ratio);
-					//System.out.println("flag:"+flagRiseFall);
-					
-					
+					stockLogger.logger.fatal("extremeDate:"+extremeDate);
+					stockLogger.logger.fatal("extremePrice:"+extremePrice);
+					stockLogger.logger.fatal("pointStartDate:"+pointStartDate);
+					stockLogger.logger.fatal("pointEndDate:"+pointEndDate);					
+					stockLogger.logger.fatal("ratio:"+ratio);
+
 					switch (stockType)
 					{
-					case ConstantsInfo.DayDataType:
-						System.out.println("insert day point date:"+extremeDate);
-						stockLogger.logger.debug("insert day point date:"+extremeDate);
+					case ConstantsInfo.DayDataType:						
+						stockLogger.logger.fatal("insert day point date:"+extremeDate);
 						break;
-					case ConstantsInfo.WeekDataType:
-						System.out.println("insert week point date:"+extremeDate);	
-						stockLogger.logger.debug("insert week point date:"+extremeDate);
+					case ConstantsInfo.WeekDataType:						
+						stockLogger.logger.fatal("insert week point date:"+extremeDate);
 						break;
-					case ConstantsInfo.MonthDataType:
-						System.out.println("insert month point date:"+extremeDate);
-						stockLogger.logger.debug("insert month point date:"+extremeDate);
+					case ConstantsInfo.MonthDataType:						
+						stockLogger.logger.fatal("insert month point date:"+extremeDate);
 						break;			
 					}
-					//sp=new StockPoint(stockType,Date.valueOf(extremeDate),extremePrice,Date.valueOf(pointStartDate),Date.valueOf(pointEndDate),priceFlag,ratio,0);
+					
 					sp = new StockPoint(0,stockType,Date.valueOf(extremeDate),extremePrice,Date.valueOf(pointTrueStartDate),Date.valueOf(pointEndDate),flagRiseFall,ratio,0);
 					lastSp = sp;
 					
@@ -393,7 +367,6 @@ public class PointClass {
 		String strPriDate,strNextDate,curDate,pointDate = null;
 		boolean priceWillFall,priceWillRise;
 		String pointStartDate = null,pointEndDate = null;
-		int pointIndex=0;
 		int getStartflag=0;
 		StockData sData;
 		float extremePrice = 0;
@@ -1133,14 +1106,18 @@ public class PointClass {
 	 * @throws NoSuchFieldException
 	 */
 
-	public void getPointToTable(int type,int stockMarket,int marketType, String alyseTimeStart, String alyseTimeEnd) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
+	public void getPointToTable(int type,int stockMarket,int marketType, String alyseTimeStart, String alyseTimeEnd)
 	{
 		List<String> listStockFullId = new ArrayList<String>();
 		
-		if(marketType == ConstantsInfo.StockMarket )
-			listStockFullId=sbDao.getAllStockFullId(marketType);
-		else 
-			listStockFullId=sbDao.getAllFuturesFullId(marketType);
+		try {
+			if(marketType == ConstantsInfo.StockMarket )
+				listStockFullId=sbDao.getAllStockFullId(marketType);
+			else 
+				listStockFullId=sbDao.getAllFuturesFullId(marketType);
+		 } catch (Exception e) {	
+			 stockLogger.logger.fatal(e.toString());
+		 }
 		
 		int count1=0,count2=0,count3=0,count4=0,count5=0;
 		stockLogger.logger.fatal("analy stock point start time:"+alyseTimeStart+"end time:"+alyseTimeEnd);
@@ -1187,7 +1164,11 @@ public class PointClass {
 				break;
 			}
 			
-			getPiontToTableForSingleStock(fullId,type,alyseTimeStart,alyseTimeEnd);		
+			try {
+				getPiontToTableForSingleStock(fullId,type,alyseTimeStart,alyseTimeEnd);	
+			} catch (Exception e) {	
+				 stockLogger.logger.fatal(e.toString());
+			 }
 		}	
 	}
 	

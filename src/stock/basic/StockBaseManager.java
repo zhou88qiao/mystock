@@ -18,8 +18,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,7 +33,6 @@ import java.util.Random;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -324,7 +322,7 @@ public class StockBaseManager {
 		stockFunction.add(GetStockData);
 		stockFunction.add(ExtremeAnalyze);		
 		stockFunction.add(LoadPointExcel);
-		stockFunction.add(LoadAnalyExcel);
+		//stockFunction.add(LoadAnalyExcel);
 		stockFunction.add(LoadPointOpExcel);
 		stockFunction.add(LoadSummaryExcel);
 		stockFunction.add(LoadOperationAnalyse);
@@ -334,7 +332,7 @@ public class StockBaseManager {
 		futuresFunction.add(GetFuturesData);
 		futuresFunction.add(FuturesExtremeAnalyze);		
 		futuresFunction.add(FuturesLoadPointExcel);
-		futuresFunction.add(FuturesLoadAnalyExcel);
+		//futuresFunction.add(FuturesLoadAnalyExcel);
 		futuresFunction.add(FuturesLoadPointOpExcel);
 		futuresFunction.add(FuturesLoadSummaryExcel);	
 		futuresFunction.add(FuturesLoadOperationAnalyse);
@@ -1142,64 +1140,27 @@ public class StockBaseManager {
 		
 		stockLogger.logger.fatal("******load stock data start*****");
 		//导入 部分日数据 并计算ma5 涨幅
-		try {
-				if(type == ConstantsInfo.StockMarket)
-					ret=fr.loadAllDataInfile();
-				else 
-					ret=fr.loadAllFuturesDataInfile();
-			//	ret=fr.deleteDataInfile(); //删除数据
-			} catch (SecurityException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IOException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				errorDialog();
-				return;
-			} catch (ClassNotFoundException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				errorDialog();
-				return;
-			} catch (SQLException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				errorDialog();
-				return;
-			} catch (InstantiationException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IllegalAccessException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				errorDialog();
-				return;
-			} catch (NoSuchFieldException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				errorDialog();
-				return;
-			}
-			
-			 Date end = new Date();
-		     long minute =(end.getTime() - start.getTime())/60000;
+		
+		if(type == ConstantsInfo.StockMarket)
+			ret=fr.loadAllDataInfile();
+		else 
+			ret=fr.loadAllFuturesDataInfile();
 				
-		    stockLogger.logger.fatal("load stock data consume "+ minute +" minute");
-		    stockLogger.logger.fatal("******load stock data end*****");	
-							
-			jop=new JOptionPane();					
-			jFrame.add(jop,BorderLayout.NORTH);
-			if (ret == 0)
-				jop.showMessageDialog(jFrame, "第1步数据导入成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
-			else
-				jop.showMessageDialog(jFrame, "第1步数据已经导入，不用重复","提示", JOptionPane.INFORMATION_MESSAGE); 
-			return;
+		Date end = new Date();
+		long minute =(end.getTime() - start.getTime())/60000;
+				
+		stockLogger.logger.fatal("load stock data consume "+ minute +" minute");
+		stockLogger.logger.fatal("******load stock data end*****");	
+						
+		jop=new JOptionPane();					
+		jFrame.add(jop,BorderLayout.NORTH);
+		if (ret == 0)
+			jop.showMessageDialog(jFrame, "第1步数据导入成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+		else
+			jop.showMessageDialog(jFrame, "第1步数据已经导入，不用重复","提示", JOptionPane.INFORMATION_MESSAGE); 
+		
+		return;
 	}
-	
 	
 	
 	//2分析股票交易数据
@@ -1207,61 +1168,24 @@ public class StockBaseManager {
 		
 		PointClass pc = new PointClass(sbDao,sdDao,spDao);	
 		stockLogger.logger.fatal("******analyse point start*****");
-		 Date start = new Date();
-		 		 
-		try {
-			//计算当天数据
-				if(type == ConstantsInfo.StockMarket){ 
-					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.StockMarket, startdate, enddate);
-				} else 
-					pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.FuturesMarket, startdate, enddate);
-			} catch (SecurityException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				errorDialog();
-				return;
-			} catch (ClassNotFoundException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				errorDialog();
-				return;
-			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				errorDialog();
-				return;
-			} catch (InstantiationException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IllegalAccessException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				errorDialog();
-				return;
-			} catch (NoSuchFieldException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				errorDialog();
-				return;
-			}
+		Date start = new Date();
+
+		//计算当天数据
+		if(type == ConstantsInfo.StockMarket){ 
+			pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.StockMarket, startdate, enddate);
+		} else {
+			pc.getPointToTable(ConstantsInfo.StockCalCurData,ConstantsInfo.ALLMarket,ConstantsInfo.FuturesMarket, startdate, enddate);
+		}
+		Date end = new Date();
+		long minute =(end.getTime() - start.getTime())/60000;
 			
-			 Date end = new Date();
-		     long minute =(end.getTime() - start.getTime())/60000;
-				
-		    stockLogger.logger.fatal("analyse point consume "+ minute +" minute");
-		    stockLogger.logger.fatal("******analyse point end*****");	
-		    
-			jop=new JOptionPane();					
-			jFrame.add(jop,BorderLayout.NORTH);
-			jop.showMessageDialog(jFrame, "第2步极点分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
-			return;
+		stockLogger.logger.fatal("analyse point consume "+ minute +" minute");
+		stockLogger.logger.fatal("******analyse point end*****");	
+		
+		jop=new JOptionPane();					
+		jFrame.add(jop,BorderLayout.NORTH);
+		jop.showMessageDialog(jFrame, "第2步极点分析成功,耗时"+minute+"分钟","提示", JOptionPane.INFORMATION_MESSAGE); 
+		return;
 	}
 	
 	private static DatePicker getDatePicker() {
@@ -1272,12 +1196,8 @@ public class StockBaseManager {
         Date date = new Date();
         // 字体
         Font font = new Font("Times New Roman", Font.BOLD, 14);
-
         Dimension dimension = new Dimension(180, 30);
-
-       // int[] hilightDays = { 1, 3, 5, 7 };
-      //  int[] disabledDays = { 4, 6, 5, 9 };
-    //构造方法（初始时间，时间显示格式，字体，控件大小）
+ 
         datepick = new DatePicker(date, DefaultFormat, font, dimension);
 
         datepick.setLocation(130, 90);//设置起始位置
@@ -1307,10 +1227,10 @@ public class StockBaseManager {
 			listStockDate = sdDao.getDatesFromSH000001ForStartEnd(startdate,enddate);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace();			 
 		}
-		 stockLogger.logger.fatal("******analyse summary and export all execl start*****");	
-		 Date start = new Date();
+		stockLogger.logger.fatal("******analyse summary and export all execl start*****");	
+		Date start = new Date();
 		int size =  listStockDate.size();
 		
         for(int i = 0; i < listStockDate.size(); i++) {        	
@@ -1331,48 +1251,10 @@ public class StockBaseManager {
 						sep.writeExcelFormFuturesOrderBy("export\\",date, false);
 					}
 				}
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			}
-				//sep.writeExcelFormConceptInFirstIndustryOrderBy("export\\",dateNowStr1);	
+			} catch (Exception e) {
+				stockLogger.logger.fatal(e.toString());				
+			} 
+				
         }
         
         Date end = new Date();
@@ -1391,29 +1273,19 @@ public class StockBaseManager {
     //4导入统计表
     public void loadSummaryExcelFile(int type) 
     {
-    	StockExcelReadMain seRead = new StockExcelReadMain(sbDao,sdDao,spDao,ssDao);
-		//seRead.create_summarY("123");
-		try {
-			
-			seRead.readStockAnsyleExcelData(type);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	StockExcelReadMain seRead = new StockExcelReadMain(sbDao,sdDao,spDao,ssDao);		
+		try {			
+			seRead.readStockAnsyleExcelData(type);		
+		} catch (Exception e) {
+			stockLogger.logger.fatal(e.toString());				
+		} 
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
 		jop.showMessageDialog(jFrame, "第4步导入成功","提示", JOptionPane.INFORMATION_MESSAGE); 
 		return;
     }
     
-  //5导出极点数据
+   //5导出极点数据
     public void exportPointExcelFile(int type)
     {
     	Date startDate1 = new Date();
@@ -1433,31 +1305,9 @@ public class StockBaseManager {
     		} else {
     			sep.writePointExcelFormFuturesOrderBy("export\\",date_rectely);
     		}
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			stockLogger.logger.fatal(e.toString());				
+		} 
     	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
@@ -1485,47 +1335,9 @@ public class StockBaseManager {
     		} else {
     			sep.writeSummaryExcelFormFuturesOrderBy("export\\",date_rectely);
     		}
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			errorDialog();
-			return;
-		}
+		} catch (Exception e) {
+			stockLogger.logger.fatal(e.toString());				
+		} 
     	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
@@ -1542,10 +1354,9 @@ public class StockBaseManager {
 		List<String> listStockDate = new ArrayList<String>();	         
         try {
 			listStockDate = sdDao.getDatesFromSH000001ForStartEnd(startdate,enddate);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			stockLogger.logger.fatal(e.toString());				
+		} 
         
 		stockLogger.logger.fatal("******analy operation start******");
 		Date start = new Date();
@@ -1558,42 +1369,9 @@ public class StockBaseManager {
 				} else {
 					sop.analyseStockOperationAll(ConstantsInfo.FuturesMarket,date);
 				}
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				errorDialog();
-				return;
-			}
+			} catch (Exception e) {
+				stockLogger.logger.fatal(e.toString());				
+			} 
         }
         Date end = new Date();
         long minute =(end.getTime() - start.getTime())/60000;
@@ -1641,31 +1419,9 @@ public class StockBaseManager {
     			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",date_rectely, ConstantsInfo.WeekDataType);
     			sep.writeOperationExcelFormFuturesOrderByAllType("export\\",date_rectely, ConstantsInfo.MonthDataType);
     		}
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			stockLogger.logger.fatal(e.toString());				
+		} 
     	
     	jop=new JOptionPane();					
 		jFrame.add(jop,BorderLayout.NORTH);
@@ -1694,40 +1450,17 @@ public class StockBaseManager {
     			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",date_rectely,ConstantsInfo.WeekDataType);
     			sep.writeTotalOperationExcelFormIndustryOrderByAllType("export\\",date_rectely,ConstantsInfo.MonthDataType);
 
-    		} else {
-    			//sep.writeTotalOperationExcelFormFuturesOrderBy("export\\",date_rectely);
+    		} else {   		
     			sep.writeTotalOperationExcelFormFuturesOrderByAllType("export\\",date_rectely,ConstantsInfo.DayDataType);
     			sep.writeTotalOperationExcelFormFuturesOrderByAllType("export\\",date_rectely,ConstantsInfo.WeekDataType);
     			sep.writeTotalOperationExcelFormFuturesOrderByAllType("export\\",date_rectely,ConstantsInfo.MonthDataType);
 
     		}
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 Date end = new Date();
-	     long minute =(end.getTime() - startDate1.getTime())/60000;
+		} catch (Exception e) {
+			stockLogger.logger.fatal(e.toString());				
+		} 
+		Date end = new Date();
+	    long minute =(end.getTime() - startDate1.getTime())/60000;
 			
 	    stockLogger.logger.fatal("analy total operation consume "+ minute +" minute");
 	    stockLogger.logger.fatal("******export total operation end*****");	
@@ -1751,9 +1484,7 @@ public class StockBaseManager {
 			final JTextField jtfName=new JTextField(12);
 			final JTextField jtfieldIndu=new JTextField(24); //记录选择的行业
 			final JTextField jtfieldConc=new JTextField(48); //记录选择的概念
-		//	final JTextField jtfIndustry=new JTextField(24);
-		//	final JTextField jtfConcept=new JTextField(24);
-			
+				
 			//概念
 			List<String> allConceptNameList = null;
 			try {
@@ -1770,7 +1501,6 @@ public class StockBaseManager {
 			try {
 				allThirdIndustryNameList = sbDao.getAllThirdIndustryName();
 			} catch (SQLException e3) {
-				// TODO Auto-generated catch block
 				e3.printStackTrace();
 			}	
 			String[] industryName = (String[])allThirdIndustryNameList.toArray(new String[allThirdIndustryNameList.size()]);

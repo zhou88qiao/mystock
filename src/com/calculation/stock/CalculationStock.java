@@ -117,8 +117,7 @@ public class CalculationStock {
 			if (listYear.size()==2) {
 				
 				sdDao.calWeekStockDataFromDate(fullId, listWeekCur,listYear.get(1));//计算周 ma5 ma10 涨幅比
-				sdDao.calMonthStockDataFromDate(fullId, listMonthCur,listYear.get(1));//计算周 ma5 ma10 涨幅比
-				
+				sdDao.calMonthStockDataFromDate(fullId, listMonthCur,listYear.get(1));//计算周 ma5 ma10 涨幅比	
 			}
 			
 			
@@ -209,9 +208,7 @@ public class CalculationStock {
 				//不能跨年  结尾：年最后一天
 			//	listWeek=sdDao.getUnCalculationWeek(fullId,"2014-10-13","2014-12-28");
 			//	sdDao.calWeekStockDataFromDate(fullId, listWeek,2014);//计算周
-	
-				//listWeek=sdDao.getUnCalculationWeek(fullId,"2015-07-20","2015-07-31");
-				
+				//listWeek=sdDao.getUnCalculationWeek(fullId,"2015-07-20","2015-07-31");			
 				
 				for (i=0;i<listYear.size();i++)	
 				{
@@ -222,27 +219,10 @@ public class CalculationStock {
 					sdDao.calWeekStockDataFromDate(fullId, listWeek,year);//计算周 ma5 ma10 涨幅比
 					sdDao.calMonthStockDataFromDate(fullId, listMonth,year);//计算周 ma5 ma10 涨幅比
 				}
-				
-				
-				
-		
-				
-				 //计算月
-				
-				//计算2014年月
-			//	listMonth.add(10);//第10月
-			//	sdDao.calMonthStockDataFromDate(fullId, listMonth,2014); //计算月 ma5 ma10 涨幅比 	
-				//2015年
-				//List<Integer> listMonth2015 = new ArrayList<Integer>();
-				//listMonth2015.add(7);
-		
-				
 			
 			}
-			
-			
+				
 		}
-		
 		
 	}
 	

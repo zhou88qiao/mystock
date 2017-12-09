@@ -562,13 +562,12 @@ public class StockSummaryDao extends BaseDao{
 		{
 			
 			String stockTable=ConstantsInfo.STOCK_OPERATION_TABLE_NAME+fullId;
-			String selectSql = null;
-		
+			String selectSql = null;		
 			//≈≈∫√–Ú
 			if(sdate!=null)
-				selectSql="select * from "+stockTable+" where dateType="+dateType+" and opDate <= '"+sdate+"' ORDER BY id desc limit 1";
+				selectSql="select * from "+stockTable+" where dateType="+dateType+" and opDate <= '"+sdate+"' ORDER BY opDate desc limit 1";
 			else
-				selectSql="select * from "+stockTable+" where dateType="+dateType+" ORDER BY id desc limit 1 ";
+				selectSql="select * from "+stockTable+" where dateType="+dateType+" ORDER BY opDate desc limit 1 ";
 			//System.out.println(selectSql);
 			return super.executeSingleQuery(selectSql,StockOperation.class); 
 		}

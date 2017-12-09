@@ -549,8 +549,7 @@ public class FileReader {
 	 * @throws InstantiationException 
 	 * @throws SecurityException 
 	 */
-	public int loadAllDataInfile() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
-	{
+	public int loadAllDataInfile(){
 		
 		CalculationStock cas =new CalculationStock(sbDao,sdDao);
 		
@@ -561,23 +560,27 @@ public class FileReader {
 		 int stockDataNum =0;
 		 String stock_source_data=null;
 		 String stock_name=null;
-		 int stockFile=0;
+		 
 		 int isTableExist=0;
 		 String loadfilePath ="";
 		 String curPath=System.getProperty("user.dir");
 		 curPath = curPath.replaceAll("\\\\", "/"); //转义将\ 转为/
-		 int id =0;
+		 int id = 0;
 		
 		 //判断重复导入 读取SH99999.txt文件
 		 stock_time= readFileFirstLineDate();		
 		 
-		 id = sdDao.getDataValueIsExist("SH000001",stock_time);
-		 if(id > 0) {
-			 return 1;
+		 try {
+			id = sdDao.getDataValueIsExist("SH000001",stock_time);
+			if(id > 0) {
+				return 1;
+			}
+			 //清空stock_load_FullId表，作为下一步分析时用
+			 sbDao.truncateStockLoadFullId(ConstantsInfo.StockMarket);
+		 } catch (Exception e) {	
+			 stockLogger.logger.fatal(e.toString());
 		 }
-		
-		 //清空stock_load_FullId表，作为下一步分析时用
-		 sbDao.truncateStockLoadFullId(ConstantsInfo.StockMarket);
+		 
 
 		 for (int i=0;i<lstStockFileNames.size();i++)		 
 		 {
@@ -586,120 +589,79 @@ public class FileReader {
 			 int begin = stock_source_data.indexOf('\\');
 			 int end = stock_source_data.indexOf('.');
 			 stock_name = stock_source_data.substring(begin+1, end);//stock_source_data.substring(10, 18);
-			 System.out.println("stock name:"+stock_name);
+			
 			 stockLogger.logger.fatal("StockFullId:"+stock_name);
 			 if (stock_name.equals("SH999999")) //东兴证券999999改为000001
 				 stock_name="SH000001";
 			
-			 sbDao.insertStockLoadFullId(ConstantsInfo.StockMarket,stock_name);
-			// if(!stock_name.equals("SH601899"))//只测试SH000001
-			//	 continue;	
-		
-			 isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_DATA_STOCK);
-			 if(isTableExist==0)//不存在
-			 {
-				 stockLogger.logger.fatal(stock_name + " not found");
-				 stockLogger.logger.fatal(stock_name + " creat table");
-				 sdDao.createStockDataTable(stock_name);	
-			 }
-			 
-			 stockDataNum = readFileByLines(stock_source_data,stock_name,ConstantsInfo.StockMarket);
-			//已经存在表，空交易数据或停牌不用导入
-			 if((isTableExist>0) && (stockDataNum <= 0)) {
-				 System.out.println("load stock data num:"+stockDataNum);
-				 stockLogger.logger.fatal("load stock data num:"+stockDataNum);
-				 continue;
-			 }
-			 
-			 //删除当天的数据
-			// sdDao.delStockDataDay(stock_name,loadDate);
-			 //修改默认值
-			// sdDao.alterStockDeafaultDataType(stock_name);
+			 try {
+				 sbDao.insertStockLoadFullId(ConstantsInfo.StockMarket,stock_name);
+				// if(!stock_name.equals("SH601899"))//只测试SH000001
+				//	 continue;	
 			
-			 loadfilePath=curPath+"/StockLoadFile/"+stock_name+".sql";
-			 sdDao.loadDatafFiletoDB(loadfilePath,stock_name);
-			
-			 if(isTableExist==0) {//不存在				 
-				 stockLogger.logger.fatal("cal new stock table");
-				//计算全部ma5 涨幅	
-				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 		 
-				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
-				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
-			 } else {				
-				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
-			 }
-			 
-			 /*
-			 //创建极点表
-			 spDao.createStockPointTable(stock_name);
-			 //创建汇总表
-			 ssDao.createStockSummaryTable(stock_name);
-			 //创建操作表
-			 ssDao.createStockOperationTable(stock_name);
-			 */
-			 
-			 //全部删除summary point operation表情况	
-			 
-			isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_POINT_STOCK);
-			if(isTableExist==0){//不存在
-				spDao.createStockPointTable(stock_name);
-			}
-			isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_SUMMARY_STOCK);
-			if(isTableExist==0){//不存在
-				ssDao.createStockSummaryTable(stock_name);
-			}
-			
-			isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_OPERATION_STOCK);
-			if(isTableExist==0){//不存在
-				ssDao.createStockOperationTable(stock_name);
-			} 
+				 isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_DATA_STOCK);
+				 if(isTableExist==0){
+					 stockLogger.logger.fatal(stock_name + " not found");
+					 stockLogger.logger.fatal(stock_name + " creat table");
+					 sdDao.createStockDataTable(stock_name);	
+				 }
+				 
+				 stockDataNum = readFileByLines(stock_source_data,stock_name,ConstantsInfo.StockMarket);
+				 //已经存在表，空交易数据或停牌不用导入
+				 if((isTableExist>0) && (stockDataNum <= 0)) {
+					 System.out.println("load stock data num:"+stockDataNum);
+					 stockLogger.logger.fatal("load stock data num:"+stockDataNum);
+					 continue;
+				 }
+				 
+				 loadfilePath=curPath+"/StockLoadFile/"+stock_name+".sql";
+				 sdDao.loadDatafFiletoDB(loadfilePath,stock_name);
 				
-			
-			stockFile++;
-			
+				 if(isTableExist==0) {//不存在				 
+					 stockLogger.logger.fatal("cal new stock table");
+					//计算全部ma5 涨幅	
+					 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 		 
+					 PointClass pc = new PointClass(sbDao,sdDao,spDao);
+					 //计算极点
+					 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
+				 } else {				
+					 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
+				 }
+			 } catch (Exception e) {	
+				 stockLogger.logger.fatal(e.toString());
+			 }
+			 		
 		 }
-		 System.out.println("stockFile:"+stockFile);
-		
+
 		return 0;
 	  }
 	
 	//导入商品数据
-	public int loadAllFuturesDataInfile() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
-	{
+	public int loadAllFuturesDataInfile(){
 		
 		CalculationStock cas =new CalculationStock(sbDao,sdDao);
 		
 		String dirPath = "FuturesData\\";
 		 List<String> lstStockFileNames=null;
 		 lstStockFileNames= getListFiles(dirPath);
-		 int stockDataNum =0;
 		 String stock_source_data=null;
 		 String stock_name=null;
-		 int stockFile=0;
 		 int isTableExist=0;
 		 String loadfilePath ="";
 		 String curPath=System.getProperty("user.dir");
 		 curPath = curPath.replaceAll("\\\\", "/"); //转义将\ 转为/
-		 int id =0;
 		
-		 /*
-		 //判断重复导入 读取SH99999.txt文件
-		 stock_time= readFileFirstLineDate();
-		
-		 id = sdDao.getDataValueIsExist("SH000001",stock_time);
-		 if(id > 0) {
-			 return 1;
-		 }
-		*/
 		 //清空stock_load_FullId表，作为下一步分析时用
-		 sbDao.truncateStockLoadFullId(ConstantsInfo.FuturesMarket);
+		 try{
+			 sbDao.truncateStockLoadFullId(ConstantsInfo.FuturesMarket);
+		 } catch (Exception e) {	
+			 stockLogger.logger.fatal(e.toString());
+		 }
 
 		 for (int i=0;i<lstStockFileNames.size();i++)		 
 		 {
 			 stock_source_data = lstStockFileNames.get(i);	
 			 
-			// System.out.println(stock_source_data);
 			 int begin = stock_source_data.indexOf('\\');
 			 begin +=2;//去掉前面两个字符
 			 int end = stock_source_data.indexOf('.');
@@ -708,59 +670,48 @@ public class FileReader {
 			 //去掉空格与&
 			 stock_name = stock_name.replaceAll(" ", "");
 			 stock_name = stock_name.replaceAll("&", "");
-			 
-			 System.out.println("stock name:"+stock_name);
+			 		
 			 stockLogger.logger.fatal("StockFullId:"+stock_name);
 			 if (stock_name.equals("SH999999")) //东兴证券999999改为000001
 				 stock_name="SH000001";
 			
-			 sbDao.insertStockLoadFullId(ConstantsInfo.FuturesMarket,stock_name);
-			// if(!stock_name.equals("SH601899"))//只测试SH000001
-			//	 continue;	
-					
-			 
-			 isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_DATA_STOCK);
-			 if(isTableExist==0)//不存在
-			 {
-				 stockLogger.logger.fatal(stock_name + " not found");
-				 stockLogger.logger.fatal(stock_name + " creat table");
-				 sdDao.createStockDataTable(stock_name);	
-			 }
-			 
-			 stockDataNum = readFileByLines(stock_source_data,stock_name,ConstantsInfo.FuturesMarket);				
-			 
-			 //删除当天的数据
-			// sdDao.delStockDataDay(stock_name,loadDate);
-			 //修改默认值
-			// sdDao.alterStockDeafaultDataType(stock_name);
-			
-			 loadfilePath=curPath+"/StockLoadFile/"+stock_name+".sql";
-			 int ret = sdDao.loadDatafFiletoDB(loadfilePath,stock_name);
-			 stockLogger.logger.fatal("load data nums:"+ret);
-			 System.out.println("load data nums:"+ret);
-			
-			 if(isTableExist==0) {//不存在
+			 try{
+				 sbDao.insertStockLoadFullId(ConstantsInfo.FuturesMarket,stock_name);
 				 
-				 stockLogger.logger.fatal("cal new stock table");
-				//计算全部ma5 涨幅	
-				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 
-				 //创建极点表
-				 spDao.createStockPointTable(stock_name);
-				 //创建汇总表
-				 ssDao.createStockSummaryTable(stock_name);
+				 isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_DATA_STOCK);
+				 if(isTableExist==0)//不存在
+				 {
+					 stockLogger.logger.fatal(stock_name + " not found");
+					 stockLogger.logger.fatal(stock_name + " creat table");
+					 sdDao.createStockDataTable(stock_name);	
+				 }
 				 
-				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
-				 //计算极点
-				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
-			 }else {				
-				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
+				 readFileByLines(stock_source_data,stock_name,ConstantsInfo.FuturesMarket);				
+				 loadfilePath=curPath+"/StockLoadFile/"+stock_name+".sql";
+				 int ret = sdDao.loadDatafFiletoDB(loadfilePath,stock_name);
+				 stockLogger.logger.fatal("load data nums:"+ret);
+			
+				 if(isTableExist==0) {//不存在					 
+					 stockLogger.logger.fatal("cal new stock table");
+					//计算全部ma5 涨幅	
+					 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 
+					 //创建极点表
+					 spDao.createStockPointTable(stock_name);
+					 //创建汇总表
+					 ssDao.createStockSummaryTable(stock_name);
+					 
+					 PointClass pc =new PointClass(sbDao,sdDao,spDao);
+					 //计算极点
+					 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
+				 }else {				
+					 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalCurData); //计算部分
+				 }
+			 
+			 } catch (Exception e) {	
+				 stockLogger.logger.fatal(e.toString());
 			 }
-			
-			stockFile++;
-			
 		 }
-		 System.out.println("stockFile:"+stockFile);
-		
+
 		return 0;
 	  }
 	
@@ -1063,7 +1014,7 @@ public class FileReader {
 		//fr.loadAllConceptContainStockInfile();//导入概念下对应股票
 		//loadreadIndustryInfile();//读取三行行业名
 		//loadAllIndustryContainStockInfile(); //导入三级行业下对应 股票
-     fr.loadAllFuturesDataInfile();
+    // fr.loadAllFuturesDataInfile();
       fr.loadAllDataInfile();
  	//	fr.loadSingleAllDataInfile(dateNowStr);	
 		

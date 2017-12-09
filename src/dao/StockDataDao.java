@@ -6,7 +6,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import com.timer.stock.StockDateTimer;
 import com.timer.stock.TimeStock;
 
 import common.ConstantsInfo;
-import common.stockLogger;
 import dao.BaseDao;
 import dao.StockData;
 
@@ -59,8 +57,7 @@ public class StockDataDao extends BaseDao{
 		"dataType SMALLINT default 0," +
 		"index date_index(`date`)," +
 		"index data_index(`dataType`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
-		String sql=createTablesql;
-		System.out.println(sql);
+		
 		return super.saveOrUpdate(createTablesql);
 	}
 	
@@ -122,8 +119,7 @@ public class StockDataDao extends BaseDao{
 		//	delete from day_stock_sz000015 WHERE stockVolume=0 and dailyTurnover=0;
 		String sql;
 		sql="delete from "+tableName +" where stockVolume=0 and dailyTurnover=0 and dataType='"+ConstantsInfo.DayDataType+"'";
-		
-		System.out.println(sql);
+				
 		return super.saveOrUpdate(sql);
 	}
 	
@@ -257,9 +253,7 @@ public class StockDataDao extends BaseDao{
 	{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+stockFullId;	
 	
-		String updateSql = "update "+stockTable+" set ma5Price='0',ma10Price='0' where dataType='"+ConstantsInfo.DayDataType+"'";;
-		System.out.println(updateSql);
-		
+		String updateSql = "update "+stockTable+" set ma5Price='0',ma10Price='0' where dataType='"+ConstantsInfo.DayDataType+"'";;	
 		return super.saveOrUpdate(updateSql);
 	}
 	
@@ -2019,9 +2013,8 @@ public class StockDataDao extends BaseDao{
 		String stockTable=ConstantsInfo.STOCK_DATA_TABLE_NAME+"sh000001";
 		String selectSql = null;
 		
-			//ÅÅºÃĞò
-		selectSql="select DISTINCT(date) from "+stockTable+" where date >='"+startDate+"' and date<= '"+endDate+"' ORDER BY date";
-		System.out.println(selectSql);
+		//ÅÅºÃĞò
+		selectSql="select DISTINCT(date) from "+stockTable+" where date >='"+startDate+"' and date<= '"+endDate+"' ORDER BY date";		
 		dates=getQuery(selectSql,null);
 		return dates;
 	}
