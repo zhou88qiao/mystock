@@ -2,7 +2,7 @@ package dao;
 
 import java.sql.Date;
 
-import excel.all_v2.StockExcelTotalInfo;
+import stock.export.StockExcelTotalInfo;
 
 public class StockSummary implements Comparable {
 	private  int id;

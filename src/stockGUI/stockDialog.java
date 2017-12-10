@@ -1,6 +1,8 @@
 package stockGUI;
 
-import getStockData.GetMA;
+import stock.analysis.GetMA;
+import stock.analysis.PointClass;
+import stock.timer.DateStock;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -31,9 +33,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-
-import com.point.stock.PointClass;
-import com.timer.stock.DateStock;
 
 import common.ConstantsInfo;
 

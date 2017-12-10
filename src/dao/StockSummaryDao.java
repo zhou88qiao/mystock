@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import common.ConstantsInfo;
-import excel.all_v2.StockExcelTotalInfo;
+import stock.export.StockExcelTotalInfo;
 
 public class StockSummaryDao extends BaseDao{
 	

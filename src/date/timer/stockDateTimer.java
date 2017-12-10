@@ -15,7 +15,7 @@ public class stockDateTimer {
 	// 用来全局控制 上一周，本周，下一周的周数变化
 	 private int weeks = 0;
 	 private int MaxDate;// 一月最大天数
-	 private int MaxYear;// 一年最大天数
+	 private int MaxYear;// 一年最大天数 
 	 
 	 public static String DEFAULT_FORMAT = "yyyy-MM-dd"; 
 	 static SimpleDateFormat format = new   SimpleDateFormat(DEFAULT_FORMAT); 

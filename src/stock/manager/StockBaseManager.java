@@ -1,4 +1,4 @@
-package stock.basic;
+package stock.manager;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
@@ -55,8 +55,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
 import com.eltima.components.ui.DatePicker;
-import com.point.stock.PointClass;
-import com.timer.stock.StockDateTimer;
+
 import common.ConstantsInfo;
 import common.stockLogger;
 import dao.DbConn;
@@ -71,23 +70,19 @@ import dao.StockMarket;
 import dao.StockPointDao;
 import dao.StockRegional;
 import dao.StockSingle;
-
-import excel.all_v2.StockExcelOperationMain;
-import excel.all_v2.StockExcelPartitionMain;
-import excel.all_v2.StockExcelReadMain;
-import excel.rw.ExcelReader;
-import excel.simple.StockRecentWriter;
-import file.FileReader;
-
+import stock.analysis.PointClass;
+import stock.export.StockExcelOperationMain;
+import stock.export.StockExcelPartitionMain;
+import stock.export.StockExcelReadMain;
+import stock.loader.base.ExcelReader;
+import stock.loader.data.FileReader;
+import stock.timer.StockDateTimer;
 import stockGUI.StockTimeSeriesChart;
 import stockGUI.stocktable.StockConceptTableModel;
 import stockGUI.stocktable.StockIndustryTableModel;
 import stockGUI.stocktable.StockMarketTableModel;
 import stockGUI.stocktable.StockRegionalTableModel;
 import stockGUI.stocktable.StockSingleTableModel;
-
-
-
 
 public class StockBaseManager {
 	private final static int  addIndex=0;
@@ -1220,7 +1215,7 @@ public class StockBaseManager {
     public void exportExcelFile(int type, String startdate, String enddate){
 				
 		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	   	
-		StockRecentWriter ew=new StockRecentWriter(sbDao,sdDao,spDao);
+	
 			
 		List<String> listStockDate = new ArrayList<String>();	         
         try {
