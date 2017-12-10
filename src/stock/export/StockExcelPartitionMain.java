@@ -48,7 +48,7 @@ import dao.StockToFutures;
 import dao.StockToIndustry;
 import date.timer.stockDateTimer;
 import stock.analysis.PointClass;
-import stock.timer.StockDateTimer;
+import stock.timer.CommonDate;
 
 //分片处理excel 分成多个excel
 
@@ -670,8 +670,8 @@ public class StockExcelPartitionMain {
 	   		ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 	   		
 	   		//获取最近统计数据
-		    String endDate = StockDateTimer.getCurDate();
-	        String startDate = StockDateTimer.getBeforeDay(endDate, 1, 180);
+		    String endDate = CommonDate.getCurDate();
+	        String startDate = CommonDate.getBeforeDay(endDate, 1, 180);
 	       //获取最近统计数据
 		   	List<StockPoint> stockPointInfo=new ArrayList<StockPoint>();
 		   	stockPointInfo = spDao.getRecentPointStock(stockFullId,ConstantsInfo.DayDataType,startDate);
@@ -795,7 +795,7 @@ public class StockExcelPartitionMain {
 		    			//再遍历
 		    			for(String key: stockDateColumnmap.keySet()) {
 		    				System.out.println("key:"+key+"data:"+ sSop.getOpDate());
-		    				if(StockDateTimer.isSameDate(key, sSop.getOpDate(), dateType)){
+		    				if(CommonDate.isSameDate(key, sSop.getOpDate(), dateType)){
 		    					flag = true;
 		    					extremeCol = stockDateColumnmap.get(key);
 		    					break;
@@ -3443,7 +3443,7 @@ public class StockExcelPartitionMain {
 				    			//再遍历
 				    			for(String key: stockDateColumnmap.keySet()) {
 				    				//System.out.println("key:"+key+"data:"+ sSop.getOpDate());
-				    				if(StockDateTimer.isSameDate(key, sSop.getOpDate(), dateType)){
+				    				if(CommonDate.isSameDate(key, sSop.getOpDate(), dateType)){
 				    					flag = true;
 				    					extremeCol = stockDateColumnmap.get(key);
 				    					break;
@@ -3618,8 +3618,8 @@ public class StockExcelPartitionMain {
 			   		
 			     	//获取最近统计数据
 			   		List<StockPoint> stockPointInfo=new ArrayList<StockPoint>();
-				    String endDate = StockDateTimer.getCurDate();
-			        String startDate = StockDateTimer.getBeforeDay(endDate, 1, 180);
+				    String endDate = CommonDate.getCurDate();
+			        String startDate = CommonDate.getBeforeDay(endDate, 1, 180);
 			   		stockPointInfo = spDao.getRecentPointStock(stockFullId,ConstantsInfo.DayDataType,startDate);
 			   
 			   		int extremeCol = 0;
@@ -4203,8 +4203,8 @@ public class StockExcelPartitionMain {
 	   				
 			   		//获取最近统计数据
 			   		List<StockPoint> stockPointInfo=new ArrayList<StockPoint>();
-				    String endDate = StockDateTimer.getCurDate();
-			        String startDate = StockDateTimer.getBeforeDay(endDate, 1, 180);
+				    String endDate = CommonDate.getCurDate();
+			        String startDate = CommonDate.getBeforeDay(endDate, 1, 180);
 			   		stockPointInfo = spDao.getRecentPointStock(stockFullId,ConstantsInfo.DayDataType,startDate);
 			   
 			   		int extremeCol = 0;
@@ -4996,7 +4996,7 @@ public class StockExcelPartitionMain {
 					    			//再遍历
 					    			for(String key: stockDateColumnmap.keySet()) {
 					    				//System.out.println("key:"+key+"data:"+ sSop.getOpDate());
-					    				if(StockDateTimer.isSameDate(key, sSop.getOpDate(), dateType)){
+					    				if(CommonDate.isSameDate(key, sSop.getOpDate(), dateType)){
 					    					flag = true;
 					    					extremeCol = stockDateColumnmap.get(key);
 					    					break;

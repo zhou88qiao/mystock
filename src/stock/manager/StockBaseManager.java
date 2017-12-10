@@ -76,7 +76,7 @@ import stock.export.StockExcelPartitionMain;
 import stock.export.StockExcelReadMain;
 import stock.loader.base.ExcelReader;
 import stock.loader.data.FileReader;
-import stock.timer.StockDateTimer;
+import stock.timer.CommonDate;
 import stockGUI.StockTimeSeriesChart;
 import stockGUI.stocktable.StockConceptTableModel;
 import stockGUI.stocktable.StockIndustryTableModel;
@@ -924,8 +924,8 @@ public class StockBaseManager {
 				
             } else if(e.getSource()== checkButton){
             	  		
-            	String startTime = StockDateTimer.formatDate((Date)datepickStart.getValue());
-        		String endTime = StockDateTimer.formatDate((Date)datepickEnd.getValue());
+            	String startTime = CommonDate.formatDate((Date)datepickStart.getValue());
+        		String endTime = CommonDate.formatDate((Date)datepickEnd.getValue());
         	
         		if(timeNmae.equals("stock_analy_summary"))
         			exportExcelFile(ConstantsInfo.StockMarket,startTime, endTime);

@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
 
 import common.ConstantsInfo;
 
-public class StockDateTimer {
+public class CommonDate {
 	
 	public static String DEFAULT_FORMAT = "yyyy-MM-dd"; 
 	
@@ -167,7 +167,7 @@ public class StockDateTimer {
 			int year = aTime.get(Calendar.YEAR);//µÃµ½Äê
 			System.out.println(year);
 		 
-		 StockDateTimer st=new StockDateTimer();
+		 CommonDate st=new CommonDate();
 		 int day=st.getDayofYear();
 		 int day1=st.getDayInYear("2014-6-24");
 		 int week=st.getWeekInYear("2015-12-11");

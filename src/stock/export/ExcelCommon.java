@@ -49,7 +49,7 @@ import dao.StockSummary;
 import dao.StockSummaryDao;
 import date.timer.stockDateTimer;
 import stock.analysis.PointClass;
-import stock.timer.StockDateTimer;
+import stock.timer.CommonDate;
 
 public class ExcelCommon {
 	
@@ -271,8 +271,8 @@ public class ExcelCommon {
          for(i=0;i<stockNameIdNum;i++)
          	sheet.setColumnWidth(i, middleColWidth);
          
-         String date = StockDateTimer.getCurDate();
-         String startDate = StockDateTimer.getBeforeDay(date, 1, 180);
+         String date = CommonDate.getCurDate();
+         String startDate = CommonDate.getBeforeDay(date, 1, 180);
          List<String> listStockDate = new ArrayList<String>();
          
          listStockDate = sdDao.getDatesFromSH000001ForStartEnd(startDate,date);

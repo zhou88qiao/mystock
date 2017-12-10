@@ -16,12 +16,12 @@ import dao.BaseDao;
 import dao.StockData;
 import stock.analysis.PointClass;
 import stock.timer.DateStock;
-import stock.timer.StockDateTimer;
+import stock.timer.CommonDate;
 import stock.timer.TimeStock;
 
 public class StockDataDao extends BaseDao{
 	
-	StockDateTimer sTimer=new StockDateTimer();
+	CommonDate sTimer=new CommonDate();
 	static PointClass pClass=new PointClass();
 	public StockDataDao()
 	{
