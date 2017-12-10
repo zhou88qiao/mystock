@@ -237,10 +237,8 @@ public class StockSummaryDao extends BaseDao{
 		"monthWinValue varchar(48) NOT NULL DEFAULT '', " +
 		"monthLoseValue varchar(48) NOT NULL DEFAULT '', " +
 		"monthDealWarn varchar(48) NOT NULL DEFAULT '', " +
-		"monthOption varchar(48) NOT NULL DEFAULT '' " +
-		
+		"monthOption varchar(48) NOT NULL DEFAULT '' " +		
 		") ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
-		//System.out.println(createTablesql);
 		return super.saveOrUpdate(createTablesql);
 	}
 	
@@ -399,7 +397,6 @@ public class StockSummaryDao extends BaseDao{
 
 		//排好序
 		//selectSql="select * from "+stockTable+" ORDER BY opDate desc limit "+days;
-		System.out.println(selectSql);
 		return super.executeQuery(selectSql,StockOperation.class); 
 	}
 	
@@ -501,7 +498,6 @@ public class StockSummaryDao extends BaseDao{
         "opType  int default 1, " +
         "dateType  int default 1 " +
     	") ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
-		System.out.println(createTablesql);
 		return super.saveOrUpdate(createTablesql);
 	}
 	
@@ -512,7 +508,6 @@ public class StockSummaryDao extends BaseDao{
 		String tableName=ConstantsInfo.STOCK_OPERATION_TABLE_NAME+strFullId;
 			
 		String createTablesql="alter table " + tableName+" add column dateType int default 1;";
-		System.out.println(createTablesql);
 		return super.saveOrUpdate(createTablesql);
 	}
 
@@ -529,20 +524,7 @@ public class StockSummaryDao extends BaseDao{
 	        		sop.getOpType(),sop.getDateType());
 		  	
 	  }
-	  
-	  
-	 public int updateStockOperationTable11(StockOperation op,String stockFullId,int id) throws IOException, ClassNotFoundException, SQLException
-	{
-		String stockTable=ConstantsInfo.STOCK_OPERATION_TABLE_NAME+stockFullId;
-	//id唯一	只更新四个值
-		String updateSql = "update "+stockTable+" set assId='"+op.getAssId()+"',opDate='"+op.getOpDate()+"',buyValue='"+op.getBuyValue()+
-		"',stopValue='"+op.getStopValue()+"',saleValue='"+op.getSaleValue()+
-		"',earnRatio='"+op.getEarnRatio()+"',stopRatio='"+op.getStopRatio()+
-		"',lossRatio='"+op.getLossRatio()+"' where id="+id;
-		System.out.println(updateSql);
-		return super.saveOrUpdate(updateSql);	
-	}
-	 
+	   
 	 public int updateStockOperationTable(StockOperation op,String stockFullId,int id) throws IOException, ClassNotFoundException, SQLException
 		{
 			String stockTable=ConstantsInfo.STOCK_OPERATION_TABLE_NAME+stockFullId;
@@ -551,7 +533,6 @@ public class StockSummaryDao extends BaseDao{
 			",stopValue="+op.getStopValue()+",saleValue="+op.getSaleValue()+
 			",earnRatio="+op.getEarnRatio()+",stopRatio="+op.getStopRatio()+
 			",lossRatio="+op.getLossRatio()+" where id="+id;
-			System.out.println(updateSql);
 			return super.saveOrUpdate(updateSql);	
 		}
 	  
@@ -568,7 +549,6 @@ public class StockSummaryDao extends BaseDao{
 				selectSql="select * from "+stockTable+" where dateType="+dateType+" and opDate <= '"+sdate+"' ORDER BY opDate desc limit 1";
 			else
 				selectSql="select * from "+stockTable+" where dateType="+dateType+" ORDER BY opDate desc limit 1 ";
-			//System.out.println(selectSql);
 			return super.executeSingleQuery(selectSql,StockOperation.class); 
 		}
 		

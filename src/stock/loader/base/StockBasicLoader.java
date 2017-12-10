@@ -39,7 +39,7 @@ import dao.StockInformationDao;
 import dao.StockPointDao;
 import dao.StockSingle;
 
-public class ExcelReader {
+public class StockBasicLoader {
 	private POIFSFileSystem fs;
 	private HSSFWorkbook wb;
 	private XSSFWorkbook xb;
@@ -52,7 +52,7 @@ public class ExcelReader {
 	private StockPointDao spDao;
 	private StockBaseDao sbDao;
 
-	public ExcelReader(Connection stockBaseConn) {
+	public StockBasicLoader(Connection stockBaseConn) {
 		this.sbDao = new StockBaseDao(stockBaseConn);
 
 	}
@@ -62,7 +62,7 @@ public class ExcelReader {
 	static int insetNum = 0;
 	static int insetNoNum = 0;
 
-	public ExcelReader(StockBaseDao sbDao) {
+	public StockBasicLoader(StockBaseDao sbDao) {
 		this.sbDao = sbDao;
 		// this.sdDao = sdDao;
 		// this.spDao = spDao;
@@ -1535,7 +1535,7 @@ public class ExcelReader {
 		Connection stockBaseConn = DbConn
 				.getConnDB("stockConf/conn_base_db.ini");
 
-		ExcelReader excelReader = new ExcelReader(stockBaseConn);
+		StockBasicLoader stockBasicLoader = new StockBasicLoader(stockBaseConn);
 
 		// 导入市场
 		// excelReader.readMarketInfo();
@@ -1548,7 +1548,7 @@ public class ExcelReader {
 		// 一级行业下概念
 		// excelReader.readFirstIndustry_To_Concept();
 		
-		 excelReader.readStockToFeatures();
+		 stockBasicLoader.readStockToFeatures();
 
 		// 三级行业股票
 		// excelReader.readThirdIndustry_to_stock();

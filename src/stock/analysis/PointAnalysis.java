@@ -14,7 +14,6 @@ import org.apache.log4j.PropertyConfigurator;
 import common.ConstantsInfo;
 import common.stockLogger;
 
-import dao.DayStock;
 import dao.DbConn;
 import dao.StockBaseDao;
 import dao.StockData;
@@ -23,9 +22,8 @@ import dao.StockInformationDao;
 import dao.StockPoint;
 import dao.StockPointDao;
 import stock.timer.DateStock;
-import stock.timer.CommonDate;
 
-public class PointClass {
+public class PointAnalysis {
 	
 	private StockDataDao sdDao;
 	private StockBaseDao sbDao;
@@ -33,17 +31,17 @@ public class PointClass {
 	static StockInformationDao siDao =new StockInformationDao();
 	
 	
-	public PointClass()
+	public PointAnalysis()
 	{
 		
 	}
-	public PointClass(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn)
+	public PointAnalysis(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn)
 	{
 		this.sbDao = new StockBaseDao(stockBaseConn);
 		this.sdDao =new StockDataDao(stockDataConn);
 		this.spDao =new StockPointDao(stockPointConn);
 	}
-	 public PointClass(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao)
+	 public PointAnalysis(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao)
 	{
 		this.sbDao = sbDao;
 		this.sdDao = sdDao;
@@ -1225,7 +1223,7 @@ public class PointClass {
 		//addIndexForStockPoint();//Ë÷Òý 1
 		
 		
-		PointClass pc=new PointClass(stockBaseConn,stockDataConn,stockPointConn);
+		PointAnalysis pc=new PointAnalysis(stockBaseConn,stockDataConn,stockPointConn);
 		Date startDate = new Date(0);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
         String dateNowStr = sdf.format(startDate);  

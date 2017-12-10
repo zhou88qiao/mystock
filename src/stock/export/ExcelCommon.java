@@ -1,59 +1,40 @@
 package stock.export;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import common.ConstantsInfo;
-import common.stockLogger;
-import dao.DbConn;
-import dao.StockBaseDao;
 import dao.StockBaseFace;
 import dao.StockDataDao;
-import dao.StockInformationDao;
-import dao.StockMarket;
 import dao.StockOperation;
 import dao.StockPoint;
-import dao.StockPointDao;
-import dao.StockSingle;
+
 import dao.StockSummary;
-import dao.StockSummaryDao;
 import stock.timer.stockDater;
-import stock.analysis.PointClass;
 import stock.timer.CommonDate;
 
 public class ExcelCommon {
 	
-		
 	final static int stockNameIdNum=3;
 	final static int stockSummaryNum=15;
 	final static int stockOperationNum=7;
@@ -2000,12 +1981,6 @@ public class ExcelCommon {
     	valuePer=changePercent(totalShouyi);
     	create07Cell(wb, rowStock, colNum++, valuePer, 0); 	
     	
-    }
-    
-    public static void main(String[] args) throws SecurityException, SQLException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException {
-    	float a= (float) -0.0987;
-    	String valuePer=changePercent(a);
-    	System.out.println(valuePer);
     }
     
 }

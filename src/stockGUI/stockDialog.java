@@ -1,7 +1,6 @@
 package stockGUI;
 
-import stock.analysis.GetMA;
-import stock.analysis.PointClass;
+import stock.analysis.PointAnalysis;
 import stock.timer.DateStock;
 
 import java.awt.BorderLayout;
@@ -55,8 +54,7 @@ public class stockDialog {
 	static StockInformationDao sid =new StockInformationDao();
 	static DayStockDao dsd=new DayStockDao();
 	static StockDataDao sdDao=new StockDataDao();
-	static GetMA gm=new GetMA();
-	static PointClass pClass=new PointClass();
+	static PointAnalysis pClass=new PointAnalysis();
 	static List<StockInformation> listStockInfo = new ArrayList<StockInformation>(); 
 	List<String> listIndustry = new ArrayList<String>(); 
 	List<String> listConcept = new ArrayList<String>(); 	

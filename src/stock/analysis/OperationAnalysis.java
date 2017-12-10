@@ -1,4 +1,4 @@
-package stock.export;
+package stock.analysis;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -23,13 +23,13 @@ import dao.StockPointDao;
 import dao.StockSummary;
 import dao.StockSummaryDao;
 
-public class StockExcelOperationMain {
+public class OperationAnalysis {
 	private StockDataDao sdDao;
 	private StockBaseDao sbDao;
 	private StockPointDao spDao;
 	private StockSummaryDao ssDao;
 	
-	public StockExcelOperationMain(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
+	public OperationAnalysis(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
 	{
 		   this.sbDao = new StockBaseDao(stockBaseConn);
 		   this.sdDao =new StockDataDao(stockDataConn);
@@ -37,7 +37,7 @@ public class StockExcelOperationMain {
 		   this.ssDao = new StockSummaryDao(stockSummaryConn);
 	}
     
-    public StockExcelOperationMain(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
+    public OperationAnalysis(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
 	{
 		this.sbDao = sbDao;
 		this.sdDao = sdDao;
@@ -692,7 +692,7 @@ public class StockExcelOperationMain {
         Connection stockSummaryConn = DbConn.getConnDB("stockConf/conn_summary_db.ini");
         
         stockLogger.logger.fatal("excel operation start");	
-        StockExcelOperationMain seOp = new StockExcelOperationMain(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
+        OperationAnalysis seOp = new OperationAnalysis(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
 		 
         seOp.analyseSingleStockOperation("SH600091","2017-11-22");
  

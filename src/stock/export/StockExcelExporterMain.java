@@ -47,19 +47,19 @@ import dao.StockToConcept;
 import dao.StockToFutures;
 import dao.StockToIndustry;
 import stock.timer.stockDater;
-import stock.analysis.PointClass;
+import stock.analysis.PointAnalysis;
 import stock.timer.CommonDate;
 
 //分片处理excel 分成多个excel
 
-public class StockExcelPartitionMain {
+public class StockExcelExporterMain {
 
 	private StockDataDao sdDao;
 	private StockPointDao spDao;
 	private StockBaseDao sbDao;
 	private StockSummaryDao ssDao;
 
-	static PointClass pClass=new PointClass();
+	static PointAnalysis pClass=new PointAnalysis();
 
 	
  	//static ExcelCommon eCommon=new ExcelCommon();
@@ -78,7 +78,7 @@ public class StockExcelPartitionMain {
  	//比例保留两位小数点
  	static DecimalFormat decimalFormat=new DecimalFormat(".00");
  	
- 	public StockExcelPartitionMain(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
+ 	public StockExcelExporterMain(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
 	{
 		   this.sbDao = new StockBaseDao(stockBaseConn);
 		   this.sdDao =new StockDataDao(stockDataConn);
@@ -86,7 +86,7 @@ public class StockExcelPartitionMain {
 		   this.ssDao = new StockSummaryDao(stockSummaryConn);
 	}
     
-    public StockExcelPartitionMain(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
+    public StockExcelExporterMain(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
 	{
 		this.sbDao = sbDao;
 		this.sdDao = sdDao;
@@ -5049,7 +5049,7 @@ public class StockExcelPartitionMain {
         Connection stockPointConn = DbConn.getConnDB("stockConf/conn_point_db.ini");
         Connection stockSummaryConn = DbConn.getConnDB("stockConf/conn_summary_db.ini");
 	   
-		StockExcelPartitionMain se = new StockExcelPartitionMain(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
+		StockExcelExporterMain se = new StockExcelExporterMain(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
 		//排序
 		
 

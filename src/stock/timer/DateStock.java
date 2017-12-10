@@ -66,9 +66,4 @@ public class DateStock {
 		this.yearDate = yearDate;
 	}
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

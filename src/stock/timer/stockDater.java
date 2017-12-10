@@ -526,42 +526,4 @@ public class stockDater {
        
 	 }
 
-	public static void main(String[] args) throws ParseException {
-		stockDater tt = new stockDater();
-		 int i= compareDate("1995-11-12", "1999-12-16");
-	       System.out.println("i=="+i);
-	       /*
-	       for(int i = 1999;i < 2013;i++){  
-	            System.out.println(formatDate(getCurrYearFirst(i)));  
-	            System.out.println(formatDate(getCurrYearLast(i)));  
-	        }  
-		
-		System.out.println("获取当前日期是周几:" + tt.isWorkDay());
-		System.out.println("获取当前日期是周几:" + tt.getWeek("2014-4-29"));
-		System.out.println("获取当天日期:" + tt.getNowTime("yyyy-MM-dd"));
-		System.out.println("获取本周一日期:" + tt.getMondayOFWeek());
-		System.out.println("获取本周日的日期:" + tt.getCurrentWeekday());
-		System.out.println("获取上周一日期:" + tt.getPreviousWeekday());
-		System.out.println("获取上周日日期:" + tt.getPreviousWeekSunday());
-		System.out.println("获取下周一日期:" + tt.getNextMonday());
-		System.out.println("获取下周日日期:" + tt.getNextSunday());
-		System.out.println("获得相应周的周六的日期:" + tt.getNowTime("yyyy-MM-dd"));
-		System.out.println("获取本月第一天日期:" + tt.getFirstDayOfMonth());
-		System.out.println("获取本月最后一天日期:" + tt.getDefaultDay());
-		System.out.println("获取上月第一天日期:" + tt.getPreviousMonthFirst());
-		System.out.println("获取上月最后一天的日期:" + tt.getPreviousMonthEnd());
-		System.out.println("获取下月第一天日期:" + tt.getNextMonthFirst());
-		System.out.println("获取下月最后一天日期:" + tt.getNextMonthEnd());
-		System.out.println("获取本年的第一天日期:" + tt.getCurrentYearFirst());
-		System.out.println("获取本年最后一天日期:" + tt.getCurrentYearEnd());
-		System.out.println("获取去年的第一天日期:" + tt.getPreviousYearFirst());
-		System.out.println("获取去年的最后一天日期:" + tt.getPreviousYearEnd());
-		System.out.println("获取明年第一天日期:" + tt.getNextYearFirst());
-		System.out.println("获取明年最后一天日期:" + tt.getNextYearEnd());
-		System.out.println("获取本季度第一天到最后一天:" + tt.getThisSeasonTime(11));
-		System.out.println("获取两个日期之间间隔天数2008-12-1~2008-9.29:"
-	    + stockDateTimer.getTwoDay("2008-12-1", "2008-9-29"));
-		*/
-	}
-
 }

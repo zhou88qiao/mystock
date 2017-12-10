@@ -38,7 +38,7 @@ public class StockPointDao extends BaseDao{
 		"expectation float default 0,"+
 		"index data_index(`type`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
 		String sql=createTablesql;
-		System.out.println(sql);
+		//System.out.println(sql);
 		return super.saveOrUpdate(createTablesql);
 	}
 	
@@ -118,7 +118,6 @@ public class StockPointDao extends BaseDao{
 			
 			break;
 		}	
-		//System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql,StockPoint.class); 	
 	}	
 	
@@ -165,7 +164,6 @@ public class StockPointDao extends BaseDao{
 			break;
 		}	
 		//stockLogger.logger.debug(selectSql);
-		//System.out.println(selectSql);
 		return super.executeQuery(selectSql,StockPoint.class); 
 	}	
 	
@@ -190,8 +188,6 @@ public class StockPointDao extends BaseDao{
 			selectSql="select * from "+stockTable+"";
 			break;
 		}	
-		//stockLogger.logger.debug(selectSql);
-		System.out.println(selectSql);
 		return super.executeQuery(selectSql,StockPoint.class); 
 	}	
 	
@@ -217,7 +213,6 @@ public class StockPointDao extends BaseDao{
 			break;
 		}	
 		//stockLogger.logger.debug(selectSql);
-		//System.out.println(selectSql);
 		return super.executeQuery(selectSql,StockPoint.class); 
 	}	
 	
@@ -243,8 +238,6 @@ public class StockPointDao extends BaseDao{
 			selectSql="select extremePrice from "+stockTable+"";
 			break;
 		}	
-		//stockLogger.logger.debug(selectSql);
-	//	System.out.println(selectSql);
 		return super.getFloatQuery(selectSql,null); 
 	}	
 	
@@ -271,7 +264,6 @@ public class StockPointDao extends BaseDao{
 			break;
 		}	
 		//stockLogger.logger.debug(selectSql);
-		//System.out.println(selectSql);
 		return super.getSingleIntQuery(selectSql,null); 
 	}
 	
@@ -281,7 +273,6 @@ public class StockPointDao extends BaseDao{
 	{
 		String stockTable=ConstantsInfo.STOCK_POINT_TABLE_NAME+stockFullId;
 		String selectSql = "select DISTINCT(extremeDate) from "+stockTable+" ORDER BY extremeDate desc"; //distinct去重
-		//	System.out.println(selectSql);
 		return super.getQuery(selectSql, null);
 	}
 	
@@ -290,7 +281,6 @@ public class StockPointDao extends BaseDao{
 	{
 		String stockTable=ConstantsInfo.STOCK_POINT_TABLE_NAME+stockFullId;
 		String selectSql = "select DISTINCT(extremeDate) from "+stockTable+" where extremeDate>='"+cDate+"' ORDER BY extremeDate desc"; //distinct去重
-		//	System.out.println(selectSql);
 		return super.getQuery(selectSql, null);
 	}
 	
@@ -301,8 +291,7 @@ public class StockPointDao extends BaseDao{
 		selectSql="select DATE_ADD('"+lastDate+"', INTERVAL DATEDIFF('"+lastDate+"','"+preDate+"') DAY)";
 		return super.getSingleQuery(selectSql, null);
 	}	
-	
-	
+
 	//增加索引Type索引
 	public int addIndex(String stockFullId) throws IOException, ClassNotFoundException, SQLException
 	{
@@ -312,26 +301,13 @@ public class StockPointDao extends BaseDao{
 		return super.saveOrUpdate(sql);
 	}
 	
-	
-	//删除某条极点数据，误操
+	//删除某条极点数据
 	public int delStockPointData(String stockFullId,int id) throws IOException, ClassNotFoundException, SQLException
 	{
 		String stockTable=ConstantsInfo.STOCK_POINT_TABLE_NAME+stockFullId;
 		//delete from day_stock_sz000010  where id in (select id from (select  max(id) as id,count(date) as count from day_stock_sz000010 group by date having count >1 order by count desc) as tab );
 		String selectSql;
 		selectSql="delete from "+stockTable+" where id='"+id+"'";
-	//	System.out.println(selectSql);
-		return super.saveOrUpdate(selectSql);
-	}
-	
-	//删除某个极点数据，误操作
-	public int delStockPointDay(String stockFullId,String mouday) throws IOException, ClassNotFoundException, SQLException
-	{
-		String stockTable=ConstantsInfo.STOCK_POINT_TABLE_NAME+stockFullId;
-		//delete from day_stock_sz000010  where id in (select id from (select  max(id) as id,count(date) as count from day_stock_sz000010 group by date having count >1 order by count desc) as tab );
-		String selectSql;
-		selectSql="delete from "+stockTable+" where toDate='"+mouday+"'";
-		//System.out.println(selectSql);
 		return super.saveOrUpdate(selectSql);
 	}
 

@@ -122,7 +122,6 @@ public class StockInformationDao extends BaseDao {
 				String conceptName=si.getStockConcept();
 				if(conceptName==null || conceptName.length()<1)
 					continue;
-			//	System.out.println(conceptName);
 				//ШЅжи
 				if(Collections.frequency(listConcept, conceptName) < 1) 
 					listConcept.add(conceptName);
@@ -244,8 +243,7 @@ public class StockInformationDao extends BaseDao {
 				break;
 			}
 			if(updateSql!=null)
-			{
-				System.out.println(updateSql);			
+			{			
 				return super.saveOrUpdate(updateSql);
 			}
 			else
@@ -271,8 +269,7 @@ public class StockInformationDao extends BaseDao {
 				break;
 			}
 			if(updateSql!=null)
-			{
-				System.out.println(updateSql);			
+			{		
 				return super.saveOrUpdate(updateSql);
 			}
 			else
@@ -300,8 +297,7 @@ public class StockInformationDao extends BaseDao {
 			}
 			
 			if(updateSql!=null)
-			{
-				System.out.println(updateSql);			
+			{			
 				return super.saveOrUpdate(updateSql);
 			}
 			else

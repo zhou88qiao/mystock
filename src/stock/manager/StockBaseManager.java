@@ -70,12 +70,12 @@ import dao.StockMarket;
 import dao.StockPointDao;
 import dao.StockRegional;
 import dao.StockSingle;
-import stock.analysis.PointClass;
-import stock.export.StockExcelOperationMain;
-import stock.export.StockExcelPartitionMain;
-import stock.export.StockExcelReadMain;
-import stock.loader.base.ExcelReader;
-import stock.loader.data.FileReader;
+import stock.analysis.PointAnalysis;
+import stock.analysis.OperationAnalysis;
+import stock.export.StockExcelExporterMain;
+import stock.loader.analyse.loadSummaryMain;
+import stock.loader.base.StockBasicLoader;
+import stock.loader.data.StockDataLoader;
 import stock.timer.CommonDate;
 import stockGUI.StockTimeSeriesChart;
 import stockGUI.stocktable.StockConceptTableModel;
@@ -97,7 +97,7 @@ public class StockBaseManager {
 	private StockBaseDao sbDao;
 	private StockSummaryDao ssDao;
 	//static StockInformationDao siDao =new StockInformationDao();
-	static PointClass pClass=new PointClass();
+	static PointAnalysis pClass=new PointAnalysis();
 	 private static TrayIcon trayIcon = null;
 	 static SystemTray tray = SystemTray.getSystemTray();
 	
@@ -204,7 +204,7 @@ public class StockBaseManager {
 	List<StockRegional> listStockRegional = new ArrayList<StockRegional>(); 
 	List<StockSingle> listStockSingle = new ArrayList<StockSingle>(); 
 	
-	FileReader fr;//导入数据
+	StockDataLoader fr;//导入数据
 	
 	public StockBaseManager(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
 	{
@@ -369,7 +369,7 @@ public class StockBaseManager {
 	class menuActionListenter implements ActionListener
 	{
 		int ret=0;
-		ExcelReader excelReader=null;
+		StockBasicLoader stockBasicLoader=null;
 		public void actionPerformed(ActionEvent e) {
 			
 			if(stockSP!=null)
@@ -1039,46 +1039,46 @@ public class StockBaseManager {
 	 
 	public void loadData(int loadType) throws IOException, ClassNotFoundException, SQLException{
 		int ret = 0;
-		ExcelReader excelReader=null;
-		excelReader = new ExcelReader(sbDao);	
+		StockBasicLoader stockBasicLoader=null;
+		stockBasicLoader = new StockBasicLoader(sbDao);	
 		String desc=null;
 	
 		switch(loadType){
 			case 9: //导入一级行业	
-				ret=excelReader.readIndustry();
+				ret=stockBasicLoader.readIndustry();
 				desc = "数据导入出错，请检查文件1Industry";
 				break;
 			case 10: //导入一级行业对应概念	
-				ret=excelReader.readFirstIndustry_To_Concept();
+				ret=stockBasicLoader.readFirstIndustry_To_Concept();
 				desc = "数据导入出错，请检查文件2FirstIndustry-to-Concept.xlsx";
 				break;
 			case 11: //导入三级行业对应股票	
-				ret=excelReader.readThirdIndustry_to_stock();
+				ret=stockBasicLoader.readThirdIndustry_to_stock();
 				desc="数据导入出错，请检查文件3ThirdIndustry-to-stock.xlsx";
 				break;
 			case 12: //导入概念对应股票	
-				ret=excelReader.readConcept_to_stock();
+				ret=stockBasicLoader.readConcept_to_stock();
 				desc="数据导入出错，请检查文件4Concept-to-stock.xlsx";
 				break;
 			case 13: //导入两融	
-				ret=excelReader.readTwoRong();
+				ret=stockBasicLoader.readTwoRong();
 				desc="数据导入出错，请检查文件5TwoRong.xlsx";
 				break;
 			case 14: //导入基本面
-				ret=excelReader.readstock_baseExpect();
+				ret=stockBasicLoader.readstock_baseExpect();
 				desc="数据导入出错，请检查文件5TwoRong.xlsx";
 				break;
 			case 15: //导入基本面
-				ret=excelReader.readMarketInfo();
-				ret=excelReader.readFuturesInfo();
+				ret=stockBasicLoader.readMarketInfo();
+				ret=stockBasicLoader.readFuturesInfo();
 				desc="数据导入出错，请检查文件0Market_BaseInfo.xlsx或7ExMarket_BaseInfo.xlsx";
 				break;
 			case 16: //导入基本面
-				ret=excelReader.readStockToFeatures();
+				ret=stockBasicLoader.readStockToFeatures();
 				desc="数据导入出错，请检查文件8ExMarket-to-stock.xlsx";
 				break;
 			case 17: //年份信息面
-				ret=excelReader.readYearInfo();
+				ret=stockBasicLoader.readYearInfo();
 				desc="数据导入出错，请检查文件9 10 11 12四个文件";
 				break;
 			default:
@@ -1130,7 +1130,7 @@ public class StockBaseManager {
 	public void loadStockData(int type){
 		
 		Date start = new Date();
-		fr=new FileReader(sbDao,sdDao,spDao,ssDao);		
+		fr=new StockDataLoader(sbDao,sdDao,spDao,ssDao);		
 		int ret = 0;
 		
 		stockLogger.logger.fatal("******load stock data start*****");
@@ -1161,7 +1161,7 @@ public class StockBaseManager {
 	//2分析股票交易数据
 	public void analyseStockData(int type, String startdate, String enddate){
 		
-		PointClass pc = new PointClass(sbDao,sdDao,spDao);	
+		PointAnalysis pc = new PointAnalysis(sbDao,sdDao,spDao);	
 		stockLogger.logger.fatal("******analyse point start*****");
 		Date start = new Date();
 
@@ -1214,7 +1214,7 @@ public class StockBaseManager {
 	 //3导出分析数据
     public void exportExcelFile(int type, String startdate, String enddate){
 				
-		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	   	
+		StockExcelExporterMain sep = new StockExcelExporterMain(sbDao,sdDao,spDao,ssDao);	   	
 	
 			
 		List<String> listStockDate = new ArrayList<String>();	         
@@ -1268,7 +1268,7 @@ public class StockBaseManager {
     //4导入统计表
     public void loadSummaryExcelFile(int type) 
     {
-    	StockExcelReadMain seRead = new StockExcelReadMain(sbDao,sdDao,spDao,ssDao);		
+    	loadSummaryMain seRead = new loadSummaryMain(sbDao,sdDao,spDao,ssDao);		
 		try {			
 			seRead.readStockAnsyleExcelData(type);		
 		} catch (Exception e) {
@@ -1287,7 +1287,7 @@ public class StockBaseManager {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
 		String dateNowStr1 = sdf1.format(startDate1);    	
 			
-		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
+		StockExcelExporterMain sep = new StockExcelExporterMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
     		
     		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
@@ -1317,7 +1317,7 @@ public class StockBaseManager {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
 		String dateNowStr1 = sdf1.format(startDate1);  
 			
-		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	   
+		StockExcelExporterMain sep = new StockExcelExporterMain(sbDao,sdDao,spDao,ssDao);	   
     	try {
     		
     		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
@@ -1344,7 +1344,7 @@ public class StockBaseManager {
     //7买卖操作分析
     public void analyseOperation(int type, String startdate, String enddate)
     {	
-		StockExcelOperationMain sop = new StockExcelOperationMain(sbDao,sdDao,spDao,ssDao);	 
+		OperationAnalysis sop = new OperationAnalysis(sbDao,sdDao,spDao,ssDao);	 
     	
 		List<String> listStockDate = new ArrayList<String>();	         
         try {
@@ -1396,7 +1396,7 @@ public class StockBaseManager {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
 		String dateNowStr1 = sdf1.format(startDate1);    	
 		
-		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
+		StockExcelExporterMain sep = new StockExcelExporterMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
     		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
     		if(date_rectely==null || date_rectely == ""){
@@ -1431,7 +1431,7 @@ public class StockBaseManager {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
 		String dateNowStr1 = sdf1.format(startDate1);    	
 		stockLogger.logger.fatal("******export total operation start*****");	
-		StockExcelPartitionMain sep = new StockExcelPartitionMain(sbDao,sdDao,spDao,ssDao);	    
+		StockExcelExporterMain sep = new StockExcelExporterMain(sbDao,sdDao,spDao,ssDao);	    
     	try {
     		String date_rectely = sdDao.getRecetlyDateFromSH000001(dateNowStr1);
     		if(date_rectely==null || date_rectely == ""){

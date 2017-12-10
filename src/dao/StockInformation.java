@@ -85,7 +85,4 @@ public class StockInformation {
 		this.stockFullId = stockFullId;
 	}
 	
-	public static void main(String[] args) {
-
-	}
 }

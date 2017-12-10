@@ -22,23 +22,23 @@ import dao.StockPointDao;
 import stock.timer.stockDater;
 import stock.timer.TimeStock;
 
-public class CalculationStock {
+public class MaAnalysis {
 	
 	private StockDataDao sdDao;
 	private StockBaseDao sbDao;
 	static StockInformationDao siDao =new StockInformationDao();
 	static stockDater sdTime=new stockDater();
-	public CalculationStock()
+	public MaAnalysis()
 	{
 		
 	}
-	public CalculationStock(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn)
+	public MaAnalysis(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn)
 	{
 		sbDao = new StockBaseDao(stockBaseConn);
 		sdDao =new StockDataDao(stockDataConn);
 	}
 	
-	 public CalculationStock(StockBaseDao sbDao,StockDataDao sdDao)
+	 public MaAnalysis(StockBaseDao sbDao,StockDataDao sdDao)
 	{
 		this.sbDao = sbDao;
 		this.sdDao = sdDao;
@@ -258,7 +258,7 @@ public class CalculationStock {
 	     Connection stockBaseConn = DbConn.getConnDB("stockConf/conn_base_db.ini");  
 	     Connection stockDataConn = DbConn.getConnDB("stockConf/conn_data_db.ini"); 
 	     Connection stockPointConn = DbConn.getConnDB("stockConf/conn_point_db.ini");  
-	     CalculationStock cas =new CalculationStock(stockBaseConn,stockDataConn,stockPointConn);
+	     MaAnalysis cas =new MaAnalysis(stockBaseConn,stockDataConn,stockPointConn);
 
 		
 		/*1 Ìí¼ÓË÷Òý*/

@@ -1,4 +1,4 @@
-package stock.export;
+package stock.loader.analyse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,14 +30,14 @@ import dao.StockSummaryDao;
 
 
 //读取分析的数据入到数据库中
-public class StockExcelReadMain {
+public class loadSummaryMain {
 	
 	private StockDataDao sdDao;
 	private StockPointDao spDao;
 	private StockBaseDao sbDao;
 	private StockSummaryDao ssDao;
 	
-	public StockExcelReadMain(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
+	public loadSummaryMain(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
 	{
 		   this.sbDao = new StockBaseDao(stockBaseConn);
 		   this.sdDao =new StockDataDao(stockDataConn);
@@ -45,7 +45,7 @@ public class StockExcelReadMain {
 		   this.ssDao = new StockSummaryDao(stockSummaryConn);
 	}
     
-    public StockExcelReadMain(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
+    public loadSummaryMain(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
 	{
 		this.sbDao = sbDao;
 		this.sdDao = sdDao;
@@ -244,7 +244,7 @@ public class StockExcelReadMain {
         Connection stockPointConn = DbConn.getConnDB("stockConf/conn_point_db.ini");
         Connection stockSummaryConn = DbConn.getConnDB("stockConf/conn_summary_db.ini");
 		
-		StockExcelReadMain seRead = new StockExcelReadMain(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
+		loadSummaryMain seRead = new loadSummaryMain(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
 		//seRead.create_summarY("123");
 		seRead.readStockAnsyleExcelData(ConstantsInfo.StockMarket);
 		//seRead.readStockAnsyleExcelData(ConstantsInfo.FuturesMarket);

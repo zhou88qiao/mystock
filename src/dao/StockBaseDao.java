@@ -42,7 +42,6 @@ public class StockBaseDao extends BaseDao {
 				+ "piLouDate varchar(64) default ' ' NOT NULL"
 				+ ") ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
 		String sql = createTablesql;
-		System.out.println(sql);
 		return super.saveOrUpdate(createTablesql);
 	}
 
@@ -80,7 +79,6 @@ public class StockBaseDao extends BaseDao {
 			ClassNotFoundException, SQLException {
 		String selectSql = "select name from stock_first_industry where code='"
 				+ code + "'";
-		// System.out.println(selectSql);
 		return getSingleQuery(selectSql, null);
 	}
 
@@ -89,7 +87,6 @@ public class StockBaseDao extends BaseDao {
 			throws IOException, ClassNotFoundException, SQLException {
 		String selectSql = "select conceptCode from stock_firstindustry_to_concept where firstIndustryCode ='"
 				+ industryCode + "'";
-		// System.out.println(selectSql);
 		return super.getQuery(selectSql, null);
 	}
 
@@ -99,7 +96,6 @@ public class StockBaseDao extends BaseDao {
 			SQLException {
 		String selectSql = "select * from stock_firstindustry_to_concept where firstIndustryCode ='"
 				+ industryCode + "'";
-		// System.out.println(selectSql);
 		return super.executeQuery(selectSql, StockConceptInFirstIndustry.class);
 	}
 
@@ -250,7 +246,7 @@ public class StockBaseDao extends BaseDao {
 			selectSql = selectSql + " stockConcept='" + concept + "' and";
 		// 去掉最后一个and
 		sql = selectSql.substring(0, selectSql.length() - 3);
-		System.out.println(sql);
+		
 		return super.executeQuery("select * from stock_allinfo where " + sql,
 				StockSingle.class);
 	}
@@ -431,7 +427,6 @@ public class StockBaseDao extends BaseDao {
 				+ sStock.getStockConcept() + "',enableMarginTrading='"
 				+ sStock.getEnableMarginTrading() + "' where stockFullId='"
 				+ sStock.getStockFullId() + "'";
-		System.out.println(sql);
 		return super.saveOrUpdate(sql);
 	}
 
@@ -605,7 +600,7 @@ public class StockBaseDao extends BaseDao {
 				+ tableConceptName
 				+ " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
 				+ " (`stockFullId`,`stockName`,`stockConcept`);";
-		System.out.println("loadData sql:" + sql);
+		//System.out.println("loadData sql:" + sql);
 		return super.saveOrUpdate(sql);
 	}
 
@@ -737,7 +732,6 @@ public class StockBaseDao extends BaseDao {
 		String selectSql = null;
 		selectSql = "select * from stock_third_industry  where thirdname='"
 				+ thridName + "'";
-		System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql, StockIndustry.class);
 	}
 
@@ -746,7 +740,6 @@ public class StockBaseDao extends BaseDao {
 		String selectSql = null;
 		selectSql = "select * from stock_third_industry  where thirdcode='"
 				+ thirdCode + "'";
-		// System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql, StockIndustry.class);
 	}
 
@@ -755,7 +748,6 @@ public class StockBaseDao extends BaseDao {
 		String selectSql = null;
 		selectSql = "select * from stock_allinfo  where stockFullId='"
 				+ stockCode + "'";
-		// System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql, StockSingle.class);
 	}
 
@@ -763,7 +755,6 @@ public class StockBaseDao extends BaseDao {
 			ClassNotFoundException, SQLException {
 		String selectSql = null;
 		selectSql = "select * from stock_concept  where name='" + name + "'";
-		System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql, StockConcept.class);
 	}
 
@@ -771,7 +762,6 @@ public class StockBaseDao extends BaseDao {
 			ClassNotFoundException, SQLException {
 		String selectSql = "select enableRong from stock_to_tworong where stockFullId='"
 				+ stockCode + "'";
-		// System.out.println(selectSql);
 		return getSingleIntQuery(selectSql, null);
 	}
 
@@ -780,7 +770,6 @@ public class StockBaseDao extends BaseDao {
 		String selectSql = null;
 		selectSql = "select * from stock_basefaceinfo  where stockFullId='"
 				+ stockCode + "'";
-		// System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql, StockBaseFace.class);
 	}
 
@@ -789,7 +778,6 @@ public class StockBaseDao extends BaseDao {
 		String selectSql = null;
 		selectSql = "select * from stock_baseyearinfo  where stockFullId='"
 				+ stockCode + "'";
-		// System.out.println(selectSql);
 		return super.executeSingleQuery(selectSql, StockBaseYearInfo.class);
 	}
 

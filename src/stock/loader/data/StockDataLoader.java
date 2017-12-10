@@ -35,10 +35,10 @@ import dao.StockInformationDao;
 import dao.StockPointDao;
 import dao.StockSingle;
 import dao.StockSummaryDao;
-import stock.analysis.CalculationStock;
-import stock.analysis.PointClass;
+import stock.analysis.MaAnalysis;
+import stock.analysis.PointAnalysis;
 
-public class FileReader {
+public class StockDataLoader {
 	
 	   static DayStockDao ds;
 	   private StockBaseDao sbDao; 
@@ -48,7 +48,7 @@ public class FileReader {
 	 //  static StockBaseDao sbDao =new StockBaseDao();
 	   
 	   
-	   public FileReader(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
+	   public StockDataLoader(Connection stockBaseConn,Connection stockDataConn,Connection stockPointConn,Connection stockSummaryConn)
 		{
 		   this.sbDao = new StockBaseDao(stockBaseConn);
 		   this.sdDao =new StockDataDao(stockDataConn);
@@ -56,7 +56,7 @@ public class FileReader {
 		   this.ssDao = new StockSummaryDao(stockSummaryConn);
 		}
 	   
-	   public FileReader(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
+	   public StockDataLoader(StockBaseDao sbDao,StockDataDao sdDao,StockPointDao spDao,StockSummaryDao ssDao)
 		{
 			this.sbDao = sbDao;
 			this.sdDao = sdDao;
@@ -367,7 +367,7 @@ public class FileReader {
 	            byte[] tempbytes = new byte[100];
 	            int byteread = 0;
 	            in = new FileInputStream(fileName);
-	            FileReader.showAvailableBytes(in);
+	            StockDataLoader.showAvailableBytes(in);
 	            // 读入多个字节到字节数组中，byteread为一次读入的字节数
 	            while ((byteread = in.read(tempbytes)) != -1) {
 	                System.out.write(tempbytes, 0, byteread);
@@ -550,7 +550,7 @@ public class FileReader {
 	 */
 	public int loadAllDataInfile(){
 		
-		CalculationStock cas =new CalculationStock(sbDao,sdDao);
+		MaAnalysis cas =new MaAnalysis(sbDao,sdDao);
 		
 		String dirPath = "StockData\\";
 		 List<String> lstStockFileNames=null;
@@ -620,7 +620,7 @@ public class FileReader {
 					 stockLogger.logger.fatal("cal new stock table");
 					//计算全部ma5 涨幅	
 					 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 		 
-					 PointClass pc = new PointClass(sbDao,sdDao,spDao);
+					 PointAnalysis pc = new PointAnalysis(sbDao,sdDao,spDao);
 					 //计算极点
 					 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
 				 } else {				
@@ -638,7 +638,7 @@ public class FileReader {
 	//导入商品数据
 	public int loadAllFuturesDataInfile(){
 		
-		CalculationStock cas =new CalculationStock(sbDao,sdDao);
+		MaAnalysis cas =new MaAnalysis(sbDao,sdDao);
 		
 		String dirPath = "FuturesData\\";
 		 List<String> lstStockFileNames=null;
@@ -699,7 +699,7 @@ public class FileReader {
 					 //创建汇总表
 					 ssDao.createStockSummaryTable(stock_name);
 					 
-					 PointClass pc =new PointClass(sbDao,sdDao,spDao);
+					 PointAnalysis pc =new PointAnalysis(sbDao,sdDao,spDao);
 					 //计算极点
 					 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
 				 }else {				
@@ -719,7 +719,7 @@ public class FileReader {
 	public int loadSingleAllDataInfile(String loadDate) throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
 	{
 		
-		CalculationStock cas =new CalculationStock(sbDao,sdDao);
+		MaAnalysis cas =new MaAnalysis(sbDao,sdDao);
 		
 		String dirPath = "StockData\\";
 		 List<String> lstStockFileNames=null;
@@ -761,7 +761,7 @@ public class FileReader {
 				 cas.calculStockAllDataForSingleStock(stock_name,ConstantsInfo.StockCalAllData); 		 
 				 //创建极点表
 				 spDao.createStockPointTable(stock_name);
-				 PointClass pc =new PointClass(sbDao,sdDao,spDao);
+				 PointAnalysis pc =new PointAnalysis(sbDao,sdDao,spDao);
 				 //计算极点
 				 pc.getPiontToTableForSingleStock(stock_name,ConstantsInfo.StockCalAllData, null, null);
 			 } else {				
@@ -780,7 +780,7 @@ public class FileReader {
 	public int deleteDataInfile() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
 	{
 		
-		CalculationStock cas =new CalculationStock(sbDao,sdDao);
+		MaAnalysis cas =new MaAnalysis(sbDao,sdDao);
 		String dirPath = "StockData\\";
 		 List<String> lstStockFileNames=null;
 		 lstStockFileNames= getListFiles(dirPath);
@@ -996,7 +996,7 @@ public class FileReader {
 	     Connection stockPointConn = DbConn.getConnDB("stockConf/conn_point_db.ini");  
 	     Connection stockSummaryConn = DbConn.getConnDB("stockConf/conn_summary_db.ini");
 
-		FileReader fr=new FileReader(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
+		StockDataLoader fr=new StockDataLoader(stockBaseConn,stockDataConn,stockPointConn,stockSummaryConn);
 		
 		PropertyConfigurator.configure("StockConf/log4j.properties");
 		java.util.Date startDate = new java.util.Date();

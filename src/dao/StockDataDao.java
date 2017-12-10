@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import common.ConstantsInfo;
 import dao.BaseDao;
 import dao.StockData;
-import stock.analysis.PointClass;
+import stock.analysis.PointAnalysis;
 import stock.timer.DateStock;
 import stock.timer.CommonDate;
 import stock.timer.TimeStock;
@@ -22,7 +22,7 @@ import stock.timer.TimeStock;
 public class StockDataDao extends BaseDao{
 	
 	CommonDate sTimer=new CommonDate();
-	static PointClass pClass=new PointClass();
+	static PointAnalysis pClass=new PointAnalysis();
 	public StockDataDao()
 	{
 		
@@ -450,11 +450,6 @@ public class StockDataDao extends BaseDao{
 			selectSql = "select date from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date desc limit 1";
 		}
 		
-		if(ConstantsInfo.DEBUG)
-		{
-			System.out.println(selectSql);
-		}
-		
 		return super.getSingleQuery(selectSql, null);
 	}
 	
@@ -503,11 +498,6 @@ public class StockDataDao extends BaseDao{
 			yearStart=year+"-01-01";
 			yearEnd=year+"-12-31";
 			selectSql = "select closingPrice from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date desc limit 1";
-		}
-		
-		if(ConstantsInfo.DEBUG)
-		{
-			System.out.println(selectSql);
 		}
 
 		return super.getSingleFloatQuery(selectSql, null);
@@ -559,10 +549,7 @@ public class StockDataDao extends BaseDao{
 			yearEnd=year+"-12-31";
 			selectSql = "select openingPrice from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"' ORDER BY date limit 1";
 		}
-		if(ConstantsInfo.DEBUG)
-		{
-			System.out.println(selectSql);
-		}
+
 		return super.getSingleFloatQuery(selectSql, null);
 	}
 	
@@ -612,10 +599,6 @@ public class StockDataDao extends BaseDao{
 			selectSql = "select MAX(highestPrice) from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"'";//type=4
 		}
 		
-		if(ConstantsInfo.DEBUG)
-		{
-			System.out.println(selectSql);
-		}
 		return super.getSingleFloatQuery(selectSql, null);
 	}
 	
@@ -665,10 +648,6 @@ public class StockDataDao extends BaseDao{
 			selectSql = "select MIN(lowestPrice) from "+ stockTable+" where date>='"+yearStart+"' and date<='"+yearEnd+"' and dataType='"+ConstantsInfo.SeasonDataType+"'";//type=4
 		}
 		
-		if(ConstantsInfo.DEBUG)
-		{
-			System.out.println(selectSql);
-		}
 		return super.getSingleFloatQuery(selectSql, null);
 	}
 	
@@ -697,10 +676,7 @@ public class StockDataDao extends BaseDao{
 		}
 		//存在停牌，不能限定前面时间
 		selectSql = "select AVG(closingPrice) from (select closingPrice from "+ stockTable+" where date<='"+date+"' and dataType="+dataType+" order by date desc limit "+maType+") as tmpTable";
-		if(ConstantsInfo.DEBUG)
-		{
-			System.out.println(selectSql);
-		}
+		
 		return super.getSingleFloatQuery(selectSql, null);	
 	}
 			
@@ -925,7 +901,7 @@ public class StockDataDao extends BaseDao{
 		
 		if((listDayStockOfFirstWeek!=null && listDayStockOfFirstWeek.size()>0) && (listDayStockOfLastWeek!=null && listDayStockOfLastWeek.size()>0))
 		{
-			System.out.println("one");
+			//System.out.println("one");
 			dateForweek=getDateFromFirstAndLastWeek(listDayStockOfFirstWeek,listDayStockOfLastWeek);
 			if(dateForweek==null || dateForweek.equals(""))//有可能停牌
 			{				
@@ -940,7 +916,7 @@ public class StockDataDao extends BaseDao{
 		}
 		else if((listDayStockOfFirstWeek==null || listDayStockOfFirstWeek.size()==0) && (listDayStockOfLastWeek!=null && listDayStockOfLastWeek.size()>0))
 		{
-			System.out.println("two");
+			//System.out.println("two");
 			dateForweek=getDateFromDate(stockFullId,priYearWeekNum,year-1,ConstantsInfo.WeekDataType);
 			if(dateForweek==null || dateForweek.equals(""))//有可能停牌
 			{				
@@ -955,7 +931,7 @@ public class StockDataDao extends BaseDao{
 		}
 		else if((listDayStockOfFirstWeek!=null && listDayStockOfFirstWeek.size()>0) && (listDayStockOfLastWeek==null || listDayStockOfLastWeek.size()==0))
 		{
-			System.out.println("three");
+			//System.out.println("three");
 			dateForweek=getDateFromDate(stockFullId,0,year,ConstantsInfo.WeekDataType);
 			if(dateForweek==null || dateForweek.equals(""))//有可能停牌
 			{
@@ -970,7 +946,7 @@ public class StockDataDao extends BaseDao{
 		}
 		else if((listDayStockOfFirstWeek==null || listDayStockOfFirstWeek.size()==0) && (listDayStockOfLastWeek==null || listDayStockOfLastWeek.size()==0))
 		{
-			System.out.println("four");
+			///System.out.println("four");
 			return;
 		}
 		
@@ -1005,11 +981,9 @@ public class StockDataDao extends BaseDao{
 		StockData sdata;
 		
 		//int year=2014;
-		
 		for(Iterator it = weekList.iterator();it.hasNext();)
 		{
 			int weekCount=(Integer)it.next();
-			System.out.println("weekCount"+weekCount);
 			openingPriceForWeek=getOpeningPriceFromDate(stockFullId,weekCount,year,ConstantsInfo.WeekDataType);
 			highestPriceForWeek=getHighestPriceFromDate(stockFullId,weekCount,year,ConstantsInfo.WeekDataType);
 			lowestPriceForWeek=getLowestPriceFromDate(stockFullId,weekCount,year,ConstantsInfo.WeekDataType);
