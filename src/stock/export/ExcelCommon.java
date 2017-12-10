@@ -47,7 +47,7 @@ import dao.StockPointDao;
 import dao.StockSingle;
 import dao.StockSummary;
 import dao.StockSummaryDao;
-import date.timer.stockDateTimer;
+import stock.timer.stockDater;
 import stock.analysis.PointClass;
 import stock.timer.CommonDate;
 
@@ -218,8 +218,8 @@ public class ExcelCommon {
         List<String> listStockDate = new ArrayList<String>();
        //最近三个月时间
         Date dt=new Date();
-        stockDateTimer dateTimer = new stockDateTimer();
-       String  cDate  = dateTimer.getAddDate(dt,-90);
+     
+       String  cDate  = stockDater.getAddDate(dt,-90);
        System.out.println("三个月前："+cDate);		
      
 		listStockDate=sdDao.getDatesFromSH000001RecentDate(cDate);

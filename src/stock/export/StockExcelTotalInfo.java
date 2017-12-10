@@ -2,8 +2,6 @@ package stock.export;
 
 import java.text.ParseException;
 
-import date.timer.stockDateTimer;
-
 //public class StockExcelTotalInfo implements Comparable<StockExcelTotalInfo>{
 //∞¥÷‹’«∑˘±»≈≈–Ú
 public class StockExcelTotalInfo implements Comparable{

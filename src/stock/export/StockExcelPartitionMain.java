@@ -46,7 +46,7 @@ import dao.StockSummaryDao;
 import dao.StockToConcept;
 import dao.StockToFutures;
 import dao.StockToIndustry;
-import date.timer.stockDateTimer;
+import stock.timer.stockDater;
 import stock.analysis.PointClass;
 import stock.timer.CommonDate;
 
@@ -322,7 +322,7 @@ public class StockExcelPartitionMain {
  	{
  		int dayCom = 0;
  		int gap = 0;
-		dayCom = stockDateTimer.compareDate(sDate,mDate);
+		dayCom = stockDater.compareDate(sDate,mDate);
 		if(dayCom>0)			
 			gap = sdDao.getStockDataDateGap("SH000001",mDate,sDate,dataType);	
 		else if (dayCom<0)

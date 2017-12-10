@@ -1,4 +1,4 @@
-package date.timer;
+package stock.timer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
 
 import common.ConstantsInfo;
 
-public class stockDateTimer {
+public class stockDater {
 	
 	// 用来全局控制 上一周，本周，下一周的周数变化
 	 private int weeks = 0;
@@ -527,7 +527,7 @@ public class stockDateTimer {
 	 }
 
 	public static void main(String[] args) throws ParseException {
-		stockDateTimer tt = new stockDateTimer();
+		stockDater tt = new stockDater();
 		 int i= compareDate("1995-11-12", "1999-12-16");
 	       System.out.println("i=="+i);
 	       /*

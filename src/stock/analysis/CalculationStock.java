@@ -19,7 +19,7 @@ import dao.StockBaseDao;
 import dao.StockDataDao;
 import dao.StockInformationDao;
 import dao.StockPointDao;
-import date.timer.stockDateTimer;
+import stock.timer.stockDater;
 import stock.timer.TimeStock;
 
 public class CalculationStock {
@@ -27,7 +27,7 @@ public class CalculationStock {
 	private StockDataDao sdDao;
 	private StockBaseDao sbDao;
 	static StockInformationDao siDao =new StockInformationDao();
-	static stockDateTimer sdTime=new stockDateTimer();
+	static stockDater sdTime=new stockDater();
 	public CalculationStock()
 	{
 		
