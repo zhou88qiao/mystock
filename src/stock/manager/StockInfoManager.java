@@ -25,30 +25,19 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
 
 import common.ConstantsInfo;
 import common.stockLogger;
 
-import dao.DayStockDao;
 import dao.StockDataDao;
 import dao.StockInformation;
 import dao.StockInformationDao;
 
-import stockGUI.stockDialog;
-
-import stockGUI.stocktableheader.GroupableTableHeader;
 import stockGUI.stocktree.StockObjectType;
-import stockGUI.stocktree.StockTreeCellRenderer;
 import stockGUI.stocktree.StockTreeNodeData;
  
-
-public class StockInfoManager {
-
-    //static Logger logger=Logger.getLogger("stock");
-        
+public class StockInfoManager {     
 	static StockInformationDao sid =new StockInformationDao();
 	static StockDataDao sdDao=new StockDataDao();
 	static List<StockInformation> listStockInfo = new ArrayList<StockInformation>(); 

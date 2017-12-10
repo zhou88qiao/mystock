@@ -96,6 +96,14 @@ public class ConstantsInfo {
 	
 	public final static int  DEAL_DATE=11;//
 	
+	//跌
+	public final static String STOCK_DOWN="-"; 
+	//PS 时间差
+	public final static int  PS_DATE_GAP=2;
+	//疑似最低点与前高极值点时间差
+	public final static int  SP_DATE_GAP=5;
+	
+	
 	
 	public final static int ExportDayNum=60;
 	public final static int ExportWeekNum=30;

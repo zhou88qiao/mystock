@@ -776,58 +776,6 @@ public class StockDataLoader {
 		return 0;
 	  }
 	
-	
-	public int deleteDataInfile() throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException
-	{
-		
-		MaAnalysis cas =new MaAnalysis(sbDao,sdDao);
-		String dirPath = "StockData\\";
-		 List<String> lstStockFileNames=null;
-		 lstStockFileNames= getListFiles(dirPath);
-		
-		 String stock_source_data=null;
-		 String stock_name=null;
-		 int stockFile=0;
-		 int isTableExist=0;
-		 String loadfilePath ="";
-		 String curPath=System.getProperty("user.dir");
-		 curPath = curPath.replaceAll("\\\\", "/"); //转义将\ 转为/
-	
-		 for (int i=0;i<lstStockFileNames.size();i++)		 
-		 {
-			
-			 stock_source_data = lstStockFileNames.get(i);	
-		
-			 stock_name=stock_source_data.substring(10, 18);
-			
-			if (stock_name.equals("SH999999")) //东兴证券999999改为000001
-				 stock_name="SH000001";
-			 
-			//if(!stock_name.equals("SH000001")) //只测试SH000001
-			//	 continue;
-			
-			 System.out.println("stock name:"+stock_name);
-			
-			 isTableExist=sdDao.isExistStockTable(stock_name,ConstantsInfo.TABLE_DATA_STOCK);
-			 if(isTableExist==0)//不存在
-			 {
-				 continue;
-			 }
-			
-			 //删除当天的数据
-		//	 sdDao.delStockDataDay(stock_name,loadDate);
-			 sdDao.delStockDataDay(stock_name,"2015-09-22");
-			 sdDao.delStockDataDay(stock_name,"2015-09-23");
-			 spDao.delStockPointDay(stock_name,"2015-09-22");
-			 spDao.delStockPointDay(stock_name,"2015-09-23");
-			
-		 }
-		 System.out.println("stockFile:"+stockFile);
-		
-		return 0;
-	  }
-	  
-	  
 	  //读取概念文件夹各子文件名 导入概念到概念表
 	  private static void loadAllConceptInfile() throws IOException, ClassNotFoundException, SQLException
 	  {

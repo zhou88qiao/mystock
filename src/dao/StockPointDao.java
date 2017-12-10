@@ -292,15 +292,7 @@ public class StockPointDao extends BaseDao{
 		return super.getSingleQuery(selectSql, null);
 	}	
 
-	//增加索引Type索引
-	public int addIndex(String stockFullId) throws IOException, ClassNotFoundException, SQLException
-	{
-		String tableName=ConstantsInfo.STOCK_POINT_TABLE_NAME+stockFullId;
-		String sql=null;
-		sql="alter table "+tableName +" add index type_index(`type`)";
-		return super.saveOrUpdate(sql);
-	}
-	
+
 	//删除某条极点数据
 	public int delStockPointData(String stockFullId,int id) throws IOException, ClassNotFoundException, SQLException
 	{
