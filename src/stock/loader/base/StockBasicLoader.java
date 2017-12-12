@@ -34,8 +34,6 @@ import dao.StockBaseFace;
 import dao.StockConcept;
 import dao.StockDataDao;
 import dao.StockIndustry;
-import dao.StockInformation;
-import dao.StockInformationDao;
 import dao.StockPointDao;
 import dao.StockSingle;
 
@@ -56,8 +54,6 @@ public class StockBasicLoader {
 		this.sbDao = new StockBaseDao(stockBaseConn);
 
 	}
-
-	static StockInformationDao sd = new StockInformationDao();
 
 	static int insetNum = 0;
 	static int insetNoNum = 0;
@@ -92,118 +88,6 @@ public class StockBasicLoader {
 			title[i] = getCellFormatValue(row.getCell((short) i));
 		}
 		return title;
-	}
-
-	/**
-	 * 读取03Excel数据内容
-	 * 
-	 * @param InputStream
-	 * @return Map 包含单元格数据内容的Map对象
-	 * @throws SQLException
-	 * @throws ClassNotFoundException
-	 * @throws IOException
-	 */
-	public Map<Integer, String> readExcelContent_for_stock(InputStream is)
-			throws IOException, ClassNotFoundException, SQLException {
-
-		String[] stock = new String[5];// 获取2，3，4列
-		HSSFCell cell;
-
-		Map<Integer, String> content = new HashMap<Integer, String>();
-		String str = "";
-		try {
-			fs = new POIFSFileSystem(is);
-			wb = new HSSFWorkbook(fs);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		sheet = wb.getSheetAt(0);
-		// 得到总行数
-		int rowNum = sheet.getLastRowNum();
-		row = sheet.getRow(0);
-		System.out.println("行数：" + rowNum);
-		int colNum = row.getPhysicalNumberOfCells();// 列数
-		// 正文内容应该从第二行开始,第一行为表头的标题
-
-		// rowNum=20;
-		for (int i = 1; i <= rowNum; i++) {
-			row = sheet.getRow(i);
-			// int j = 0;
-			// while (j < colNum) {
-			int j = 1;// 获取2，3，4三列
-			while (j < 4) {
-				// 每个单元格的数据内容用"-"分割开，以后需要时用String类的replace()方法还原数据
-				// 也可以将每个单元格的数据设置到一个javabean的属性中，此时需要新建一个javabean
-				// str += getStringCellValue(row.getCell((short) j)).trim() +
-				// "-";
-				// cell = row.getCell((short) j);
-				str += getCellFormatValue(row.getCell((short) j)).trim()
-						+ "    ";
-
-				stock[j] = getCellFormatValue(row.getCell((short) j)).trim()
-						.trim();
-				if (j == 2) {
-					switch (stock[j].length()) {
-					case 6:
-					default:
-						if (stock[j].charAt(0) == '6')// 沪市A股
-						{
-							stock[4] = "sh" + stock[j];
-							stock[0] = "沪市A股";
-						} else if (stock[j].charAt(0) == '9') {
-							stock[4] = "sh" + stock[j];
-							stock[0] = "沪市B股";
-						} else if (stock[j].charAt(0) == '2') {
-							stock[4] = "sz" + stock[j];
-							stock[0] = "深市B股";
-						} else if (stock[j].charAt(0) == '3') {
-							stock[4] = "sz" + stock[j];
-							stock[0] = "创业板";
-						} else {
-							stock[4] = "sz" + stock[j];
-							stock[0] = "深市B股";
-						}
-						break;
-					case 3:
-						stock[4] = "sz000" + stock[j];
-						stock[0] = "深市A股";
-						break;
-					case 4:
-						if (stock[j].charAt(0) == '2')
-							stock[0] = "中小企业板";
-						else
-							stock[0] = "深市A股";
-						stock[4] = "sz00" + stock[j];
-						break;
-					case 2:
-						stock[4] = "sz0000" + stock[j];
-						stock[0] = "深市A股";
-						break;
-					case 1:
-						stock[4] = "sz00000" + stock[j];
-						stock[0] = "深市A股";
-						break;
-					case 5:
-						stock[4] = "sz0" + stock[j];
-						stock[0] = "深市A股";
-						break;
-					}
-
-					System.out.println("length:" + stock[4].length() + "stock:"
-							+ stock[4]);
-					System.out.println("length0:" + stock[0].length()
-							+ "stock0:" + stock[0]);
-				}
-
-				// System.out.println("stock:"+stock[j]);
-				j++;
-			}
-			stockInsertMysql(sd, stock);
-			content.put(i, str);
-			// System.out.println("stock:"+str);
-			str = "";
-		}
-		return content;
 	}
 
 	/**
@@ -1364,25 +1248,6 @@ public class StockBasicLoader {
 		}
 		is.close();
 		System.out.println("Num:" + Num);
-		return 0;
-	}
-
-	public static int stockInsertMysql(StockInformationDao sd, String[] st)
-			throws IOException, ClassNotFoundException, SQLException {
-		/*
-		 * // for(int i=1;i<st.length;i++) // { if(st[i] == null ||
-		 * st[i].length() <= 0) { insetNoNum++; return -1; } }
-		 */
-
-		// StockInformation stif=new
-		// StockInformation(st[2],st[4],st[3],st[0],st[1]," "," ");
-		// sd.addStock2(stif);
-		// stock_info st[1] id st[6] fullid st[2]名称 st[7]分类 st[3] 行业 st[5] 概念
-		// st[4] 地区
-		StockInformation stif = new StockInformation(st[1], st[6], st[2],
-				st[7], st[3], st[5], st[4]);
-		sd.addStockInfo(stif);
-		insetNum++;
 		return 0;
 	}
 

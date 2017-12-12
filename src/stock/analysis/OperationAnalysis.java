@@ -256,7 +256,7 @@ public class OperationAnalysis {
 							sopWeek = new StockOperation(fullId, lastOpWeek.getAssId(), curDate,
 									lastSD.getOpeningPrice(), endValue, 0, 0, 0, 0, ConstantsInfo.BUY,
 									ConstantsInfo.WeekDataType);
-							ssDao.updateStockOperationTable(sopWeek, fullId, lastOpWeek.getId());
+							ssDao.updateStockOperationTable(sop, fullId, lastOpWeek.getId());
 						}
 						lastOpMonth = ssDao.getCurOperation(fullId, lastOp.getOpDate(), ConstantsInfo.MonthDataType);
 						if (lastOpMonth != null && lastOpMonth.getOpType() == ConstantsInfo.BUY) {
@@ -264,7 +264,7 @@ public class OperationAnalysis {
 							sopMonth = new StockOperation(fullId, lastOpMonth.getAssId(), curDate,
 									lastSD.getOpeningPrice(), endValue, 0, 0, 0, 0, ConstantsInfo.BUY,
 									ConstantsInfo.MonthDataType);
-							ssDao.updateStockOperationTable(sopMonth, fullId, lastOpMonth.getId());
+							ssDao.updateStockOperationTable(sop, fullId, lastOpMonth.getId());
 						}
 					} else {
 						return -1;

@@ -73,7 +73,7 @@ import dao.StockSingle;
 import stock.analysis.PointAnalysis;
 import stock.analysis.OperationAnalysis;
 import stock.export.StockExcelExporterMain;
-import stock.loader.analyse.loadSummaryMain;
+import stock.loader.analyse.LoadSummaryMain;
 import stock.loader.base.StockBasicLoader;
 import stock.loader.data.StockDataLoader;
 import stock.timer.CommonDate;
@@ -1268,7 +1268,7 @@ public class StockBaseManager {
     //4导入统计表
     public void loadSummaryExcelFile(int type) 
     {
-    	loadSummaryMain seRead = new loadSummaryMain(sbDao,sdDao,spDao,ssDao);		
+    	LoadSummaryMain seRead = new LoadSummaryMain(sbDao,sdDao,spDao,ssDao);		
 		try {			
 			seRead.readStockAnsyleExcelData(type);		
 		} catch (Exception e) {

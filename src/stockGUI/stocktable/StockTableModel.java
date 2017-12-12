@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import dao.DayStock;
 import dao.StockPoint;
 
 public class StockTableModel extends AbstractTableModel

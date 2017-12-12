@@ -1,8 +1,8 @@
 package common;
 
-import org.apache.poi.xssf.usermodel.XSSFColor;
-
 public class ConstantsInfo {
+	
+	public final static String  STOCK_HAITONG_SHANGZHENG="SH999999";
 	public final static int ALLDataType=6;
 	public final static int UnComputeDataType=0; //Î´¼ÆËãµÄ
 	public final static int DayDataType=1;

@@ -14,7 +14,6 @@ import dao.DbConn;
 import dao.StockBaseDao;
 import dao.StockData;
 import dao.StockDataDao;
-import dao.StockInformationDao;
 import dao.StockPoint;
 import dao.StockPointDao;
 import stock.timer.DateStock;
@@ -28,8 +27,7 @@ public class PointAnalysis {
 	private StockDataDao sdDao;
 	private StockBaseDao sbDao;
 	private StockPointDao spDao;
-	static StockInformationDao siDao = new StockInformationDao();
-
+	
 	public PointAnalysis() {
 
 	}
@@ -269,7 +267,7 @@ public class PointAnalysis {
 					} else {
 						// 与上次状态不一致
 						priceFlag = curFlag;
-						if (!dateZero.equals("")){
+						if (!("".equals(dateZero))){
 							curDate = dateZero;
 						}
 					}

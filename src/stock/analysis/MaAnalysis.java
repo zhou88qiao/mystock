@@ -15,7 +15,6 @@ import common.stockLogger;
 import dao.DbConn;
 import dao.StockBaseDao;
 import dao.StockDataDao;
-import dao.StockInformationDao;
 import stock.timer.TimeStock;
 
 /**
@@ -25,7 +24,6 @@ import stock.timer.TimeStock;
 
 public class MaAnalysis {
 	static int KUA_YEAR = 2;
-	static StockInformationDao siDao =new StockInformationDao();
 	private StockDataDao sdDao;
 	private StockBaseDao sbDao;
 
