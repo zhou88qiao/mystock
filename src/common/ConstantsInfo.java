@@ -2,7 +2,7 @@ package common;
 
 public class ConstantsInfo {
 	
-	public final static String  STOCK_HAITONG_SHANGZHENG="SH999999";
+	public final static String STOCK_HAITONG_SHANGZHENG="SH999999";
 	public final static int ALLDataType=6;
 	public final static int UnComputeDataType=0; //未计算的
 	public final static int DayDataType=1;
@@ -102,7 +102,6 @@ public class ConstantsInfo {
 	public final static int  PS_DATE_GAP=2;
 	//疑似最低点与前高极值点时间差
 	public final static int  SP_DATE_GAP=5;
-	
 	
 	
 	public final static int ExportDayNum=60;
