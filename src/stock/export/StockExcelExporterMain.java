@@ -111,7 +111,12 @@ public class StockExcelExporterMain {
 		return f;
 	}
 
-	// 获取两值比率
+	/**
+	 * 获取两值比率
+	 * @param value1
+	 * @param value2
+	 * @return
+	 */
 	public float getGAP(float value1, float value2) {
 		if (value1 > -0.000001 && value1 < 0.000001){
 			return 0;
@@ -121,7 +126,14 @@ public class StockExcelExporterMain {
 		return gap;
 	}
 
-	// 获取交易提示
+	/**
+	 * 获取交易提示
+	 * @param flag
+	 * @param pointSuspectedDateGAP
+	 * @param pointCurDateGAP
+	 * @param suspectedCurDateGap
+	 * @return
+	 */
 	public int getDealWarn(int flag, int pointSuspectedDateGAP, int pointCurDateGAP, int suspectedCurDateGap) {
 		int ret = 0;
 		// 上涨
@@ -145,6 +157,12 @@ public class StockExcelExporterMain {
 		return ret;
 	}
 
+	/**
+	 * @param curValue
+	 * @param curStartValue
+	 * @param curEndValue
+	 * @return
+	 */
 	public StockDesireValue getStockDesireValue(float curValue, float curStartValue, float curEndValue) {
 		float tmpValue = 0;
 		// 预期
@@ -255,7 +273,14 @@ public class StockExcelExporterMain {
 		return ret;
 	}
 
-	// 反转区域 疑似极点 前一极点 前二极点
+
+	/**
+	 * 反转区域 疑似极点 前一极点 前二极点
+	 * @param suspectedValue
+	 * @param lastExtrmeValue
+	 * @param priHighOrLowestValue
+	 * @return
+	 */
 	public float getReversalRegion(float suspectedValue, float lastExtrmeValue, float priHighOrLowestValue) {
 		float tmpValue = 0;
 		float reversalRegion = 0;
@@ -285,7 +310,21 @@ public class StockExcelExporterMain {
 		return reversalRegion;
 	}
 
-	// 计算前一涨停数据
+
+	/**
+	 * 计算前一涨停数据
+	 * @param stockFullId
+	 * @param anaylseDate
+	 * @param sdata
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 */
 	public String priUpData(String stockFullId, String anaylseDate, StockData sdata)
 			throws IOException, ClassNotFoundException, SQLException, SecurityException, InstantiationException,
 			IllegalAccessException, NoSuchFieldException {
@@ -309,7 +348,21 @@ public class StockExcelExporterMain {
 		return info;
 	}
 
-	// 获取与大盘对比两时间差
+	/**
+	 * 获取与大盘对比两时间差
+	 * @param sDate
+	 * @param mDate
+	 * @param dataType
+	 * @return
+	 * @throws ParseException
+	 * @throws SecurityException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 */
 	public int getToMarketGAP(String sDate, String mDate, int dataType)
 			throws ParseException, SecurityException, IOException, ClassNotFoundException, SQLException,
 			InstantiationException, IllegalAccessException, NoSuchFieldException {
@@ -326,12 +379,27 @@ public class StockExcelExporterMain {
 		return gap;
 	}
 
-	// 计算date当天 分析趋势，上，下转等
+	/**
+	 * 计算date当天 分析趋势，上，下转等
+	 * @param stockFullId
+	 * @param dataType
+	 * @param stockType
+	 * @param anaylseDate
+	 * @param sdata
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 * @throws ParseException
+	 */
 	public StockExcelItem getExcelItem(String stockFullId, int dataType, int stockType, String anaylseDate,
 			StockData sdata) throws IOException, ClassNotFoundException, SQLException, SecurityException,
 			InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException {
-		// StockData sdata =
-		// sdDao.getZhiDingDataStock(stockFullId,ConstantsInfo.DayDataType,anaylseDate);
+
 		if (sdata == null) {
 			return null;
 		}
@@ -417,8 +485,6 @@ public class StockExcelExporterMain {
 		String crossLastDate = lastSp.getToDate().toString();
 
 		// 取当天日数据作为计算，不拿周，月数据
-		// StockData sdata =
-		// sdDao.getLastDataStock(stockFullId,ConstantsInfo.DayDataType);
 		// 当天
 		String nowTime = anaylseDate; 
 
@@ -432,21 +498,16 @@ public class StockExcelExporterMain {
 				stockLogger.logger.fatal("****stockFullId：" + stockFullId + "无最近低点****");
 				return null;
 			}
-			// float minPrice = sMinData.getLowestPrice();
 			// 前一极点 开始时间
 			curStartDate = lastExtremeDate;
 			// 开始点位
-			curStartValue = lastExtrmePrice;// sdDao.getStockLowestPrice(stockFullId,curDownStartDate,dataType);
+			curStartValue = lastExtrmePrice;
 
 			// 疑似极点 结束时间
 			curEndDate = sMinData.getDate().toString();
 			//// curExtremeDate = curEndDate;最近极点时间
 			// 结束点位
 			curEndValue = sMinData.getLowestPrice();
-			// 当前幅
-			// curDownRange =
-			// sdDao.getStockCurHigestRange(stockFullId,curDownEndDate,dataType,0);
-
 		} else {
 
 			// 3 最近最高点 疑似极点
@@ -464,10 +525,6 @@ public class StockExcelExporterMain {
 			curEndDate = sMaxData.getDate().toString();
 			// 结束点位
 			curEndValue = sMaxData.getHighestPrice();
-
-			// 幅
-			// curUpRange =
-			// sdDao.getStockCurHigestRange(stockFullId,curUpEndDate,dataType,1);
 		}
 
 		// 反转区域与前高低点
@@ -502,7 +559,8 @@ public class StockExcelExporterMain {
 		if (curEndDate.equals(curDate)) {
 			curState = curTread;
 		} else {
-			curState = -1; // 调整
+			// 调整
+			curState = -1; 
 		}
 
 		// 交易提示
@@ -579,7 +637,6 @@ public class StockExcelExporterMain {
 			MarketStockCurInfo[marketIndex][dataType - 1] = scValue;
 		} else {
 			marketIndex = stockType - 2;
-			// System.out.println("curStartDate:"+curStartDate);
 
 			StockCurValue scMarketValue = MarketStockCurInfo[marketIndex][dataType - 1];
 
@@ -618,7 +675,16 @@ public class StockExcelExporterMain {
 		return eItem;
 	}
 
-	// 是否出现停牌现像
+	/**
+	 * 是否出现停牌现像
+	 * @param stockFullId
+	 * @param time
+	 * @param sdata
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	int getEnableTingPai(String stockFullId, String time, StockData sdata)
 			throws IOException, ClassNotFoundException, SQLException {
 		// 取当天取大盘时间对比，是否有停牌
@@ -633,12 +699,29 @@ public class StockExcelExporterMain {
 		if (SHDate.equals(sdata.getDate().toString())) {
 			return 0;
 		} else {
+			// 停牌
 			stockLogger.logger.fatal("tingpai sh000001 time:" + SHDate + " anayle time:" + sdata.getDate().toString());
-			return 1;// 停牌
+			return 1;
 		}
 	}
 
-	// 分析大盘
+
+	/**
+	 * 分析大盘
+	 * @param wb
+	 * @param sheet
+	 * @param filePath
+	 * @param fileName
+	 * @param filetime
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 * @throws ParseException
+	 */
 	public void writePointExcelFromMarket(Workbook wb, Sheet sheet, String filePath, String fileName, String filetime)
 			throws SQLException, IOException, ClassNotFoundException, SecurityException, InstantiationException,
 			IllegalAccessException, NoSuchFieldException, ParseException {
@@ -651,7 +734,6 @@ public class StockExcelExporterMain {
 		StockBaseFace sbFace = new StockBaseFace(0, "sh1111", "", "", "", "", "", "");
 		ExcelCommon.writeExcelItemTitle(wb, sheet, "大盘指数", sbFace, stockRow, true);
 	
-		// sdDao.getLastDataStock("SH000001",ConstantsInfo.DayDataType);
 		StockData sdata = sdDao.getZhiDingDataStock("SH000001", ConstantsInfo.DayDataType, filetime);
 		SHDate = sdata.getDate().toString();
 		for (Iterator itMarket = listStockMarket.iterator(); itMarket.hasNext();) {
@@ -713,7 +795,24 @@ public class StockExcelExporterMain {
 
 	}
 
-	// 分析大盘
+	
+	/**
+	 *  分析大盘
+	 * @param wb
+	 * @param sheet
+	 * @param filePath
+	 * @param fileName
+	 * @param filetime
+	 * @param dateType
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 * @throws ParseException
+	 */
 	public void writeTotalOperationExcelFromMarket(Workbook wb, Sheet sheet, String filePath, String fileName,
 			String filetime, int dateType) throws SQLException, IOException, ClassNotFoundException, SecurityException,
 			InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException {
@@ -747,16 +846,10 @@ public class StockExcelExporterMain {
 
 			List<StockOperation> stockOperationInfo = new ArrayList<StockOperation>();
 			// 获取最近统计数据
-			/*
-			 * String endDate = StockDateTimer.getCurDate(); String startDate =
-			 * StockDateTimer.getBeforeDay(endDate, 1, 180); stockOperationInfo
-			 * = ssDao.getOperationFromOperationTable(stockFullId, -1, 120);
-			 */
 			int nums = ConstantsInfo.ExportNum(dateType);
 			stockOperationInfo = ssDao.getOperationFromOperationTable(stockFullId, dateType, nums);
 
 			int extremeCol = 0;
-			// System.out.println(stockPointInfo.size());
 			for (int ij = 0; ij < stockOperationInfo.size(); ij++) {
 				StockOperation sSop = stockOperationInfo.get(ij);
 				if (sSop == null) {
@@ -799,7 +892,6 @@ public class StockExcelExporterMain {
 
 	}
 
-	// 分析大盘
 	public void writeOperationExcelFromMarket(Workbook wb, Sheet sheet, String filePath, String fileName,
 			String filetime, int dateType) throws SQLException, IOException, ClassNotFoundException, SecurityException,
 			InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException {
@@ -869,7 +961,6 @@ public class StockExcelExporterMain {
 
 	}
 
-	// 分析大盘
 	public void writeSummaryExcelFromMarket(Workbook wb, Sheet sheet, String filePath, String fileName, String filetime)
 			throws SQLException, IOException, ClassNotFoundException, SecurityException, InstantiationException,
 			IllegalAccessException, NoSuchFieldException, ParseException {
@@ -892,7 +983,7 @@ public class StockExcelExporterMain {
 			stockType = sbDao.getMarketType(stockFullId);
 
 			int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_SUMMARY_STOCK);
-			if (isTableExist == 0) {// 不存在
+			if (isTableExist == 0) {
 				stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 				System.out.println(stockFullId + "统计表不存在****");
 				continue;
@@ -929,7 +1020,6 @@ public class StockExcelExporterMain {
 
 	}
 
-	// 分析大盘
 	public void writeExcelFromMarket(Workbook wb, Sheet sheet, String filePath, String fileName, String filetime,
 			boolean flag) throws SQLException, IOException, ClassNotFoundException, SecurityException,
 			InstantiationException, IllegalAccessException, NoSuchFieldException, ParseException {
@@ -1010,7 +1100,7 @@ public class StockExcelExporterMain {
 			}
 
 			int isTableExist = sdDao.isExistStockTable(ssu.getFullId(), ConstantsInfo.TABLE_SUMMARY_STOCK);
-			if (isTableExist == 0) {// 不存在
+			if (isTableExist == 0) {
 				ssDao.createStockSummaryTable(ssu.getFullId());
 				ssDao.insertStockSummaryTable(ssu.getFullId(), ssu);
 			} else {
@@ -1053,7 +1143,7 @@ public class StockExcelExporterMain {
 		String excleFileName = null;
 		FileInputStream fileIStream = null;
 		sheetCount = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		int titleRow = 0;
 		// 每个行业输出到excel一次
 		for (int i = 0; i < listMarket.size(); i++) {
 			if (i == 0 || stockRow >= 510) {
@@ -1133,7 +1223,6 @@ public class StockExcelExporterMain {
 				System.out.println("stockFullId:" + stockFullId);
 
 				// 商品 暂时被当成上证股票处理，与上证对比
-				// stockType=sbDao.getMarketType(stockFullId);
 				stockType = ConstantsInfo.SHMarket;
 
 				int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_POINT_STOCK);
@@ -1153,20 +1242,14 @@ public class StockExcelExporterMain {
 				StockExcelItem monthItem;
 
 				// 是否停牌
-				int enableTingPai = 0; // getEnableTingPai(stockFullId);
+				// getEnableTingPai(stockFullId);
+				int enableTingPai = 0; 
 				// 是否两融
 				int enableTwoRong = sbDao.lookUpStockTwoRong(stockFullId);
 				// 基本面
-				// StockBaseFace baseFace =
-				// sbDao.lookUpStockBaseFace(stockFullId);
-				// StockBaseYearInfo yearInfo =
-				// sbDao.lookUpStockBaseYearInfo(stockFullId);
 				StockBaseFace baseFace = new StockBaseFace(0, stockFullId, toInduStock.getBaseExpect(),
 						toInduStock.getMain(), toInduStock.getPsychology(), toInduStock.getRisk(),
 						toInduStock.getPotential(), toInduStock.getFaucet());
-
-				// setHighestLowestPrice(baseFace,stockFullId);
-
 				// 其他值
 				StockOtherInfoValue soiValue = new StockOtherInfoValue(stockFullId, toInduStock.getName(),
 						enableTwoRong, enableTingPai, baseFace, null);
@@ -1176,35 +1259,24 @@ public class StockExcelExporterMain {
 				if (dayItem == null) {
 					stockLogger.logger.fatal("day point is null");
 					// continue;
-				} else {
-					// ExcelCommon.writeExcelItem(wb,sheet,dayItem, stockRow,
-					// ConstantsInfo.DayDataType);
-				}
+				} 
 				// 分析周预测值
 				weekItem = getExcelItem(stockFullId, ConstantsInfo.WeekDataType, stockType, fileTime, sdata);
 				if (weekItem == null) {
 					stockLogger.logger.fatal("week point is null");
 					// continue;
-				} else {
-					// ExcelCommon.writeExcelItem(wb,sheet,weekItem, stockRow,
-					// ConstantsInfo.WeekDataType);
-				}
+				} 
 				// 分析月预测值
 				monthItem = getExcelItem(stockFullId, ConstantsInfo.MonthDataType, stockType, fileTime, sdata);
 				if (monthItem == null) {
 					stockLogger.logger.fatal("month point is null");
 					// continue;
-				} else {
-					// ExcelCommon.writeExcelItem(wb,sheet,monthItem,stockRow,
-					// ConstantsInfo.MonthDataType);
-				}
+				} 
 
 				// 统计
-
 				statItem = getExcelStatItem(dayItem, weekItem, monthItem);
 
 				StockExcelTotalInfo setInfo = new StockExcelTotalInfo(soiValue, dayItem, weekItem, monthItem, statItem);
-				// 停牌 放后面
 				// 停牌 放后面
 				if (enableTingPai != 0 && setInfo.getStatItem() != null
 						&& setInfo.getStatItem().getDayMixStatItem() != null) {
@@ -1218,7 +1290,6 @@ public class StockExcelExporterMain {
 			// 记录行业内各股票提示
 			int dealWarns[] = new int[4];
 			// 排序
-			// Collections.sort(listStockTotalInfoOrderBy);
 			Collections.sort(listName, Collator.getInstance(java.util.Locale.CHINA));
 			for (int kk = 0; kk < listName.size(); kk++) {
 				for (int j = 0; j < listStockTotalInfoOrderBy.size(); j++) {
@@ -1248,8 +1319,6 @@ public class StockExcelExporterMain {
 						ExcelCommon.writeExcelStatItem(wb, sheet, statItem, stockRow, ssu, flag);
 
 						// 统计数据已经在概念那 插入数据
-						// ssDao.insertStockSummaryTable(setInfo.getSoiValue().getFullId(),ssu);
-
 						if (setInfo.getDayItem() != null) {
 							ExcelCommon.writeExcelItem(wb, sheet, setInfo.getDayItem(), stockRow,
 									ConstantsInfo.DayDataType, ssu, flag);
@@ -1282,7 +1351,8 @@ public class StockExcelExporterMain {
 			}
 
 			if (flag) {
-				int sub = 5;// 未知
+				// 未知
+				int sub = 5;
 				if (dealWarns != null && dealWarns.length != 0){
 					sub = getMax(dealWarns);
 				}
@@ -1412,7 +1482,7 @@ public class StockExcelExporterMain {
 				stockType = sbDao.getMarketType(stockFullId);
 
 				int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_DATA_STOCK);
-				if (isTableExist == 0) {// 不存在
+				if (isTableExist == 0) {
 					stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在极值表****");
 					System.out.println(stockFullId + "极值表不存在****");
 					continue;
@@ -1486,7 +1556,6 @@ public class StockExcelExporterMain {
 			// 记录行业内各股票提示
 			int dealWarns[] = new int[4];
 			// 周涨幅比排序
-			// Collections.sort(listStockTotalInfoOrderBy);
 			// 中文名字排序
 			Collections.sort(listName, Collator.getInstance(java.util.Locale.CHINA));
 
@@ -1535,7 +1604,7 @@ public class StockExcelExporterMain {
 
 						// 插入summary表 //避免多次写入
 						int isTableExist = sdDao.isExistStockTable(ssu.getFullId(), ConstantsInfo.TABLE_SUMMARY_STOCK);
-						if (isTableExist == 0) {// 不存在
+						if (isTableExist == 0) {
 							ssDao.createStockSummaryTable(ssu.getFullId());
 							ssDao.insertStockSummaryTable(ssu.getFullId(), ssu);
 						} else {
@@ -1554,7 +1623,8 @@ public class StockExcelExporterMain {
 			}
 
 			if (flag) {
-				int sub = 5;// 未知
+				// 未知
+				int sub = 5;
 				if (dealWarns != null && dealWarns.length != 0){
 					sub = getMax(dealWarns);
 				}
@@ -1595,7 +1665,7 @@ public class StockExcelExporterMain {
 	public static String getBuySaleGrade(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem,
 			int dataType) {
 		String desc = "";
-		int largePSTrend = 0;//
+		int largePSTrend = 0;
 		int smallPSTrend = 0;
 		float ratio = 0;
 
@@ -1606,19 +1676,22 @@ public class StockExcelExporterMain {
 			}
 
 			if (eDayItem.getScValue().getTread() == 0) {
-				smallPSTrend = 0; // 日极疑趋势
+				// 日极疑趋势
+				smallPSTrend = 0; 
 			} else {
 				smallPSTrend = 1;
 			}
 
 			if (eWeekItem.getScValue().getTread() == 0) {
-				largePSTrend = 0; // 周极疑趋势
+				 // 周极疑趋势
+				largePSTrend = 0;
 			} else {
 				largePSTrend = 1;
 			}
 
 			if (eWeekItem.getScValue().getPointSuspectedDateGap() == 0) {
-				ratio = 2; // 大于1
+				// 大于1
+				ratio = 2; 
 			} else {
 				ratio = (float) eWeekItem.getScValue().getSuspectedCurDateGap()
 						/ eWeekItem.getScValue().getPointSuspectedDateGap();
@@ -1629,21 +1702,23 @@ public class StockExcelExporterMain {
 			if (eWeekItem == null || eMonthItem == null) {
 				return "";
 			}
-
-			if (eWeekItem.getScValue().getTread() == 0) {
-				smallPSTrend = 0; // 日极疑趋势
+			// 日极疑趋势		
+			if (eWeekItem.getScValue().getTread() == 0) {		
+				smallPSTrend = 0; 
 			} else {
 				smallPSTrend = 1;
 			}
-
+			
+			// 周极疑趋势
 			if (eMonthItem.getScValue().getTread() == 0) {
-				largePSTrend = 0; // 周极疑趋势
+				largePSTrend = 0; 
 			} else {
 				largePSTrend = 1;
 			}
 
 			if (eMonthItem.getScValue().getPointSuspectedDateGap() == 0) {
-				ratio = 2; // 大于1
+				// 大于1
+				ratio = 2; 
 			} else {
 				ratio = (float) eMonthItem.getScValue().getSuspectedCurDateGap()
 						/ eMonthItem.getScValue().getPointSuspectedDateGap();
@@ -1708,16 +1783,28 @@ public class StockExcelExporterMain {
 		return desc;
 	}
 
-	// 当前上涨还是下跌趋势
+	/**
+	 * 当前上涨还是下跌趋势
+	 * @param item
+	 * @return
+	 */
 	public int getTread(StockExcelItem item) {
+		// 日极疑趋势 跌
 		if (item.getScValue().getTread() == 0) {
-			return 0; // 日极疑趋势 跌
+			return 0; 
 		} else {
 			return 1;
 		}
 	}
 
-	// 极点状态组合
+	/**
+	 * 极点状态组合
+	 * @param eDayItem
+	 * @param eWeekItem
+	 * @param eMonthItem
+	 * @param type
+	 * @return
+	 */
 	public String getPriPStateValue(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem,
 			int type) {
 		// 月极疑点位比状态
@@ -1767,7 +1854,15 @@ public class StockExcelExporterMain {
 
 	}
 
-	// 疑似极点状态组合
+
+	/**
+	 * 疑似极点状态组合
+	 * @param eDayItem
+	 * @param eWeekItem
+	 * @param eMonthItem
+	 * @param type
+	 * @return
+	 */
 	public String getPSStateValue(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem,
 			int type) {
 		// 月极疑点位比状态
@@ -1816,14 +1911,24 @@ public class StockExcelExporterMain {
 
 	}
 
-	// 极点状态组合
+	/**
+	 * 极点状态组合
+	 * @param eDayItem
+	 * @param eWeekItem
+	 * @param eMonthItem
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public String getPriPointState(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem)
 			throws IOException, ClassNotFoundException, SQLException {
 		int monthTrend = 0;
 		int weekPointNum = 0;
 		int dayPointNum = 0;
 		String psState = "";
-		float monthPSValueGap = 0;// 极疑点位比
+		// 极疑点位比
+		float monthPSValueGap = 0;
 		String fullId = "";
 
 		if (eDayItem != null) {
@@ -1831,7 +1936,8 @@ public class StockExcelExporterMain {
 		}
 
 		if (eMonthItem == null) {
-			monthTrend = 0; // 涨
+			// 涨
+			monthTrend = 0; 
 			weekPointNum = 0;
 		} else {
 			monthPSValueGap = eMonthItem.getScValue().getPointSuspectedValueGap();
@@ -1853,23 +1959,30 @@ public class StockExcelExporterMain {
 			// 前极点时间
 			String sWeekDate = eWeekItem.getScValue().getStartDate();
 			dayPointNum = spDao.getUpOrDownPointNum(fullId, ConstantsInfo.DayDataType, sWeekDate);
-			// System.out.println("sWeekDate:"+sWeekDate);
 		}
 
 		psState = String.valueOf(monthTrend) + ":" + String.valueOf(weekPointNum) + ":" + String.valueOf(dayPointNum);
 		return psState;
 	}
 
-	// 疑似极点状态组合
+	/**
+	 *  疑似极点状态组合
+	 * @param eDayItem
+	 * @param eWeekItem
+	 * @param eMonthItem
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public String getPSState(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem)
 			throws IOException, ClassNotFoundException, SQLException {
 		int monthTrend = 0;
 		int weekPointNum = 0;
 		int dayPointNum = 0;
 		String psState = "";
-		float monthPSValueGap = 0;// 极疑点位比
-		float weekPSValueGap = 0;// 极疑点位比
-		int dayPSValueGap = 0;// 极疑点位比
+		// 极疑点位比
+		float monthPSValueGap = 0;
 		String fullId = "";
 
 		if (eDayItem != null) {
@@ -1877,7 +1990,8 @@ public class StockExcelExporterMain {
 		}
 
 		if (eMonthItem == null) {
-			monthTrend = 1; // 涨
+			// 涨
+			monthTrend = 1; 
 			weekPointNum = 1;
 		} else {
 			monthPSValueGap = eMonthItem.getScValue().getPointSuspectedValueGap();
@@ -1897,19 +2011,27 @@ public class StockExcelExporterMain {
 		} else {
 			String sWeekDate = eWeekItem.getScValue().getEndDate();
 			dayPointNum = spDao.getUpOrDownPointNum(fullId, ConstantsInfo.DayDataType, sWeekDate);
-			// System.out.println("sWeekDate:"+sWeekDate);
 		}
 
-		// System.out.println(monthTrend+":"+weekPointNum+":"+dayPointNum);
 		psState = String.valueOf(monthTrend) + String.valueOf(weekPointNum) + String.valueOf(dayPointNum);
-
 		return psState;
 	}
 
-	// 股票状态
+
+	/**
+	 * 股票状态
+	 * @param eDayItem
+	 * @param eWeekItem
+	 * @param eMonthItem
+	 * @param dataType
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public String getBuySaleState(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem,
 			int dataType) throws IOException, ClassNotFoundException, SQLException {
-		int largePSTrend = 0;//
+		int largePSTrend = 0;
 		int smallPSTrend = 0;
 		String desc = "";
 		String startDate = null;
@@ -1926,15 +2048,16 @@ public class StockExcelExporterMain {
 			if (eDayItem == null || eWeekItem == null) {
 				return "";
 			}
-
+			
+			// 日极疑趋势
 			if (eDayItem.getScValue().getTread() == 0) {
-				smallPSTrend = 0; // 日极疑趋势
+				smallPSTrend = 0; 
 			} else {
 				smallPSTrend = 1;
 			}
 
 			if (eWeekItem.getScValue().getTread() == 0) {
-				largePSTrend = 0; // 周极疑趋势
+				largePSTrend = 0; 
 			} else {
 				largePSTrend = 1;
 			}
@@ -1951,13 +2074,13 @@ public class StockExcelExporterMain {
 			}
 
 			if (eWeekItem.getScValue().getTread() == 0) {
-				smallPSTrend = 0; // 日极疑趋势
+				smallPSTrend = 0; 
 			} else {
 				smallPSTrend = 1;
 			}
 
 			if (eMonthItem.getScValue().getTread() == 0) {
-				largePSTrend = 0; // 周极疑趋势
+				largePSTrend = 0;
 			} else {
 				largePSTrend = 1;
 			}
@@ -1968,24 +2091,22 @@ public class StockExcelExporterMain {
 			fullId = eWeekItem.getFullId();
 		}
 
-		/// System.out.println("startDate:"+startDate);
-		// System.out.println("trend:"+largePSTrend);
-
 		if (largePSTrend == 0) {
-			spList = spDao.getUpOrDownPoint(fullId, dataType, startDate, 1); // 计算出最大值
+			// 计算出最大值
+			spList = spDao.getUpOrDownPoint(fullId, dataType, startDate, 1); 
 			// 增加当前疑似点
 			if (smallPSTrend == 1) {
 				spList.add(eDayItem.getScValue().getEndValue());
 			}
 		} else {
-			spList = spDao.getUpOrDownPoint(fullId, dataType, startDate, 0); // 计算最小值
+			// 计算最小值
+			spList = spDao.getUpOrDownPoint(fullId, dataType, startDate, 0); 
 			// 增加当前疑似点
 			if (smallPSTrend == 0) {
 				spList.add(eDayItem.getScValue().getEndValue());
 			}
 		}
-
-		// System.out.println("spList size:"+spList.size());
+		
 		if (spList.size() <= 1) {
 			if (largePSTrend == 0) {
 				desc = "连续下跌";
@@ -1995,11 +2116,12 @@ public class StockExcelExporterMain {
 
 		} else {
 			spPri = spList.get(0);
-			// System.out.println("first:"+spPri);
+		
 			for (countI = 1; countI < spList.size(); countI++) {
 				spNext = spList.get(countI);
-				// System.out.println("next:"+spNext);
-				if (largePSTrend == 0) {// 下跌
+				
+				// 下跌
+				if (largePSTrend == 0) {
 					if (spNext > spPri) {
 						flag = 1;
 						break;
@@ -2040,11 +2162,20 @@ public class StockExcelExporterMain {
 			}
 		}
 
-		// System.out.println(desc);
 		return desc;
 	}
 
-	// 计算出统计项中需要混合计算的项
+	/**
+	 * 计算出统计项中需要混合计算的项
+	 * @param eDayItem
+	 * @param eWeekItem
+	 * @param eMonthItem
+	 * @param dataType
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	StockMixStatValue getMixStatValue(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem,
 			int dataType) throws IOException, ClassNotFoundException, SQLException {
 		StockMixStatValue sMixValue;
@@ -2091,6 +2222,12 @@ public class StockExcelExporterMain {
 		return sMixValue;
 	}
 
+	/**
+	 * @param eDayItem
+	 * @param eWeekItem
+	 * @param eMonthItem
+	 * @return
+	 */
 	StockExcelStatItem getExcelStatItem(StockExcelItem eDayItem, StockExcelItem eWeekItem, StockExcelItem eMonthItem) {
 		StockExcelStatItem statItem;
 
@@ -2156,12 +2293,12 @@ public class StockExcelExporterMain {
 		List<String> listFirstIndustry = new ArrayList<String>();
 		// 得到当前一级行业code
 		listFirstIndustry = sbDao.getStockFirstIndustry();
-		DecimalFormat decimalFormat = new DecimalFormat(".00");
 		XSSFWorkbook wb = null;
 		XSSFSheet sheet = null;
 		String excleFileName = null;
 		int flagFirst = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		// 记录行业或概念标题行
+		int titleRow = 0;
 		sheetCount = 0;
 		// 先输出到一级行业
 		for (int countI = 0; countI < listFirstIndustry.size(); countI++) {
@@ -2259,7 +2396,7 @@ public class StockExcelExporterMain {
 
 					System.out.println("stockFullId:" + stockFullId);
 					int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_DATA_STOCK);
-					if (isTableExist == 0) {// 不存在
+					if (isTableExist == 0) {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在极值表****");
 						System.out.println(stockFullId + "极值表不存在****");
 						continue;
@@ -2332,7 +2469,6 @@ public class StockExcelExporterMain {
 				// 记录行业内各股票提示
 				int dealWarns[] = new int[4];
 				// 排序
-				// Collections.sort(listStockTotalInfoOrderBy);
 				Collections.sort(listName, Collator.getInstance(java.util.Locale.CHINA));
 
 				for (int kk = 0; kk < listName.size(); kk++) {
@@ -2385,8 +2521,9 @@ public class StockExcelExporterMain {
 						}
 					}
 				}
-
-				int sub = 5;// 未知
+				
+				// 未知
+				int sub = 5;
 				if (dealWarns != null && dealWarns.length != 0) {
 					sub = getMax(dealWarns);
 				}
@@ -2403,15 +2540,9 @@ public class StockExcelExporterMain {
 				fileOStream.close();
 
 				listConceptStock = null;
-				// 测试作用
-				// if(stockRow>20)
-				// break;
 
 			}
 
-			// 测试作用
-			// if(stockRow>20)
-			// break;
 		}
 
 		listConcept = null;
@@ -2444,7 +2575,8 @@ public class StockExcelExporterMain {
 		XSSFSheet sheet = null;
 		String excleFileName = null;
 		int flagFirst = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		// 记录行业或概念标题行
+		int titleRow = 0;
 		sheetCount = 0;
 		// 先输出到一级行业
 		for (int countI = 0; countI < listFirstIndustry.size(); countI++) {
@@ -2517,15 +2649,7 @@ public class StockExcelExporterMain {
 				// 概念标题
 				stockRow++;
 				titleRow = stockRow;
-				/*
-				 * //基本面 StockBaseFace baseFaceConcept = new
-				 * StockBaseFace(0,conceptCode,scon.getBaseExpect(),scon.getMain
-				 * (),
-				 * scon.getPsychology(),scon.getRisk(),scon.getPotential(),scon.
-				 * getFaucet()); ExcelCommon.writeExcelItemTitle(wb,sheet,i+":"+
-				 * firstIndustryName,baseFaceConcept,stockRow);
-				 */
-
+	
 				ExcelCommon.writeExcelItemTitle(wb, sheet, conceptName, null, stockRow, true);
 				// 所属概念所有股票
 				List<StockToConcept> listConceptStock = new ArrayList<StockToConcept>();
@@ -2559,20 +2683,16 @@ public class StockExcelExporterMain {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "****");
 
 						int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_SUMMARY_STOCK);
-						if (isTableExist == 0) {// 不存在
+						if (isTableExist == 0) {
 							stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 							System.out.println(stockFullId + "统计表不存在****");
 							continue;
 						}
 
-						// ssDao.truncateSummaryStock(stockFullId);
-
 						// 其他值
 						StockOtherInfoValue soiValue = new StockOtherInfoValue(stockFullId, toConstock.getStockName(),
 								0, 0, null, null);
-						// ExcelCommon.writeExcelStockOtherInfo(wb, sheet,
-						// soiValue, stockRow);
-
+		
 						stockRow++;
 						ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 
@@ -2592,11 +2712,6 @@ public class StockExcelExporterMain {
 							}
 
 						}
-
-						// 第一个就是最后一天的
-						// listStockSummaryOrderBy.add(stockSummaryInfo.get(0));
-						// 排序
-						// Collections.sort(listStockTotalInfoOrderBy);
 
 					}
 				}
@@ -2648,7 +2763,7 @@ public class StockExcelExporterMain {
 		XSSFSheet sheet = null;
 		String excleFileName = null;
 		int flagFirst = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		int titleRow = 0;
 		sheetCount = 0;
 		// 先输出到一级行业
 		for (int countI = 0; countI < listMarket.size(); countI++) {
@@ -2750,12 +2865,9 @@ public class StockExcelExporterMain {
 						continue;
 					}
 					// ssDao.truncateSummaryStock(stockFullId);
-
 					// 其他值
 					StockOtherInfoValue soiValue = new StockOtherInfoValue(stockFullId, toConstock.getName(), 0, 0,
 							null, null);
-					// ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue,
-					// stockRow);
 
 					stockRow++;
 					ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
@@ -2777,10 +2889,6 @@ public class StockExcelExporterMain {
 
 					}
 
-					// 第一个就是最后一天的
-					// listStockSummaryOrderBy.add(stockSummaryInfo.get(0));
-					// 排序
-					// Collections.sort(listStockTotalInfoOrderBy);
 				}
 			}
 
@@ -2940,7 +3048,7 @@ public class StockExcelExporterMain {
 					stockRow++;
 					ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 					int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_OPERATION_STOCK);
-					if (isTableExist == 0) {// 不存在
+					if (isTableExist == 0) {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 						System.out.println(stockFullId + "统计表不存在****");
 						continue;
@@ -3130,7 +3238,7 @@ public class StockExcelExporterMain {
 					stockRow++;
 					ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 					int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_OPERATION_STOCK);
-					if (isTableExist == 0) {// 不存在
+					if (isTableExist == 0) {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 						System.out.println(stockFullId + "统计表不存在****");
 						continue;
@@ -3142,8 +3250,6 @@ public class StockExcelExporterMain {
 					stockOperationInfo = ssDao.getOperationFromOperationTable(stockFullId, dateType, nums);
 
 					int extremeCol = 0;
-					int earn = 0, stop = 0, loss = 0;
-					float totalShouyi = 0;
 					// 查找对应位置并写入excel
 					for (int ij = 0; ij < stockOperationInfo.size(); ij++) {
 						StockOperation sSop = stockOperationInfo.get(ij);
@@ -3162,8 +3268,7 @@ public class StockExcelExporterMain {
 							if (dateType == ConstantsInfo.WeekDataType || dateType == ConstantsInfo.MonthDataType) {
 								// 再遍历
 								for (String key : stockDateColumnmap.keySet()) {
-									// System.out.println("key:"+key+"data:"+
-									// sSop.getOpDate());
+							
 									if (CommonDate.isSameDate(key, sSop.getOpDate(), dateType)) {
 										flag = true;
 										extremeCol = stockDateColumnmap.get(key);
@@ -3233,7 +3338,7 @@ public class StockExcelExporterMain {
 		XSSFSheet sheet = null;
 		String excleFileName = null;
 		int flagFirst = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		int titleRow = 0;
 		sheetCount = 0;
 		// 先输出到一级行业
 		for (int countI = 0; countI < listMarket.size(); countI++) {
@@ -3332,19 +3437,14 @@ public class StockExcelExporterMain {
 					stockLogger.logger.fatal("****stockFullId：" + stockFullId + "****");
 
 					int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_OPERATION_STOCK);
-					if (isTableExist == 0) {// 不存在
+					if (isTableExist == 0) {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 						System.out.println(stockFullId + "统计表不存在****");
 						continue;
 					}
 
-					// ssDao.truncateSummaryStock(stockFullId);
-
-					// 其他值
 					StockOtherInfoValue soiValue = new StockOtherInfoValue(stockFullId, toConstock.getName(), 0, 0,
 							null, null);
-					// ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue,
-					// stockRow);
 
 					stockRow++;
 					ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
@@ -3357,9 +3457,8 @@ public class StockExcelExporterMain {
 
 					int extremeCol = 0;
 					isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_SUMMARY_STOCK);
-					if (isTableExist != 0) {// 存在
-						// StockSummary ss =
-						// ssDao.getLastSummaryFromSummaryTable(stockFullId);
+					if (isTableExist != 0) {
+						
 						StockSummary ss = ssDao.getZhiDingSummaryFromSummaryTable(stockFullId, fileTime,
 								ConstantsInfo.DayDataType);
 
@@ -3390,12 +3489,7 @@ public class StockExcelExporterMain {
 							System.out.println("not exist the day");
 						}
 					}
-
-					// 第一个就是最后一天的
-					// listStockSummaryOrderBy.add(stockSummaryInfo.get(0));
-					// 排序
-					// Collections.sort(listStockTotalInfoOrderBy);
-
+		
 				}
 			}
 
@@ -3446,7 +3540,7 @@ public class StockExcelExporterMain {
 		XSSFSheet sheet = null;
 		String excleFileName = null;
 		int flagFirst = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		int titleRow = 0;
 		sheetCount = 0;
 		// 先输出到一级行业
 		for (int countI = 0; countI < listIndustry.size(); countI++) {
@@ -3536,7 +3630,7 @@ public class StockExcelExporterMain {
 					stockLogger.logger.fatal("****stockFullId：" + stockFullId + "****");
 
 					int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_POINT_STOCK);
-					if (isTableExist == 0) {// 不存在
+					if (isTableExist == 0) {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 						System.out.println(stockFullId + "统计表不存在****");
 						continue;
@@ -3560,8 +3654,7 @@ public class StockExcelExporterMain {
 					int extremeCol = 0;
 					isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_SUMMARY_STOCK);
 					if (isTableExist != 0) {
-						// StockSummary ss =
-						// ssDao.getLastSummaryFromSummaryTable(stockFullId);
+						
 						StockSummary ss = ssDao.getZhiDingSummaryFromSummaryTable(stockFullId, fileTime,
 								ConstantsInfo.DayDataType);
 
@@ -3592,12 +3685,7 @@ public class StockExcelExporterMain {
 							System.out.println("not exist the day");
 						}
 					}
-
-					// 第一个就是最后一天的
-					// listStockSummaryOrderBy.add(stockSummaryInfo.get(0));
-					// 排序
-					// Collections.sort(listStockTotalInfoOrderBy);
-
+	
 				}
 			}
 
@@ -3662,7 +3750,7 @@ public class StockExcelExporterMain {
 		XSSFSheet sheet = null;
 		String excleFileName = null;
 		int flagFirst = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		int titleRow = 0;
 		sheetCount = 0;
 		// 先输出到一级行业
 		for (int countI = 0; countI < listIndustry.size(); countI++) {
@@ -3756,7 +3844,6 @@ public class StockExcelExporterMain {
 					stockLogger.logger.fatal("****stockFullId：" + stockFullId + "****");
 					// ssDao.truncateSummaryStock(stockFullId);
 
-					// 其他值
 					StockOtherInfoValue soiValue = new StockOtherInfoValue(stockFullId, toConstock.getStockName(), 0, 0,
 							null, null);
 					// ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue,
@@ -3766,7 +3853,7 @@ public class StockExcelExporterMain {
 					ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 
 					int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_OPERATION_STOCK);
-					if (isTableExist == 0) {// 不存在
+					if (isTableExist == 0) {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 						System.out.println(stockFullId + "统计表不存在****");
 						continue;
@@ -3801,17 +3888,12 @@ public class StockExcelExporterMain {
 							}
 						}
 					}
-					// System.out.println(earn+":"+stop+":"+loss);
+				
 					int totalsize = earn + stop + loss;
 					if (totalsize > 0) {
 						ExcelCommon.writeOperationTotalExcelItem(wb, sheet, 0, stockRow, earn, stop, loss, totalsize,
 								totalShouyi);
 					}
-
-					// 第一个就是最后一天的
-					// listStockSummaryOrderBy.add(stockSummaryInfo.get(0));
-					// 排序
-					// Collections.sort(listStockTotalInfoOrderBy);
 
 				}
 			}
@@ -3954,7 +4036,7 @@ public class StockExcelExporterMain {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "****");
 
 						int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_OPERATION_STOCK);
-						if (isTableExist == 0) {// 不存在
+						if (isTableExist == 0) {
 							stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 							System.out.println(stockFullId + "统计表不存在****");
 							continue;
@@ -3962,7 +4044,6 @@ public class StockExcelExporterMain {
 
 						// ssDao.truncateSummaryStock(stockFullId);
 
-						// 其他值
 						StockOtherInfoValue soiValue = new StockOtherInfoValue(stockFullId, toConstock.getStockName(),
 								0, 0, null, null);
 						// ExcelCommon.writeExcelStockOtherInfo(wb, sheet,
@@ -3986,12 +4067,10 @@ public class StockExcelExporterMain {
 							if (sSop != null && stockDateColumnmap.containsKey(sSop.getOpDate())) {
 								extremeCol = stockDateColumnmap.get(sSop.getOpDate());
 
-								// String psState =
-								// ssDao.getpsStatusFromSummaryTable(stockFullId,sSop.getOpDate());
-								String psState = ""; // ssDao.getpsStatusFromSummaryTable(stockFullId,sSop.getOpDate());
+								// String psState =  ssDao.getpsStatusFromSummaryTable(stockFullId,sSop.getOpDate());
+								String psState = "";
 
 								ExcelCommon.writeOperationExcelItem(wb, sheet, sSop, psState, extremeCol, stockRow);
-
 		
 								if (sSop.getOpType() == ConstantsInfo.STOP) { 
 									stop++;
@@ -4005,23 +4084,17 @@ public class StockExcelExporterMain {
 								}
 							}
 						}
-						// System.out.println(earn+":"+stop+":"+loss);
+						
 						int totalsize = earn + stop + loss;
 						if (totalsize > 0) {
 							ExcelCommon.writeOperationTotalExcelItem(wb, sheet, 0, stockRow, earn, stop, loss,
 									totalsize, totalShouyi);
-						}
-
-						// 第一个就是最后一天的
-						// listStockSummaryOrderBy.add(stockSummaryInfo.get(0));
-						// 排序
-						// Collections.sort(listStockTotalInfoOrderBy);
+						}					
 
 					}
 				}
 
-				FileOutputStream fileOStream = new FileOutputStream(filePath + fileTime + "\\" + excleFileName);
-				;
+				FileOutputStream fileOStream = new FileOutputStream(filePath + fileTime + "\\" + excleFileName);		
 				wb.write(fileOStream);
 				fileOStream.flush();
 				fileIStream.close();
@@ -4069,7 +4142,7 @@ public class StockExcelExporterMain {
 		XSSFSheet sheet = null;
 		String excleFileName = null;
 		int flagFirst = 0;
-		int titleRow = 0;// 记录行业或概念标题行
+		int titleRow = 0;
 		sheetCount = 0;
 		// 先输出到一级行业
 		for (int countI = 0; countI < listIndustry.size(); countI++) {
@@ -4171,24 +4244,17 @@ public class StockExcelExporterMain {
 					ExcelCommon.writeExcelStockOtherInfo(wb, sheet, soiValue, stockRow, 0, null, true);
 
 					int isTableExist = sdDao.isExistStockTable(stockFullId, ConstantsInfo.TABLE_OPERATION_STOCK);
-					if (isTableExist == 0) {// 不存在
+					if (isTableExist == 0) {
 						stockLogger.logger.fatal("****stockFullId：" + stockFullId + "不存在统计表****");
 						System.out.println(stockFullId + "统计表不存在****");
 						continue;
 					}
 					// 获取最近统计数据
 					List<StockOperation> stockOperationInfo = new ArrayList<StockOperation>();
-					// stockOperationInfo =
-					// ssDao.getOperationFromOperationTable(stockFullId, -1,
-					// 120);
-
 					int nums = ConstantsInfo.ExportNum(dateType);
 					stockOperationInfo = ssDao.getOperationFromOperationTable(stockFullId, dateType, nums);
 
 					int extremeCol = 0;
-					int earn = 0, stop = 0, loss = 0;
-					float totalShouyi = 0;
-
 					// 查找对应位置并写入excel
 					for (int ij = 0; ij < stockOperationInfo.size(); ij++) {
 						StockOperation sSop = stockOperationInfo.get(ij);
@@ -4207,8 +4273,6 @@ public class StockExcelExporterMain {
 							if (dateType == ConstantsInfo.WeekDataType || dateType == ConstantsInfo.MonthDataType) {
 								// 再遍历
 								for (String key : stockDateColumnmap.keySet()) {
-									// System.out.println("key:"+key+"data:"+
-									// sSop.getOpDate());
 									if (CommonDate.isSameDate(key, sSop.getOpDate(), dateType)) {
 										flag = true;
 										extremeCol = stockDateColumnmap.get(key);
@@ -4293,12 +4357,6 @@ public class StockExcelExporterMain {
 
 		// se.writeTotalOperationExcelFormIndustryOrderBy("export\\",dateNowStr);
 		// se.writeTotalOperationExcelFormIndustryOrderByAllType("export\\","2017-11-03",ConstantsInfo.WeekDataType);
-
-		// StockSummary ssu = new StockSummary(0,
-		// "","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","");
-		// ssu.setFullId("SH603330");
-		// ssu.setName("上海天洋");
-		// se.ssDao.insertStockSummaryTable(ssu.getFullId(), ssu);
 
 		stockBaseConn.close();
 		stockDataConn.close();
